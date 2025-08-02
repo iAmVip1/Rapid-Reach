@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRoutes from './routes/user.route.js'
 import authRoutes from './routes/auth.route.js'
+import path from "path";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.listen(3000, () =>{
     console.log('Server is running in port 3000!!');
 })
 
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
