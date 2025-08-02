@@ -4,27 +4,35 @@ import { errorHandler } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password || username === '' || email === '' || password === '') {
-    return next(errorHandler(400, 'All fields are required'));
-  }
-
   try {
-    const hashedPassword = bcryptjs.hashSync(password, 10);
+    const { username, email, password } = req.body;
 
-    // Capture uploaded profile picture path if exists
+    if (!username || !email || !password) {
+      return next(errorHandler(400, 'All fields are required'));
+    }
+
+    const hashedPassword = bcryptjs.hashSync(password, 10);
     const profilePicture = req.file ? req.file.path : null;
 
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      profilePicture, // save the path in DB
+      profilePicture,
+
+      // convert string to boolean
+      isHospital: req.body.isHospital === 'true',
+      isFireDep: req.body.isFireDep === 'true',
+      isPoliceDep: req.body.isPoliceDep === 'true',
+      isPoliceVAn: req.body.isPoliceVAn === 'true',
+      isAmbulance: req.body.isAmbulance === 'true',
+      isBlood: req.body.isBlood === 'true',
+      isFireTruck: req.body.isFireTruck === 'true',
     });
 
     await newUser.save();
-    res.json('Signup is successful');
+    res.status(201).json({ success: true, message: 'Signup is successful' });
+
   } catch (error) {
     next(error);
   }
