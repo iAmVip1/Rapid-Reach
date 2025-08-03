@@ -1,120 +1,205 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
+import { Link, NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [companyDropdown, setCompanyDropdown] = useState(false);
-
-  const navItems = [
-    { label: "Home", href: "#", active: true },
-    { label: "Arch Services", href: "#" },
-    { label: "Arch Shop", href: "#" },
-    { label: "Partners", href: "#" },
-  ];
+  const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser?.profilePicture);
 
   return (
-    <nav className="w-full border-b shadow-sm bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+    <header className="bg-lime-50 shadow-md">
+      <nav className="border-gray-200">
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="font-bold text-sm sm:text-xl flex items-center"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_the_Red_Cross.svg/1200px-Flag_of_the_Red_Cross.svg.png"
+              alt="logo"
+              className="h-8"
+            />
+            <span
+              className="px-2 py-1 bg-gradient-to-r from-emerald-400 to-cyan-400
+       rounded-lg text-white"
+            >
+              Rapid
+            </span>
+            <span>Reach</span>
+          </Link>
+
+          {/* Desktop Menu */}
+          <ul className="hidden md:flex items-center space-x-8 cursor-pointer">
+            <li
+              className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
+            transition-colors duration-200"
+            >
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-rose-700 text-white p-2 rounded-xl"
+                    : "font-medium"
+                }
+              >
+                Home
+              </NavLink>
+            </li>
+            <li
+              className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
+            transition-colors duration-200"
+            >
+              <NavLink
+                to="/services"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-rose-700 text-white p-2 rounded-xl"
+                    : "font-medium"
+                }
+              >
+                Services
+              </NavLink>
+            </li>
+            <li
+              className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
+            transition-colors duration-200"
+            >
+              <NavLink
+                to="/contact"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-rose-700 text-white p-2 rounded-xl"
+                    : "font-medium"
+                }
+              >
+                Contact Us
+              </NavLink>
+            </li>
+            {currentUser ? (
+              <>
+                <img
+                  src={
+                    currentUser?.profilePicture
+                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
+                          /\\/g,
+                          "/"
+                        )}`
+                      : "https://via.placeholder.com/40"
+                  }
+                  alt="profile picture"
+                  className="w-10 h-10 rounded-full object-cover "
+                />
+              </>
+            ) : (
+              <li
+                className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
+            transition-colors duration-200"
+              >
+                <NavLink
+                  to="/sign-in"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-rose-700 text-white p-2 rounded-xl"
+                      : "font-medium"
+                  }
+                >
+                  Login
+                </NavLink>
+              </li>
+            )}
+          </ul>
+
+        
+          {/* Mobile Hamburger */}
+          <div className="md:hidden flex items-center space-x-4">
+            
+            {/* profilePicture */}
+            {currentUser ? (
+              <>
+                <img
+                  src={
+                    currentUser?.profilePicture
+                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
+                          /\\/g,
+                          "/"
+                        )}`
+                      : "https://via.placeholder.com/40"
+                  }
+                  alt="profile picture"
+                  className="w-8 h-8 rounded-full object-cover "
+                />
+              </>
+            ) :(
+              <></>
+            )}
+            {/* profilePicture */}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+            </button>
+          </div>
         </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-6 bg-gray-50 px-6 py-2 rounded-full">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={`text-sm font-medium ${
-                item.active ? "text-black" : "text-gray-600"
-              } hover:text-black`}
+        
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden px-4 py-4 space-y-2 ">
+            <NavLink
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                isActive
+                  ? "block text-black font-medium"
+                  : "block text-gray-600"
+              }
             >
-              {item.label}
-            </a>
-          ))}
-          {/* Company dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setCompanyDropdown(!companyDropdown)}
-              className="flex items-center text-gray-600 hover:text-black text-sm font-medium"
+              Home
+            </NavLink>
+            <NavLink
+              to="/services"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                isActive
+                  ? "block text-black font-medium"
+                  : "block text-gray-600"
+              }
             >
-              Company <FaChevronDown className="ml-1 text-xs" />
-            </button>
-            {companyDropdown && (
-              <div className="absolute mt-2 w-40 bg-white border rounded shadow z-10">
-                <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                  About Us
-                </a>
-                <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                  Careers
-                </a>
-              </div>
+              Services
+            </NavLink>
+            <NavLink
+              to="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                isActive
+                  ? "block text-black font-medium"
+                  : "block text-gray-600"
+              }
+            >
+              Contact Us
+            </NavLink>
+            {currentUser ? (
+              <>
+              
+              </>
+            ):(
+            <NavLink
+              to="/sign-in"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                isActive
+                  ? "block text-black font-medium"
+                  : "block text-gray-600"
+              }
+            >
+              Login
+            </NavLink>
             )}
           </div>
-        </div>
-
-        {/* Right buttons */}
-        <div className="hidden md:flex items-center gap-4">
-          <button className="px-4 py-2 text-sm border rounded hover:bg-gray-100">
-            Log In
-          </button>
-          <button className="px-4 py-2 text-sm border rounded hover:bg-gray-100">
-            Become a Supplier
-          </button>
-        </div>
-
-        {/* Mobile Hamburger */}
-        <div className="md:hidden">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden px-4 py-4 space-y-2 border-t">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={`block text-sm ${
-                item.active ? "text-black font-medium" : "text-gray-600"
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
-          <div>
-            <button
-              onClick={() => setCompanyDropdown(!companyDropdown)}
-              className="flex items-center text-gray-600 hover:text-black text-sm font-medium"
-            >
-              Company <FaChevronDown className="ml-1 text-xs" />
-            </button>
-            {companyDropdown && (
-              <div className="ml-4 mt-1 space-y-1">
-                <a href="#" className="block text-sm text-gray-600 hover:text-black">
-                  About Us
-                </a>
-                <a href="#" className="block text-sm text-gray-600 hover:text-black">
-                  Careers
-                </a>
-              </div>
-            )}
-          </div>
-          <hr />
-          <div className="space-y-2">
-            <button className="w-full px-4 py-2 text-sm border rounded hover:bg-gray-100">
-              Log In
-            </button>
-            <button className="w-full px-4 py-2 text-sm border rounded hover:bg-gray-100">
-              Become a Supplier
-            </button>
-          </div>
-        </div>
-      )}
-    </nav>
+        )}
+      </nav>
+    </header>
   );
 }
