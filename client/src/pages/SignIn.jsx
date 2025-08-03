@@ -72,7 +72,7 @@ export default function Signin() {
 
           </form>
           <p className="text-center text-gray-600 mt-4">
-          Don't have an account? <Link to='/signup' className="text-blue-500">Create an account</Link>
+          Don't have an account? <Link to='/sign-up' className="text-blue-500">Create an account</Link>
           </p>
           {
             errorMessage && (

@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
-  console.log(currentUser?.profilePicture);
+ // console.log(currentUser?.profilePicture);
 
   return (
     <header className="bg-lime-50 shadow-md">
@@ -115,7 +115,7 @@ export default function Navbar() {
         
           {/* Mobile Hamburger */}
           <div className="md:hidden flex items-center space-x-4">
-            
+
             {/* profilePicture */}
             {currentUser ? (
               <>
