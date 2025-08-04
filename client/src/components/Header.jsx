@@ -2,11 +2,35 @@ import React, { useState } from "react";
 import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { signoutSuccess } from "../redux/user/userSlice";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
- // console.log(currentUser?.profilePicture);
+  const dispatch = useDispatch();
+  // console.log(currentUser?.profilePicture);
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <header className="bg-lime-50 shadow-md">
@@ -80,18 +104,44 @@ export default function Navbar() {
             </li>
             {currentUser ? (
               <>
-                <img
-                  src={
-                    currentUser?.profilePicture
-                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                          /\\/g,
-                          "/"
-                        )}`
-                      : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
-                  }
-                  alt="profile picture"
-                  className="w-10 h-10 rounded-full object-cover "
-                />
+                <button className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded sm:hidden md:block">
+                  <img
+                    src={
+                      currentUser?.profilePicture
+                        ? `http://localhost:3000/${currentUser.profilePicture.replace(
+                            /\\/g,
+                            "/"
+                          )}`
+                        : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
+                    }
+                    alt="profile picture"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 rounded-lg p-3 mt-1 shadow-md scale-y-0 group-hover:scale-y-100 origin-top duration-200 bg-white space-y-2 w-auto">
+                    <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
+                      <div>{currentUser.username}</div>
+                      <div className="font-medium truncate">
+                        {currentUser.email}
+                      </div>
+                    </div>
+                    <a
+                      href="/dashboard?tab=profile"
+                      className="block py-2 px-4 text-sm hover:font-semibold hover:bg-gray-500 hover:text-white rounded-xl"
+                    >
+                      Profile
+                    </a>
+                   
+                    <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
+                    <div className="py-2">
+                      <div
+                        className="block px-4 py-2 text-sm hover:cursor-pointer hover:bg-red-500 hover:text-white rounded-xl"
+                        onClick={handleSignout}
+                      >
+                        Sign out
+                      </div>
+                    </div>
+                  </div>
+                </button>
               </>
             ) : (
               <li
@@ -112,37 +162,64 @@ export default function Navbar() {
             )}
           </ul>
 
-        
           {/* Mobile Hamburger */}
           <div className="md:hidden flex items-center space-x-4">
-
             {/* profilePicture */}
-            {currentUser ? (
-              <>
-                <img
-                  src={
-                    currentUser?.profilePicture
-                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                          /\\/g,
-                          "/"
-                        )}`
-                      : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
-                  }
-                  alt="profile picture"
-                  className="w-8 h-8 rounded-full object-cover "
-                />
-              </>
-            ) :(
+             {currentUser ? (
+               <button
+              className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded "
+              onClick={toggleDropdown} // Toggle dropdown on click
+            >
+              <img
+                src={
+                  currentUser?.profilePicture
+                    ? `http://localhost:3000/${currentUser.profilePicture.replace(
+                        /\\/g,
+                        "/"
+                      )}`
+                    : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
+                }
+                alt="profile picture"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              {isOpen && ( // Only show the dropdown if `isOpen` is true
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 rounded-lg p-3 mt-1 shadow-md scale-y-100 origin-top duration-200 bg-white space-y-2 w-auto">
+                  <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
+                    <div>{currentUser.username}</div>
+                    <div className="font-medium truncate">
+                      {currentUser.email}
+                    </div>
+                  </div>
+                  <a
+                    href="/dashboard?tab=profile"
+                    className="block py-2 px-4 text-sm hover:font-semibold hover:bg-gray-500 hover:text-white rounded-xl"
+                  >
+                    Profile
+                  </a>
+                
+                  <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
+                  <div className="py-2">
+                    <div
+                      className="block px-4 py-2 text-sm hover:cursor-pointer hover:bg-red-500 hover:text-white rounded-xl"
+                      onClick={handleSignout}
+                    >
+                      Sign out
+                    </div>
+                  </div>
+                </div>
+              )}
+            </button>
+             ):(
               <></>
-            )}
+             )}
+           
+
             {/* profilePicture */}
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
             </button>
           </div>
         </div>
-
-        
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
@@ -181,21 +258,19 @@ export default function Navbar() {
               Contact Us
             </NavLink>
             {currentUser ? (
-              <>
-              
-              </>
-            ):(
-            <NavLink
-              to="/sign-in"
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                isActive
-                  ? "block text-black font-medium"
-                  : "block text-gray-600"
-              }
-            >
-              Login
-            </NavLink>
+              <></>
+            ) : (
+              <NavLink
+                to="/sign-in"
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  isActive
+                    ? "block text-black font-medium"
+                    : "block text-gray-600"
+                }
+              >
+                Login
+              </NavLink>
             )}
           </div>
         )}
