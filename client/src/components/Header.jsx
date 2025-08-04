@@ -87,7 +87,7 @@ export default function Navbar() {
                           /\\/g,
                           "/"
                         )}`
-                      : "https://via.placeholder.com/40"
+                      : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
                   }
                   alt="profile picture"
                   className="w-10 h-10 rounded-full object-cover "
@@ -126,7 +126,7 @@ export default function Navbar() {
                           /\\/g,
                           "/"
                         )}`
-                      : "https://via.placeholder.com/40"
+                      : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
                   }
                   alt="profile picture"
                   className="w-8 h-8 rounded-full object-cover "
