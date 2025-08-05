@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
+import MobileSidebar from "../components/MobileSidebar";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -20,6 +21,7 @@ export default function Dashboard() {
     <div className=" bg-gray-100 shadow-md">
       <DashSidebar />
     </div>
+
 
     {/* Main Content */}
     <div className="flex-1 p-6">
