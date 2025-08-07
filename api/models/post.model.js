@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
   {
-    postname: {
+    departmentName: {
       type: String,
       required: true,
     },
@@ -24,6 +24,10 @@ const postSchema = new mongoose.Schema(
     },
     phoneNumber2: {
       type: Number,
+      required: true,
+    },
+    registrationNo: {
+      type: String,
       required: true,
     },
     category: {
@@ -60,3 +64,4 @@ const postSchema = new mongoose.Schema(
 const Post = mongoose.model("Post", postSchema);
 
 export default Post;
+ 
