@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 import Footer from "./components/Footer";
+import DepartmentRoute from "./components/DepartmentRoute";
+import CreatePost from "./pages/CreatePost";
 
 export default function App() {
   return (
@@ -20,6 +22,10 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route element={<PrivateRoute />} >
         <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+
+        <Route element={<DepartmentRoute />} >
+        <Route path="/create-post" element={<CreatePost />} />
         </Route>
         
         <Route path="/gridview" element={<GridView />} />

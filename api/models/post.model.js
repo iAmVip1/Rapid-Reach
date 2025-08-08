@@ -8,15 +8,19 @@ const postSchema = new mongoose.Schema(
     },
     address: {
       type: String,
-
+      required: true,
     },
     longitude: {
       type: String,
-      
+      required: true,
     },
     latitude: {
       type: String,
-      
+      required: true,
+    },
+    website: {
+      type: String,
+      required: true,
     },
     phoneNumber1: {
       type: Number,
