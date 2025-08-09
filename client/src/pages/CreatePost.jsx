@@ -47,6 +47,7 @@ export default function CreatePost() {
             longitude: lng,
             latitude: lat,
           }));
+          fetchAddress(lat, lng);
         },
         (err) => {
           console.error(err);
@@ -116,7 +117,32 @@ export default function CreatePost() {
       ...prev,
       [key]: value,
     }));
+
+    if (key === "latitude" || key === "longitude") {
+      const lat = key === "latitude" ? value : formData.latitude;
+      const lng = key === "longitude" ? value : formData.longitude;
+      if (lat && lng) {
+        fetchAddress(lat, lng);
+      }
+    }
   };
+
+  async function fetchAddress(lat, lng) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+      );
+      const data = await res.json();
+      if (data && data.display_name) {
+        setFromData((prev) => ({
+          ...prev,
+          address: data.display_name,
+        }));
+      }
+    } catch (err) {
+      console.error("Error fetching address:", err);
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
