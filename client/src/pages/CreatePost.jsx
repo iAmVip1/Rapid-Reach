@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RxCrossCircled } from "react-icons/rx";
 
 export default function CreatePost() {
+  //image
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState("");
   const [longitude, setLongitude] = useState("");
@@ -9,13 +13,40 @@ export default function CreatePost() {
   const [loadingImage, setLoadingImage] = useState(false);
   const [preview, setPreview] = useState(null);
 
+  //form
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
+  const [formData, setFromData] = useState({
+    departmentName: "",
+    address: "",
+    longitude: "",
+    latitude: "",
+    website: "",
+    phoneNumber1: "",
+    phoneNumber2: "",
+    registrationNo: "",
+    category: "",
+    description: "",
+    imageUrls: [],
+  });
+
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   // Auto-generate location
   const handleAutoGenerateLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setLongitude(pos.coords.longitude.toFixed(6));
-          setLatitude(pos.coords.latitude.toFixed(6));
+          const lng = pos.coords.longitude.toFixed(6);
+          const lat = pos.coords.latitude.toFixed(6);
+          setLongitude(lng);
+          setLatitude(lat);
+          setFromData((prev) => ({
+            ...prev,
+            longitude: lng,
+            latitude: lat,
+          }));
         },
         (err) => {
           console.error(err);
@@ -29,31 +60,34 @@ export default function CreatePost() {
 
   // Image upload
   const handleUploadImage = async (e) => {
-    e.preventDefault();
-    try {
-      if (!image) {
-        return alert("Please select an image first");
-      }
-      setLoadingImage(true);
+  e.preventDefault();
+  try {
+    if (!image) return alert("Please select an image first");
+    setLoadingImage(true);
 
-      const imageData = new FormData();
-      imageData.append("file", image);
-      imageData.append("upload_preset", "test-image");
-      imageData.append("cloud_name", "dyy6csn97");
+    const imageData = new FormData();
+    imageData.append("file", image);
+    imageData.append("upload_preset", "test-image");
+    imageData.append("cloud_name", "dyy6csn97");
 
-      const { data } = await axios.post(
-        "https://api.cloudinary.com/v1_1/dyy6csn97/image/upload",
-        imageData
-      );
+    const { data } = await axios.post(
+      "https://api.cloudinary.com/v1_1/dyy6csn97/image/upload",
+      imageData
+    );
 
-      setUrl(data.secure_url);
-    } catch (error) {
-      console.log(error);
-      alert("Image upload failed!");
-    } finally {
-      setLoadingImage(false);
-    }
-  };
+    setUrl(data.secure_url);
+    setFromData((prev) => ({
+      ...prev,
+      imageUrls: [...prev.imageUrls, data.secure_url]
+    }));
+  } catch (error) {
+    console.log(error);
+    alert("Image upload failed!");
+  } finally {
+    setLoadingImage(false);
+  }
+};
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -64,14 +98,83 @@ export default function CreatePost() {
     }
   };
 
+  const handleRemoveImage = (index) => {
+    setFromData({
+      ...formData,
+      imageUrls: formData.imageUrls.filter((_, i) => i !== index),
+    });
+  };
+
   console.log(url);
+
+  // form specification
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFromData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (formData.imageUrls.length < 1)
+        return setError("You must upload an image");
+      if (formData.phoneNumber1.length < 10)
+        return setError("Phone numbers must be 10 numbers");
+      if (formData.phoneNumber2.length < 10)
+        return setError("Phone numbers must be 10 numbers");
+      if (formData.phoneNumber1 == formData.phoneNumber2)
+        return setError("Phone numbers must be different");
+
+      setLoading(true);
+      setError(false);
+      const res = await fetch("/api/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "post/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          userRef: currentUser._id,
+          userMail: currentUser.email,
+          userImage: currentUser.profilePicture,
+        }),
+      });
+
+      const data = await res.json();
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+      }
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+  if (currentUser) {
+    let cat = "";
+    if (currentUser.isHospital) cat = "Hospital";
+    else if (currentUser.isFireDep) cat = "Fire Department";
+    else if (currentUser.isPoliceDep) cat = "Police Department";
+
+    setFromData((prev) => ({
+      ...prev,
+      category: cat
+    }));
+  }
+}, [currentUser]);
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
         Please fill up the details.
       </h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         {/* Dept name Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -80,6 +183,9 @@ export default function CreatePost() {
           <input
             type="text"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100"
+            value={formData.departmentName}
+            id='departmentName'
+            onChange={handleChange}
           />
         </div>
 
@@ -91,9 +197,10 @@ export default function CreatePost() {
             </label>
             <input
               type="text"
-              value={longitude}
-              readOnly
+              value={formData.longitude}
+              id="longitude"
               className="block w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100"
+              onChange={handleChange}
             />
           </div>
           <div className="flex-1">
@@ -102,8 +209,9 @@ export default function CreatePost() {
             </label>
             <input
               type="text"
-              value={latitude}
-              readOnly
+              value={formData.latitude}
+              onChange={handleChange}
+              id="latitude"
               className="block w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100"
             />
           </div>
@@ -126,6 +234,9 @@ export default function CreatePost() {
           <input
             type="text"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100"
+            value={formData.address}
+            id="address"
+            onChange={handleChange}
           />
         </div>
 
@@ -138,6 +249,9 @@ export default function CreatePost() {
             type="text"
             placeholder="e.g. example.com"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2"
+            value={formData.website}
+            id="website"
+            onChange={handleChange}
           />
         </div>
 
@@ -149,6 +263,9 @@ export default function CreatePost() {
           <textarea
             placeholder="Write a short description"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2 h-30"
+            value={formData.description}
+            id="description"
+            onChange={handleChange}
           />
         </div>
 
@@ -161,6 +278,23 @@ export default function CreatePost() {
             type="text"
             placeholder="e.g. 07991 123 456"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2"
+            value={formData.phoneNumber1}
+            id="phoneNumber1"
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Phone Number:
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. 07991 123 456"
+            className="block w-full mt-1 border border-gray-300 rounded-md p-2"
+            value={formData.phoneNumber2}
+            id="phoneNumber2"
+            onChange={handleChange}
           />
         </div>
 
@@ -173,6 +307,9 @@ export default function CreatePost() {
             type="text"
             placeholder="e.g. 123456789"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2"
+            value={formData.registrationNo}
+            id="registrationNo"
+            onChange={handleChange}
           />
         </div>
 

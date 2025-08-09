@@ -50,10 +50,6 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    userType: {
-      type: String,
-      required: true,
-    },
     userMail: {
       type: String,
       required: true,
