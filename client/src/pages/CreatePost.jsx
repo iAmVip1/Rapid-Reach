@@ -110,10 +110,11 @@ export default function CreatePost() {
   // form specification
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { id, name, value } = e.target;
+    const key = name || id;
     setFromData((prev) => ({
       ...prev,
-      [name]: value,
+      [key]: value,
     }));
   };
 
@@ -134,7 +135,7 @@ export default function CreatePost() {
       const res = await fetch("/api/post/create", {
         method: "POST",
         headers: {
-          "Content-Type": "post/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
