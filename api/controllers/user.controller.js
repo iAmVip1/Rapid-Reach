@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
+import Post from '../models/post.model.js';
 
 export const test = (req, res) => {
     res.json({message: 'API is working'})
@@ -86,3 +87,16 @@ export const uploadProfileImage = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUserPosts = async (req, res, next) => {
+  if (req.user.id === req.params.id) {
+    try {
+      const posts = await Post.find({ userRef: req.params.id});
+      res.status(200).json(posts);
+    } catch (error) {
+      next (error)
+    }
+  } else {
+    return next (errorHandler(401, 'You can only view your own posts!'));
+  }
+}
