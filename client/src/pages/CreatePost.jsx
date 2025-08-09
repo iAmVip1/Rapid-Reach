@@ -110,10 +110,11 @@ export default function CreatePost() {
   // form specification
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { id, name, value } = e.target;
+    const key = name || id;
     setFromData((prev) => ({
       ...prev,
-      [name]: value,
+      [key]: value,
     }));
   };
 
@@ -134,7 +135,7 @@ export default function CreatePost() {
       const res = await fetch("/api/post/create", {
         method: "POST",
         headers: {
-          "Content-Type": "post/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -353,6 +354,7 @@ export default function CreatePost() {
           {/* Upload Button */}
           <div className="flex justify-center mt-6">
             <button
+              type="button"
               onClick={handleUploadImage}
               className="border-2 rounded-md hover:bg-blue-500 hover:text-white border-blue-500 py-2 px-6 font-bold"
             >
@@ -373,6 +375,19 @@ export default function CreatePost() {
               </div>
             </div>
           )}
+        </div>
+
+        {error && (
+          <p className="text-red-600 mt-4">{error}</p>
+        )}
+
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
         </div>
       </form>
     </div>
