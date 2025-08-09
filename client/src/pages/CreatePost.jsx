@@ -60,33 +60,33 @@ export default function CreatePost() {
 
   // Image upload
   const handleUploadImage = async (e) => {
-  e.preventDefault();
-  try {
-    if (!image) return alert("Please select an image first");
-    setLoadingImage(true);
+    e.preventDefault();
+    try {
+      if (!image) return alert("Please select an image first");
+      setLoadingImage(true);
 
-    const imageData = new FormData();
-    imageData.append("file", image);
-    imageData.append("upload_preset", "test-image");
-    imageData.append("cloud_name", "dyy6csn97");
+      const imageData = new FormData();
+      imageData.append("file", image);
+      imageData.append("upload_preset", "test-image");
+      imageData.append("cloud_name", "dyy6csn97");
 
-    const { data } = await axios.post(
-      "https://api.cloudinary.com/v1_1/dyy6csn97/image/upload",
-      imageData
-    );
+      const { data } = await axios.post(
+        "https://api.cloudinary.com/v1_1/dyy6csn97/image/upload",
+        imageData
+      );
 
-    setUrl(data.secure_url);
-    setFromData((prev) => ({
-      ...prev,
-      imageUrls: [...prev.imageUrls, data.secure_url]
-    }));
-  } catch (error) {
-    console.log(error);
-    alert("Image upload failed!");
-  } finally {
-    setLoadingImage(false);
-  }
-};
+      setUrl(data.secure_url);
+      setFromData((prev) => ({
+        ...prev,
+        imageUrls: [...prev.imageUrls, data.secure_url],
+      }));
+    } catch (error) {
+      console.log(error);
+      alert("Image upload failed!");
+    } finally {
+      setLoadingImage(false);
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -110,10 +110,11 @@ export default function CreatePost() {
   // form specification
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { id, name, value } = e.target;
+    const key = name || id;
     setFromData((prev) => ({
       ...prev,
-      [name]: value,
+      [key]: value,
     }));
   };
 
@@ -134,7 +135,7 @@ export default function CreatePost() {
       const res = await fetch("/api/post/create", {
         method: "POST",
         headers: {
-          "Content-Type": "post/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -156,18 +157,22 @@ export default function CreatePost() {
   };
 
   useEffect(() => {
-  if (currentUser) {
-    let cat = "";
-    if (currentUser.isHospital) cat = "Hospital";
-    else if (currentUser.isFireDep) cat = "Fire Department";
-    else if (currentUser.isPoliceDep) cat = "Police Department";
+    if (currentUser) {
+      let cat = "";
+      if (currentUser.isHospital) cat = "Hospital";
+      else if (currentUser.isFireDep) cat = "Fire Department";
+      else if (currentUser.isPoliceDep) cat = "Police Department";
 
-    setFromData((prev) => ({
-      ...prev,
-      category: cat
-    }));
-  }
-}, [currentUser]);
+      setFromData((prev) => ({
+        ...prev,
+        category: cat,
+      }));
+    }
+  }, [currentUser]);
+  console.log(formData);
+  console.log(url);
+  
+  
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
@@ -184,7 +189,7 @@ export default function CreatePost() {
             type="text"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100"
             value={formData.departmentName}
-            id='departmentName'
+            id="departmentName"
             onChange={handleChange}
           />
         </div>
@@ -275,7 +280,7 @@ export default function CreatePost() {
             Phone Number:
           </label>
           <input
-            type="text"
+            type="number"
             placeholder="e.g. 07991 123 456"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2"
             value={formData.phoneNumber1}
@@ -289,7 +294,7 @@ export default function CreatePost() {
             Phone Number:
           </label>
           <input
-            type="text"
+            type="number"
             placeholder="e.g. 07991 123 456"
             className="block w-full mt-1 border border-gray-300 rounded-md p-2"
             value={formData.phoneNumber2}
@@ -338,7 +343,7 @@ export default function CreatePost() {
                 <img
                   src={preview}
                   alt="Preview"
-                  className="h-full w-full object-cover rounded-lg"
+                  className="h-full w-full object-cover rounded-lg md:ml-32 "
                 />
               )}
               <input
@@ -353,6 +358,7 @@ export default function CreatePost() {
           {/* Upload Button */}
           <div className="flex justify-center mt-6">
             <button
+              type="button"
               onClick={handleUploadImage}
               className="border-2 rounded-md hover:bg-blue-500 hover:text-white border-blue-500 py-2 px-6 font-bold"
             >
@@ -373,6 +379,15 @@ export default function CreatePost() {
               </div>
             </div>
           )}
+        </div>
+        {error && <p className="text-red-600 mt-4">{error}</p>}
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
         </div>
       </form>
     </div>
