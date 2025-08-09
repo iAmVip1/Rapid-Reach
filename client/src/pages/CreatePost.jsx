@@ -7,6 +7,7 @@ export default function CreatePost() {
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
   const [loadingImage, setLoadingImage] = useState(false);
+  const [preview, setPreview] = useState(null);
 
   // Auto-generate location
   const handleAutoGenerateLocation = () => {
@@ -53,6 +54,17 @@ export default function CreatePost() {
       setLoadingImage(false);
     }
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    if (file) {
+      setPreview(URL.createObjectURL(file)); // Create a preview URL
+    } else {
+      setPreview(null);
+    }
+  };
+
+  console.log(url);
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
@@ -171,23 +183,32 @@ export default function CreatePost() {
           </label>
           <div className="max-w-md mx-auto rounded-lg overflow-hidden">
             <div className="relative h-48 rounded-lg border-2 border-blue-500 bg-gray-50 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
-              <div className="absolute flex flex-col items-center pointer-events-none">
+              {!preview ? (
+                <div className="absolute flex flex-col items-center pointer-events-none">
+                  <img
+                    alt="File Icon"
+                    className="mb-3"
+                    src="https://img.icons8.com/dusk/64/000000/file.png"
+                  />
+                  <span className="block text-gray-500 font-semibold">
+                    Drag & drop your files here
+                  </span>
+                  <span className="block text-gray-400 font-normal mt-1">
+                    or click to upload
+                  </span>
+                </div>
+              ) : (
                 <img
-                  alt="File Icon"
-                  className="mb-3"
-                  src="https://img.icons8.com/dusk/64/000000/file.png"
+                  src={preview}
+                  alt="Preview"
+                  className="h-full w-full object-cover rounded-lg"
                 />
-                <span className="block text-gray-500 font-semibold">
-                  Drag & drop your files here
-                </span>
-                <span className="block text-gray-400 font-normal mt-1">
-                  or click to upload
-                </span>
-              </div>
+              )}
               <input
                 type="file"
+                accept="image/*"
                 className="h-full w-full opacity-0 cursor-pointer"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={handleFileChange}
               />
             </div>
           </div>
