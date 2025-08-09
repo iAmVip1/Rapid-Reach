@@ -3,5 +3,5 @@ import { Outlet, Navigate } from 'react-router-dom';
 
 export default function DepartmentRoute() {
   const { currentUser } = useSelector((state) => state.user);
-  return currentUser && currentUser.isHospital ? <Outlet /> : <Navigate to='/sign-in' />;
+  return currentUser && currentUser.isHospital ? <Outlet /> : <Navigate to='/not-allowed' />;
 }
