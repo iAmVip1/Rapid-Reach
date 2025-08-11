@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import ReactDOMServer from 'react-dom/server'
+import { FaHospital, FaTint, FaShieldAlt, FaFire } from 'react-icons/fa'
 
 // Default Leaflet marker icon (local assets via package)
 const defaultIcon = L.icon({
@@ -16,24 +18,27 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41],
 })
 
-// Colored marker icons from leaflet-color-markers (remote, lightweight)
-const makeColorIcon = (color) => L.icon({
-  iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
-  iconRetinaUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-  shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).toString(),
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-})
-
-const getIconForCategory = (category) => {
+const getCategoryIconElement = (category) => {
   const normalized = (category || '').toLowerCase()
-  if (normalized.includes('hospital')) return makeColorIcon('red')
-  if (normalized.includes('blood')) return makeColorIcon('violet')
-  if (normalized.includes('police')) return makeColorIcon('blue')
-  if (normalized.includes('fire')) return makeColorIcon('orange')
-  return defaultIcon
+  const size = 16
+  if (normalized.includes('hospital')) return <FaHospital size={size} color="#d32f2f" />
+  if (normalized.includes('blood')) return <FaTint size={size} color="#b31217" />
+  if (normalized.includes('police')) return <FaShieldAlt size={size} color="#1976d2" />
+  if (normalized.includes('fire')) return <FaFire size={size} color="#ef6c00" />
+  return <FaHospital size={size} color="#555" />
+}
+
+const makeOverlayDivIcon = (category) => {
+  const iconEl = getCategoryIconElement(category)
+  const html = `\n    <div style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#ffffff;border:1px solid rgba(0,0,0,0.2);box-shadow:0 1px 2px rgba(0,0,0,0.3);">\n      ${ReactDOMServer.renderToString(iconEl)}\n    </div>\n  `
+  // Anchor near the top of the pin; zIndex handled on Marker
+  return L.divIcon({
+    className: '',
+    html,
+    iconSize: [22, 22],
+    iconAnchor: [11, 48],
+    popupAnchor: [0, -20],
+  })
 }
 
 export default function Post() {
@@ -74,7 +79,7 @@ export default function Post() {
     return null
   }, [post])
 
-  const markerIcon = useMemo(() => getIconForCategory(post?.category), [post?.category])
+  const overlayIcon = useMemo(() => makeOverlayDivIcon(post?.category), [post?.category])
 
   if (loading) {
     return <div className="text-center mt-6">Loading...</div>
@@ -95,17 +100,23 @@ export default function Post() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={position} icon={markerIcon}>
+        {/* Base default pin */}
+        <Marker position={position} icon={defaultIcon}>
           <Popup>
-            <div>
-              <div style={{ fontWeight: 700 }}>{post.departmentName}</div>
-              <div style={{ fontSize: 12 }}>{post.address}</div>
-              {post.category && (
-                <div style={{ fontSize: 12, marginTop: 4 }}>Category: {post.category}</div>
-              )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {getCategoryIconElement(post.category)}
+              <div>
+                <div style={{ fontWeight: 700 }}>{post.departmentName}</div>
+                <div style={{ fontSize: 12 }}>{post.address}</div>
+                {post.category && (
+                  <div style={{ fontSize: 12, marginTop: 4 }}>Category: {post.category}</div>
+                )}
+              </div>
             </div>
           </Popup>
         </Marker>
+        {/* Overlay category badge above the pin */}
+        <Marker position={position} icon={overlayIcon} interactive={false} zIndexOffset={1000} />
       </MapContainer>
     </div>
   )
