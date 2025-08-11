@@ -42,7 +42,7 @@ export default function DashDocuments() {
   console.log(userPosts);
 
   return (
-    <div className="max-w-lg mx-auto border p-8 rounded-lg shadow-lg">
+    <div className="max-w-lg mx-auto border p-8 rounded-lg shadow-lg ">
       <h1 className="text-xl font-semibold text-center">
         Details and Documents
       </h1>
@@ -55,20 +55,39 @@ export default function DashDocuments() {
           {userPosts.map((post) => (
             <form key={post._id} className="mb-8">
               <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Title:</label>
+                <label className="w-1/3 font-bold text-base">
+                  Department Name:
+                </label>
                 <span className="text-base">{post.departmentName}</span>
               </div>
 
               <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">
-                  Description:
-                </label>
-                <span className="text-base">{post.description}</span>
+                <label className="w-1/3 font-bold text-base">Address:</label>
+                <span className="text-base">{post.address}</span>
+              </div>
+
+              <div className="mb-5 flex items-center gap-4">
+                <label className="w-1/3 font-bold text-base">Website:</label>
+                <span className="text-base">{post.website}</span>
+              </div>
+
+              <div className="mb-5 flex items-center gap-4">
+                <label className="w-1/3 font-bold text-base">Contact No:</label>
+                <span className="text-base">
+                  {post.phoneNumber1}, {post.phoneNumber2}
+                </span>
               </div>
 
               <div className="mb-5 flex items-center gap-4">
                 <label className="w-1/3 font-bold text-base">Category:</label>
                 <span className="text-base">{post.category}</span>
+              </div>
+
+              <div className="mb-5 flex items-center gap-4">
+                <label className="w-1/3 font-bold text-base">
+                  Registration No:
+                </label>
+                <span className="text-base">{post.registrationNo}</span>
               </div>
 
               <div className="mb-5 flex items-center gap-4">
@@ -82,6 +101,11 @@ export default function DashDocuments() {
                     />
                   </a>
                 </div>
+              </div>
+
+              <div className="mb-5 flex items-center gap-4">
+                <label className="w-1/3 font-bold text-base">Email:</label>
+                <span className="text-base">{post.userMail}</span>
               </div>
 
               {/* Action Buttons */}
