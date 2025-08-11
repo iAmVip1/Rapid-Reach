@@ -104,7 +104,7 @@ export default function Navbar() {
             </li>
             {currentUser ? (
               <>
-                <button className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded sm:hidden md:block">
+                <button className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded sm:hidden md:block z-50">
                   <img
                     src={
                       currentUser?.profilePicture
@@ -167,7 +167,7 @@ export default function Navbar() {
             {/* profilePicture */}
              {currentUser ? (
                <button
-              className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded "
+              className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded z-50"
               onClick={toggleDropdown} // Toggle dropdown on click
             >
               <img

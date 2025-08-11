@@ -4,6 +4,7 @@ import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
 import DashSideMobile from "../components/DashSideMobile";
 import { FaBars } from "react-icons/fa";
+import DashDocuments from "../components/DashDocuments";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -46,6 +47,8 @@ export default function Dashboard() {
 
         {/* Render Tab Content */}
         {tab === "profile" && <DashProfile />}
+
+        {tab === "documents" && <DashDocuments />}
         {/* Add other tab checks here */}
       </div>
     </div>

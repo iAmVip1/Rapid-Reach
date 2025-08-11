@@ -4,6 +4,7 @@ import {
   HomeIcon,
 } from "lucide-react";
 import { CgProfile } from "react-icons/cg";
+import { IoMdDocument } from "react-icons/io";
 
 export default function DashSideBar() {
   const [isHovered, setIsHovered] = useState(false);
@@ -51,6 +52,16 @@ export default function DashSideBar() {
               >
                 <CgProfile  className="w-5 h-5" />
                 {isHovered && <span>Profile</span>}
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/dashboard?tab=documents"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-md text-sm font-medium text-gray-700"
+              >
+                <IoMdDocument className="w-5 h-5" />
+                {isHovered && <span>Documents</span>}
               </Link>
             </li>
             
