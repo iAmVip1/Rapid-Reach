@@ -14,6 +14,7 @@ import DepartmentRoute from "./components/DepartmentRoute";
 import CreatePost from "./pages/CreatePost";
 import Failed from "./pages/Failed";
 import Testing from "./pages/Testing";
+import Post from "./pages/Post";
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/create-post" element={<CreatePost />} />
         </Route>
         
+        <Route path="/post/:postId" element={<Post />} />
         <Route path="/gridview" element={<GridView />} />
         <Route path="/mapview" element={<MapView />} />
         <Route path="/services" element={<Services />} />

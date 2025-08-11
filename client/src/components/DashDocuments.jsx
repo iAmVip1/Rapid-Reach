@@ -68,7 +68,9 @@ export default function DashDocuments() {
 
               <div className="mb-5 flex items-center gap-4">
                 <label className="w-1/3 font-bold text-base">Website:</label>
+                <a href={post && post.website} target="_blank">
                 <span className="text-base">{post.website}</span>
+                </a>
               </div>
 
               <div className="mb-5 flex items-center gap-4">
