@@ -372,7 +372,7 @@ export default function CreatePost() {
                 <img
                   src={preview}
                   alt="Preview"
-                  className="h-full w-full object-cover rounded-lg md:ml-32 "
+                  className="h-full w-full object-cover rounded-lg "
                 />
               )}
               <input
