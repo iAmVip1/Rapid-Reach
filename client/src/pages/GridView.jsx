@@ -1,6 +1,11 @@
 import React from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
+import { Link } from "react-router-dom";
+import Carpenter from '../../../imagesForWeb/car.png'
+import Electrician from '../../../imagesForWeb/elec.png'
+import Plumber from '../../../imagesForWeb/serviceman.png'
+
 
 export default function GridView() {
   return (
@@ -52,7 +57,6 @@ export default function GridView() {
           <div className="bg-white rounded-lg shadow p-4 space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="font-semibold">Filter</h2>
-              <button className="text-sm text-gray-500">Clear All Filters</button>
             </div>
 
             {/* Preferences */}
@@ -89,42 +93,47 @@ export default function GridView() {
         {/* Right Column */}
         <div className="w-3/4 space-y-6">
           {/* Popular Vehicles */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="font-semibold mb-4">Best Service Provided</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {/* Card */}
-              <div className="border rounded-lg overflow-hidden shadow-sm">
-                <img
-                  src="https://via.placeholder.com/400x200"
-                  alt="Car"
-                  className="w-full h-40 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-medium">2022 - Hyundai Palisade Facelift</h3>
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
-                    <FaStar className="text-yellow-500 mr-1" /> 5.0 (180 trips)
-                  </div>
-                  <p className="mt-2 font-semibold">USD 300 / day</p>
-                </div>
-              </div>
+         <div className="bg-white rounded-lg shadow p-4">
+  <h2 className="font-semibold mb-4">Best Service Provided</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    {/* Electrician Card */}
+    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+      <img 
+        src={Electrician} 
+        alt="Electrician" 
+        className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300" 
+      />
+      <div className="p-3 flex flex-col gap-2 w-full text-center">
+        <p className="text-sm font-semibold w-full">Electrician</p>
+      </div>
+    </div>
 
-              {/* Card */}
-              <div className="border rounded-lg overflow-hidden shadow-sm">
-                <img
-                  src="https://via.placeholder.com/400x200"
-                  alt="Car"
-                  className="w-full h-40 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-medium">2022 - Honda HR-V Turbo</h3>
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
-                    <FaStar className="text-yellow-500 mr-1" /> 5.0 (211 trips)
-                  </div>
-                  <p className="mt-2 font-semibold">USD 250 / day</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    {/* Carpenter Card */}
+    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+      <img 
+        src={Carpenter} 
+        alt="Carpenter" 
+        className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300" 
+      />
+      <div className="p-3 flex flex-col gap-2 w-full text-center">
+        <p className="text-sm font-semibold w-full">Carpenter</p>
+      </div>
+    </div>
+
+    {/* Plumber Card */}
+    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+      <img 
+        src={Plumber} 
+        alt="Plumber" 
+        className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300" 
+      />
+      <div className="p-3 flex flex-col gap-2 w-full text-center">
+        <p className="text-sm font-semibold w-full">Plumber</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
           {/* Other Cars */}
           <div className="bg-white rounded-lg shadow p-4 space-y-4">
