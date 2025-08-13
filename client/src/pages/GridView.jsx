@@ -1,13 +1,93 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Carpenter from '../../../imagesForWeb/car.png'
 import Electrician from '../../../imagesForWeb/elec.png'
 import Plumber from '../../../imagesForWeb/serviceman.png'
 
 
 export default function GridView() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [filters, setFilters] = useState({
+    departmentName: "",
+    address: "",
+    category: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [showMore, setShowMore] = useState(false);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const departmentNameFromUrl = urlParams.get("departmentName");
+    const addressFromUrl = urlParams.get("address");
+    const categoryFromUrl = urlParams.get("category");
+
+    if (departmentNameFromUrl || addressFromUrl || categoryFromUrl) {
+      setFilters({
+        departmentName: departmentNameFromUrl || "",
+        address: addressFromUrl || "",
+        category: categoryFromUrl || "",
+      });
+    }
+
+    const fetchPosts = async () => {
+      setLoading(true);
+      setShowMore(false);
+
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/post/get?${searchQuery}`);
+      const data = await res.json();
+
+      if (data.data?.length > 8) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
+
+      setPosts(data.data || []);
+      setLoading(false);
+    };
+
+    fetchPosts();
+  }, [location.search]);
+
+  const handleChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    if (filters.departmentName)
+      urlParams.set("departmentName", filters.departmentName);
+    if (filters.address) urlParams.set("address", filters.address);
+    if (filters.category) urlParams.set("category", filters.category);
+
+    navigate(`/search?${urlParams.toString()}`);
+  };
+
+  const onShowMoreClick = async () => {
+    const numberOfPosts = posts.length;
+    const startIndex = numberOfPosts;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/post/get-all?${searchQuery}`);
+    const data = await res.json();
+    if (data.data?.length < 9) {
+      setShowMore(false);
+    }
+    setPosts([...posts, ...(data.data || [])]);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Search Bar */}
