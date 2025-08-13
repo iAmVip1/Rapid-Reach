@@ -1,42 +1,55 @@
 import React from "react";
-import { HiOutlineMail, HiLocationMarker } from "react-icons/hi";
-import { FiPhoneCall } from "react-icons/fi";
-import { TbPhoneCall } from "react-icons/tb";
+import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { MdCall } from "react-icons/md";
 
 export default function Sample() {
   return (
-    <div className="flex flex-col p-6 max-w-md space-y-4 ">
-      {/* Department Name and Email on the same line, left and right aligned */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 border border-gray-400 flex items-center justify-center">
-            {/* Placeholder for Logo */}
-            <span className="text-gray-400 text-xs">LOGO</span>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex flex-col md:flex-row items-start justify-between w-full max-w-3xl p-8 bg-white rounded-2xl shadow-lg border border-gray-200">
+        
+        {/* Left Section */}
+        <div className="flex items-start gap-6">
+          {/* Logo */}
+          <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center">
+            <span className="text-sm font-semibold text-blue-600">LOGO</span>
           </div>
-          <span className="text-sm font-medium">Department Name</span>
-        </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer">
-          <HiOutlineMail size={20} />
-          <span>Email</span>
-        </div>
-      </div>
 
-      {/* Call Now and Contact No on the same line, left and right aligned */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer">
-          <FiPhoneCall size={20} />
-          <span>Call now</span>
-        </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer">
-          <TbPhoneCall size={20} />
-          <span>Contact No</span>
-        </div>
-      </div>
+          {/* Department Info */}
+          <div className="flex flex-col gap-4">
+            <div className="text-2xl font-bold text-gray-800">
+              Computer Science Department
+            </div>
 
-      {/* Location in a separate line, centered */}
-      <div className="flex justify-center items-center space-x-2 text-sm text-gray-600 cursor-pointer">
-        <HiLocationMarker size={20} />
-        <span>Location</span>
+            {/* Call Now */}
+            <div className="flex items-center gap-2 text-gray-700">
+              <MdCall className="text-blue-500 text-lg" />
+              <span className="hover:underline cursor-pointer">+977-9812345678</span>
+            </div>
+
+            {/* Location */}
+            <div className="flex items-center gap-2 text-gray-700">
+              <FaMapMarkerAlt className="text-blue-500" />
+              <span>Kathmandu University, Dhulikhel</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex flex-col items-start gap-6 mt-6 md:mt-0">
+          {/* Email */}
+          <div className="flex items-center gap-2 text-gray-700">
+            <FaEnvelope className="text-gray-600" />
+            <span className="hover:underline cursor-pointer">
+              csdept@ku.edu.np
+            </span>
+          </div>
+
+          {/* Contact No */}
+          <div className="flex items-center gap-2 text-gray-700">
+            <FaPhoneAlt className="text-blue-500" />
+            <span>+977-011-490100</span>
+          </div>
+        </div>
       </div>
     </div>
   );
