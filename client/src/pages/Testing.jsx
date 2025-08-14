@@ -41,19 +41,24 @@ const getCategoryIconElement = (category) => {
   return <FaHospital size={size} color="#555" />;
 };
 
-const makeOverlayDivIcon = (category) => {
+// Create a pointed (teardrop) marker with the FA icon inside
+const makePointedDivIcon = (category) => {
   const iconEl = getCategoryIconElement(category);
   const html = `
-    <div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#ffffff;border:1px solid rgba(0,0,0,0.2);box-shadow:0 1px 2px rgba(0,0,0,0.3);">
-      ${ReactDOMServer.renderToString(iconEl)}
+    <div style="position: relative; width: 40px; height: 40px;">
+      <div style="position:absolute; inset:0; background:#ffffff; border:1px solid rgba(0,0,0,0.25); box-shadow:0 2px 4px rgba(0,0,0,0.35); border-radius:50% 50% 50% 0; transform: rotate(-45deg);">
+        <div style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%) rotate(45deg); display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;">
+          ${ReactDOMServer.renderToString(iconEl)}
+        </div>
+      </div>
     </div>
   `;
   return L.divIcon({
     className: "",
     html,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16], // center the icon exactly
-    popupAnchor: [0, -20],
+    iconSize: [40, 40],
+    iconAnchor: [20, 40], // point the tip to the exact location
+    popupAnchor: [0, -34],
   });
 };
 
@@ -96,8 +101,8 @@ export default function Testing() {
     return null;
   }, [post]);
 
-  const overlayIcon = useMemo(
-    () => makeOverlayDivIcon(post?.category),
+  const pointedIcon = useMemo(
+    () => makePointedDivIcon(post?.category),
     [post?.category]
   );
 
@@ -130,7 +135,7 @@ console.log(post);
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-<Marker position={position} icon={overlayIcon}>
+<Marker position={position} icon={pointedIcon}>
   <Popup>
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
       {getCategoryIconElement(post.category)}
@@ -150,7 +155,7 @@ console.log(post);
 
         <Marker
           position={position}
-          icon={overlayIcon}
+          icon={pointedIcon}
           interactive={false}
           zIndexOffset={1000}
           color="d32f2f"
