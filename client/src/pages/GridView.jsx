@@ -86,15 +86,20 @@ export default function GridView() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const urlParams = new URLSearchParams();
-    if (filters.departmentName)
-      urlParams.set("departmentName", filters.departmentName);
-    if (filters.address) urlParams.set("address", filters.address);
-    if (filters.category) urlParams.set("category", filters.category);
+  e.preventDefault();
+  const urlParams = new URLSearchParams();
+  if (filters.departmentName) {
+    urlParams.set("departmentName", filters.departmentName);
+  }
+  if (filters.address) {
+    urlParams.set("address", filters.address);
+  }
+  if (filters.category) {
+    urlParams.set("category", filters.category);
+  }
+  navigate(`/gridview?${urlParams.toString()}`);
 
-    navigate(`/search?${urlParams.toString()}`);
-  };
+};
 
   const handleSortChange = (e) => {
   const value = e.target.value;
@@ -148,6 +153,8 @@ export default function GridView() {
           type="text"
           placeholder="Search..."
           className="border p-2 rounded w-64"
+          value={filters.departmentName}
+          onChange={handleChange}
         />
         <select className="border p-2 rounded w-56">
           <option value="">Services Status</option>
@@ -165,7 +172,9 @@ export default function GridView() {
           <option value="latest">Latest</option>
           <option value="oldest">Oldest</option>
         </select>
-        <button className="bg-purple-600 text-white px-4 py-2 rounded-lg">
+        <button
+        onClick={handleSubmit}
+         className="bg-purple-600 text-white px-4 py-2 rounded-lg">
           Search
         </button>
       </div>
