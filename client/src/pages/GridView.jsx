@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
-import { data, Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Carpenter from "../../../imagesForWeb/car.png";
 import Electrician from "../../../imagesForWeb/elec.png";
 import Plumber from "../../../imagesForWeb/serviceman.png";
@@ -151,6 +151,7 @@ export default function GridView() {
       <div className="bg-white shadow-sm py-4 px-6 flex flex-wrap gap-4 justify-between max-w-7xl mx-auto mt-4 rounded-lg">
         <input
           type="text"
+          id="departmentName"
           placeholder="Search..."
           className="border p-2 rounded w-64"
           value={filters.departmentName}
