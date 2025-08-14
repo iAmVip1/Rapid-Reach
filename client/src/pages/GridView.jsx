@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Carpenter from '../../../imagesForWeb/car.png'
-import Electrician from '../../../imagesForWeb/elec.png'
-import Plumber from '../../../imagesForWeb/serviceman.png'
-
+import { data, Link, useLocation, useNavigate } from "react-router-dom";
+import Carpenter from "../../../imagesForWeb/car.png";
+import Electrician from "../../../imagesForWeb/elec.png";
+import Plumber from "../../../imagesForWeb/serviceman.png";
+import PostItem from "../components/PostItem";
 
 export default function GridView() {
   const navigate = useNavigate();
@@ -16,10 +16,32 @@ export default function GridView() {
     address: "",
     category: "",
   });
-
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [showMore, setShowMore] = useState(false);
+  const [sortOption, setSortOption] = useState("");
+
+  const haversineDistance = (coords1, coords2) => {
+    const R = 6371; // Radius of Earth in km
+    const lat1 = coords1.lat;
+    const lon1 = coords1.lng;
+    const lat2 = coords2.lat;
+    const lon2 = coords2.lng;
+
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // distance in km
+  };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -42,7 +64,7 @@ export default function GridView() {
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/post/get?${searchQuery}`);
       const data = await res.json();
-
+      console.log("Fetched posts:", data);
       if (data.data?.length > 8) {
         setShowMore(true);
       } else {
@@ -74,19 +96,48 @@ export default function GridView() {
     navigate(`/search?${urlParams.toString()}`);
   };
 
-  const onShowMoreClick = async () => {
-    const numberOfPosts = posts.length;
-    const startIndex = numberOfPosts;
-    const urlParams = new URLSearchParams(location.search);
-    urlParams.set("startIndex", startIndex);
-    const searchQuery = urlParams.toString();
-    const res = await fetch(`/api/post/get-all?${searchQuery}`);
-    const data = await res.json();
-    if (data.data?.length < 9) {
-      setShowMore(false);
-    }
-    setPosts([...posts, ...(data.data || [])]);
-  };
+  const handleSortChange = (e) => {
+  const value = e.target.value;
+  setSortOption(value);
+
+  if (value === "nearest") {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userCoords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+
+        const sortedPosts = [...posts].map((post) => {
+          const distance = haversineDistance(userCoords, {
+            lat: post.latitude,
+            lng: post.longitude,
+          });
+          return { ...post, distance: distance.toFixed(2) }; // Attach distance to each post
+        }).sort((a, b) => a.distance - b.distance); // Sort by distance
+
+        setPosts(sortedPosts); // Update state with sorted posts
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Unable to get your location.");
+      }
+    );
+  }
+
+  if (value === "latest") {
+    setPosts(
+      [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    );
+  }
+
+  if (value === "oldest") {
+    setPosts(
+      [...posts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    );
+  }
+};
+
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -98,9 +149,7 @@ export default function GridView() {
           placeholder="Search..."
           className="border p-2 rounded w-64"
         />
-        <select
-          className="border p-2 rounded w-56"
-        >
+        <select className="border p-2 rounded w-56">
           <option value="">Services Status</option>
           <option value="">Available</option>
           <option value="">Unavailable</option>
@@ -108,14 +157,16 @@ export default function GridView() {
 
         <select
           className="border p-2 rounded w-56"
+          value={sortOption}
+          onChange={handleSortChange}
         >
-           <option value="">Sort By</option>
-          <option value="">Nearest</option>
-          <option value="">Latest</option>
-          <option value="">Oldest</option>
+          <option value="">Sort By</option>
+          <option value="nearest">Nearest</option>
+          <option value="latest">Latest</option>
+          <option value="oldest">Oldest</option>
         </select>
         <button className="bg-purple-600 text-white px-4 py-2 rounded-lg">
-          Search a Car
+          Search
         </button>
       </div>
 
@@ -141,112 +192,79 @@ export default function GridView() {
 
             {/* Preferences */}
             <div>
-              <h3 className="font-medium mb-2">Preferences</h3>
+              <h3 className="font-medium mb-2">Category</h3>
               <div className="flex flex-wrap gap-2">
                 <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">
-                  Instant Rent
+                  Hospital
                 </span>
                 <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                  Delivery
+                  Blood Bank
                 </span>
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                  Pickup by Host
+                  Police Department
                 </span>
               </div>
             </div>
 
             {/* Category */}
-            <div>
-              <h3 className="font-medium mb-2">Category</h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <span>Sedan</span>
-                <span>SUV</span>
-                <span>Cabriolet</span>
-                <span>Hatchback</span>
-                <span>Wagon</span>
-                <span>Pickup</span>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Right Column */}
         <div className="w-3/4 space-y-6">
           {/* Popular Vehicles */}
-         <div className="bg-white rounded-lg shadow p-4">
-  <h2 className="font-semibold mb-4">Best Service Provided</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-    {/* Electrician Card */}
-    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
-      <img 
-        src={Electrician} 
-        alt="Electrician" 
-        className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300" 
-      />
-      <div className="p-3 flex flex-col gap-2 w-full text-center">
-        <p className="text-sm font-semibold w-full">Electrician</p>
-      </div>
-    </div>
-
-    {/* Carpenter Card */}
-    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
-      <img 
-        src={Carpenter} 
-        alt="Carpenter" 
-        className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300" 
-      />
-      <div className="p-3 flex flex-col gap-2 w-full text-center">
-        <p className="text-sm font-semibold w-full">Carpenter</p>
-      </div>
-    </div>
-
-    {/* Plumber Card */}
-    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
-      <img 
-        src={Plumber} 
-        alt="Plumber" 
-        className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300" 
-      />
-      <div className="p-3 flex flex-col gap-2 w-full text-center">
-        <p className="text-sm font-semibold w-full">Plumber</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-          {/* Other Cars */}
-          <div className="bg-white rounded-lg shadow p-4 space-y-4">
-            {[1, 2, 3].map((item, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between border-b pb-4"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src="https://via.placeholder.com/120"
-                    alt="Car"
-                    className="w-32 h-20 object-cover rounded-lg"
-                  />
-                  <div>
-                    <h3 className="font-medium">2020 - Toyota Innova</h3>
-                    <div className="text-sm text-gray-500 flex items-center gap-2">
-                      <FaGasPump /> Gas
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 mt-1">
-                      <FaStar className="text-yellow-500 mr-1" /> 4.0 (180 reviews)
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">Basic price from</p>
-                  <p className="font-semibold">USD 380 / day</p>
-                  <button className="mt-2 px-3 py-1 bg-purple-600 text-white rounded-lg">
-                    Choose this car
-                  </button>
+          <div className="bg-white rounded-lg shadow p-4">
+            <h2 className="font-semibold mb-4">Best Service Provided</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {/* Electrician Card */}
+              <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+                <img
+                  src={Electrician}
+                  alt="Electrician"
+                  className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
+                />
+                <div className="p-3 flex flex-col gap-2 w-full text-center">
+                  <p className="text-sm font-semibold w-full">Electrician</p>
                 </div>
               </div>
-            ))}
+
+              {/* Carpenter Card */}
+              <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+                <img
+                  src={Carpenter}
+                  alt="Carpenter"
+                  className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
+                />
+                <div className="p-3 flex flex-col gap-2 w-full text-center">
+                  <p className="text-sm font-semibold w-full">Carpenter</p>
+                </div>
+              </div>
+
+              {/* Plumber Card */}
+              <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+                <img
+                  src={Plumber}
+                  alt="Plumber"
+                  className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
+                />
+                <div className="p-3 flex flex-col gap-2 w-full text-center">
+                  <p className="text-sm font-semibold w-full">Plumber</p>
+                </div>
+              </div>
+            </div>
+          </div>
+         
+          <div className="bg-white rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
+            {/* Other posts */}
+            {!loading && posts.length === 0 && (
+              <p className="text-xl ">No Users found !!</p>
+            )}
+            {loading && (
+              <p className="text-xl text-center w-full">Loading...</p>
+            )}
+            {!loading &&
+              posts &&
+              posts.map((post) => <PostItem key={post._id} post={post} />)}
           </div>
         </div>
       </div>
