@@ -1,178 +1,177 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import ReactDOMServer from "react-dom/server";
+import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
+
+// Category icons
+const getCategoryIconElement = (category) => {
+  const normalized = (category || "").toLowerCase();
+  const size = 25;
+  if (normalized.includes("hospital")) return <FaHospital size={size} color="#d32f2f" />;
+  if (normalized.includes("blood")) return <FaTint size={size} color="#b31217" />;
+  if (normalized.includes("police")) return <FaShieldAlt size={size} color="#1976d2" />;
+  if (normalized.includes("fire")) return <FaFire size={size} color="#ef6c00" />;
+  return <FaHospital size={size} color="#555" />;
+};
+
+// Div icon for marker
+const makeOverlayDivIcon = (category, departmentName) => {
+  const iconEl = getCategoryIconElement(category);
+  const html = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+        ${ReactDOMServer.renderToString(iconEl)}
+      </div>
+      <div style="margin-top: 4px; font-weight: 700; font-size: 12px; color: #000; text-align: center;">
+        ${departmentName || ""}
+      </div>
+    </div>
+  `;
+  return L.divIcon({
+    className: "",
+    html,
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [0, -48],
+  });
+};
+
+// Helper component to fit map to markers around user location
+function FitBounds({ userLocation }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!userLocation) return;
+
+    // Set a fixed zoom level around the user's location
+    const zoomLevel = 15; // You can adjust this as needed (higher value = more zoomed in)
+    map.setView(userLocation, zoomLevel);
+  }, [userLocation, map]);
+
+  return null;
+}
 
 export default function MapView() {
-  const navigate = useNavigate();
   const location = useLocation();
-
-  // Current user location state
+  const { currentUser } = useSelector((state) => state.user);
   const [userLocation, setUserLocation] = useState(null);
-
-useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
-      },
-      () => {
-        setUserLocation({ lat: 51.505, lon: -0.09 });
-      }
-    );
-  }, []);
-
-  if (!userLocation) {
-    return <div>Loading map...</div>;
-  }
-
-  // Filters and posts state
-  const [filters, setFilters] = useState({
-    departmentName: "",
-    address: "",
-    category: "",
-  });
-  const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [showMore, setShowMore] = useState(false);
-  const [sortOption, setSortOption] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  // Calculate Haversine distance
-  const haversineDistance = (coords1, coords2) => {
-    const R = 6371; // Radius of Earth in km
-    const lat1 = coords1.lat;
-    const lon1 = coords1.lng;
-    const lat2 = coords2.lat;
-    const lon2 = coords2.lng;
-
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // distance in km
-  };
-
-  // Fetching posts based on query parameters
+  // Fetch posts from API
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const departmentNameFromUrl = urlParams.get("departmentName");
-    const addressFromUrl = urlParams.get("address");
-    const categoryFromUrl = urlParams.get("category");
-
-    if (departmentNameFromUrl || addressFromUrl || categoryFromUrl) {
-      setFilters({
-        departmentName: departmentNameFromUrl || "",
-        address: addressFromUrl || "",
-        category: categoryFromUrl || "",
-      });
-    }
 
     const fetchPosts = async () => {
-      setLoading(true);
-      setShowMore(false);
-
-      const searchQuery = urlParams.toString();
-      const res = await fetch(`/api/post/get?${searchQuery}`);
-      const data = await res.json();
-      console.log("Fetched posts:", data);
-      if (data.data?.length > 8) {
-        setShowMore(true);
-      } else {
-        setShowMore(false);
+      try {
+        setLoading(true);
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/post/get?${searchQuery}`);
+        if (!res.ok) throw new Error("Failed to fetch posts");
+        const data = await res.json();
+        setPosts(data.data || []);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
       }
-
-      setPosts(data.data || []);
-      setLoading(false);
     };
 
     fetchPosts();
   }, [location.search]);
 
-  const handleChange = (e) => {
-    setFilters({
-      ...filters,
-      [e.target.id]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const urlParams = new URLSearchParams();
-    if (filters.departmentName) {
-      urlParams.set("departmentName", filters.departmentName);
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.warn("Geolocation is not supported by your browser");
+      return;
     }
-    if (filters.address) {
-      urlParams.set("address", filters.address);
-    }
-    if (filters.category) {
-      urlParams.set("category", filters.category);
-    }
-    navigate(`/gridview?${urlParams.toString()}`);
-  };
 
-  const handleSortChange = (e) => {
-    const value = e.target.value;
-    setSortOption(value);
-
-    if (value === "nearest") {
-      if (userLocation) {
-        const userCoords = {
-          lat: userLocation.lat,
-          lng: userLocation.lon,
-        };
-
-        const sortedPosts = [...posts]
-          .map((post) => {
-            const distance = haversineDistance(userCoords, {
-              lat: post.latitude,
-              lng: post.longitude,
-            });
-            return { ...post, distance: distance.toFixed(2) }; // Attach distance to each post
-          })
-          .sort((a, b) => a.distance - b.distance); // Sort by distance
-
-        setPosts(sortedPosts); // Update state with sorted posts
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 5000,
       }
-    }
+    );
 
-    if (value === "latest") {
-      setPosts(
-        [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      );
-    }
+    // Cleanup on unmount
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
 
-    if (value === "oldest") {
-      setPosts(
-        [...posts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-      );
-    }
-  };
+  if (loading) return <div className="text-center mt-6">Loading...</div>;
+  if (error) return <div className="text-center mt-6 text-red-500">Error loading posts</div>;
+  if (!posts || posts.length === 0) return <div className="text-center mt-6">No posts found</div>;
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div className="flex flex-col space-y-4 min-h-screen">
       <MapContainer
-        center={[userLocation.lat, userLocation.lon]}
-        zoom={13}
-        style={{ height: "100%" }}
+        zoom={13} // Default zoom level
+        minZoom={10}  // Set a minimum zoom level
+        maxZoom={18}  // Set a maximum zoom level
+        className="w-full z-0"
+        style={{ height: "500px" }}
+        scrollWheelZoom={true}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={[userLocation.lat, userLocation.lon]} icon={new L.Icon.Default()}>
-          <Popup>You are here!</Popup>
-        </Marker>
+
+        {/* Render all posts as markers */}
+        {posts.map((p, idx) => {
+          const lat = Number(p.latitude);
+          const lng = Number(p.longitude);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+          const position = [lat, lng];
+          const icon = makeOverlayDivIcon(p.category, p.departmentName);
+
+          return (
+            <Marker key={idx} position={position} icon={icon}>
+              <Popup>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {getCategoryIconElement(p.category)}
+                  <div>
+                    <div style={{ fontWeight: 700 }}>{p.departmentName}</div>
+                    <div style={{ fontSize: 12 }}>{p.address}</div>
+                    {p.category && <div style={{ fontSize: 12, marginTop: 4 }}>Category: {p.category}</div>}
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+
+        {/* User location marker */}
+        {userLocation && (
+          <Marker
+            position={userLocation}
+            icon={L.icon({
+              iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+            })}
+          >
+            <Popup>
+              <div style={{ fontWeight: "700" }}>You are here</div>
+            </Popup>
+          </Marker>
+        )}
+
+        {/* Fit bounds to focus on the user location */}
+        <FitBounds userLocation={userLocation} />
       </MapContainer>
     </div>
   );

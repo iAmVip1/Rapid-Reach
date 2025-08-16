@@ -1,56 +1,178 @@
-import React from "react";
-import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
-import { MdCall } from "react-icons/md";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import ReactDOMServer from "react-dom/server";
+import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
+
+// Category icons
+const getCategoryIconElement = (category) => {
+  const normalized = (category || "").toLowerCase();
+  const size = 25;
+  if (normalized.includes("hospital")) return <FaHospital size={size} color="#d32f2f" />;
+  if (normalized.includes("blood")) return <FaTint size={size} color="#b31217" />;
+  if (normalized.includes("police")) return <FaShieldAlt size={size} color="#1976d2" />;
+  if (normalized.includes("fire")) return <FaFire size={size} color="#ef6c00" />;
+  return <FaHospital size={size} color="#555" />;
+};
+
+// Div icon for marker
+const makeOverlayDivIcon = (category, departmentName) => {
+  const iconEl = getCategoryIconElement(category);
+  const html = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+        ${ReactDOMServer.renderToString(iconEl)}
+      </div>
+      <div style="margin-top: 4px; font-weight: 700; font-size: 12px; color: #000; text-align: center;">
+        ${departmentName || ""}
+      </div>
+    </div>
+  `;
+  return L.divIcon({
+    className: "",
+    html,
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [0, -48],
+  });
+};
+
+// Helper component to fit map to markers around user location
+function FitBounds({ userLocation }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!userLocation) return;
+
+    // Set a fixed zoom level around the user's location
+    const zoomLevel = 15; // You can adjust this as needed (higher value = more zoomed in)
+    map.setView(userLocation, zoomLevel);
+  }, [userLocation, map]);
+
+  return null;
+}
 
 export default function Sample() {
+  const location = useLocation();
+  const { currentUser } = useSelector((state) => state.user);
+  const [userLocation, setUserLocation] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  // Fetch posts from API
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/post/get?${searchQuery}`);
+        if (!res.ok) throw new Error("Failed to fetch posts");
+        const data = await res.json();
+        setPosts(data.data || []);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.warn("Geolocation is not supported by your browser");
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 5000,
+      }
+    );
+
+    // Cleanup on unmount
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
+
+  if (loading) return <div className="text-center mt-6">Loading...</div>;
+  if (error) return <div className="text-center mt-6 text-red-500">Error loading posts</div>;
+  if (!posts || posts.length === 0) return <div className="text-center mt-6">No posts found</div>;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex flex-col md:flex-row items-start justify-between w-full max-w-3xl p-8 bg-white rounded-2xl shadow-lg border border-gray-200">
-        
-        {/* Left Section */}
-        <div className="flex items-start gap-6">
-          {/* Logo */}
-          <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center">
-            <span className="text-sm font-semibold text-blue-600">LOGO</span>
-          </div>
+    <div className="flex flex-col space-y-4">
+      <MapContainer
+        zoom={13} // Default zoom level
+        minZoom={10}  // Set a minimum zoom level
+        maxZoom={18}  // Set a maximum zoom level
+        className="w-full z-0"
+        style={{ height: "500px" }}
+        scrollWheelZoom={true}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
 
-          {/* Department Info */}
-          <div className="flex flex-col gap-4">
-            <div className="text-2xl font-bold text-gray-800">
-              Computer Science Department
-            </div>
+        {/* Render all posts as markers */}
+        {posts.map((p, idx) => {
+          const lat = Number(p.latitude);
+          const lng = Number(p.longitude);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
-            {/* Call Now */}
-            <div className="flex items-center gap-2 text-gray-700">
-              <MdCall className="text-blue-500 text-lg" />
-              <span className="hover:underline cursor-pointer">+977-9812345678</span>
-            </div>
+          const position = [lat, lng];
+          const icon = makeOverlayDivIcon(p.category, p.departmentName);
 
-            {/* Location */}
-            <div className="flex items-center gap-2 text-gray-700">
-              <FaMapMarkerAlt className="text-blue-500" />
-              <span>Kathmandu University, Dhulikhel</span>
-            </div>
-          </div>
-        </div>
+          return (
+            <Marker key={idx} position={position} icon={icon}>
+              <Popup>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {getCategoryIconElement(p.category)}
+                  <div>
+                    <div style={{ fontWeight: 700 }}>{p.departmentName}</div>
+                    <div style={{ fontSize: 12 }}>{p.address}</div>
+                    {p.category && <div style={{ fontSize: 12, marginTop: 4 }}>Category: {p.category}</div>}
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
 
-        {/* Right Section */}
-        <div className="flex flex-col items-start gap-6 mt-6 md:mt-0">
-          {/* Email */}
-          <div className="flex items-center gap-2 text-gray-700">
-            <FaEnvelope className="text-gray-600" />
-            <span className="hover:underline cursor-pointer">
-              csdept@ku.edu.np
-            </span>
-          </div>
+        {/* User location marker */}
+        {userLocation && (
+          <Marker
+            position={userLocation}
+            icon={L.icon({
+              iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+            })}
+          >
+            <Popup>
+              <div style={{ fontWeight: "700" }}>You are here</div>
+            </Popup>
+          </Marker>
+        )}
 
-          {/* Contact No */}
-          <div className="flex items-center gap-2 text-gray-700">
-            <FaPhoneAlt className="text-blue-500" />
-            <span>+977-011-490100</span>
-          </div>
-        </div>
-      </div>
+        {/* Fit bounds to focus on the user location */}
+        <FitBounds userLocation={userLocation} />
+      </MapContainer>
     </div>
   );
 }
