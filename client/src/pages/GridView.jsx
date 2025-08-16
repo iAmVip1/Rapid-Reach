@@ -293,7 +293,7 @@ export default function GridView() {
           <div className="bg-white rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
             {/* Other posts */}
             {!loading && posts.length === 0 && (
-              <p className="text-xl ">No Users found !!</p>
+              <p className="text-xl ">No Services found !!</p>
             )}
             {loading && (
               <p className="text-xl text-center w-full">Loading...</p>

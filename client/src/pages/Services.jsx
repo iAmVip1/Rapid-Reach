@@ -32,7 +32,7 @@ export default function Services() {
                 className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
               <div className="p-3 flex flex-col gap-2 w-full text-center">
                 <p className='text-sm font-semibold'>
-                  FireDep
+                  Fire Department
                 </p>
               </div>
             </div>
@@ -46,7 +46,7 @@ export default function Services() {
                 className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
               <div className="p-3 flex flex-col gap-2 w-full text-center">
                 <p className='text-sm font-semibold'>
-                  PoliceDep
+                  Police Department
                 </p>
               </div>
             </div>
@@ -74,7 +74,7 @@ export default function Services() {
                 className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
               <div className="p-3 flex flex-col gap-2 w-full text-center">
                 <p className='text-sm font-semibold'>
-                  Firevec
+                  Fire Truck
                 </p>
               </div>
             </div>
@@ -102,7 +102,7 @@ export default function Services() {
                 className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
               <div className="p-3 flex flex-col gap-2 w-full text-center">
                 <p className='text-sm font-semibold'>
-                  Ambulance Man
+                  Ambulance 
                 </p>
               </div>
             </div>

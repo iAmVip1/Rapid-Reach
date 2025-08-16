@@ -153,7 +153,7 @@ export default function Testing() {
         <MapContainer
           center={position}
           zoom={15}
-          className="w-full"
+          className="w-full z-0"
           style={{ height: "400px" }} // Reduce the height as per your requirement
           scrollWheelZoom={false}
         >
