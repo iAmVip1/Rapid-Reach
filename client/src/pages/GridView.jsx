@@ -86,63 +86,63 @@ export default function GridView() {
   };
 
   const handleSubmit = (e) => {
-  e.preventDefault();
-  const urlParams = new URLSearchParams();
-  if (filters.departmentName) {
-    urlParams.set("departmentName", filters.departmentName);
-  }
-  if (filters.address) {
-    urlParams.set("address", filters.address);
-  }
-  if (filters.category) {
-    urlParams.set("category", filters.category);
-  }
-  navigate(`/gridview?${urlParams.toString()}`);
-
-};
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    if (filters.departmentName) {
+      urlParams.set("departmentName", filters.departmentName);
+    }
+    if (filters.address) {
+      urlParams.set("address", filters.address);
+    }
+    if (filters.category) {
+      urlParams.set("category", filters.category);
+    }
+    navigate(`/gridview?${urlParams.toString()}`);
+  };
 
   const handleSortChange = (e) => {
-  const value = e.target.value;
-  setSortOption(value);
+    const value = e.target.value;
+    setSortOption(value);
 
-  if (value === "nearest") {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const userCoords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
+    if (value === "nearest") {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userCoords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
 
-        const sortedPosts = [...posts].map((post) => {
-          const distance = haversineDistance(userCoords, {
-            lat: post.latitude,
-            lng: post.longitude,
-          });
-          return { ...post, distance: distance.toFixed(2) }; // Attach distance to each post
-        }).sort((a, b) => a.distance - b.distance); // Sort by distance
+          const sortedPosts = [...posts]
+            .map((post) => {
+              const distance = haversineDistance(userCoords, {
+                lat: post.latitude,
+                lng: post.longitude,
+              });
+              return { ...post, distance: distance.toFixed(2) }; // Attach distance to each post
+            })
+            .sort((a, b) => a.distance - b.distance); // Sort by distance
 
-        setPosts(sortedPosts); // Update state with sorted posts
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        alert("Unable to get your location.");
-      }
-    );
-  }
+          setPosts(sortedPosts); // Update state with sorted posts
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Unable to get your location.");
+        }
+      );
+    }
 
-  if (value === "latest") {
-    setPosts(
-      [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    );
-  }
+    if (value === "latest") {
+      setPosts(
+        [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      );
+    }
 
-  if (value === "oldest") {
-    setPosts(
-      [...posts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-    );
-  }
-};
-
+    if (value === "oldest") {
+      setPosts(
+        [...posts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      );
+    }
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -151,11 +151,21 @@ export default function GridView() {
       <div className="bg-white shadow-sm py-4 px-6 flex flex-wrap gap-4 justify-between max-w-7xl mx-auto mt-4 rounded-lg">
         <input
           type="text"
-          placeholder="Search..."
+          id="departmentName"
+          placeholder="Name"
           className="border p-2 rounded w-64"
           value={filters.departmentName}
           onChange={handleChange}
         />
+        <input
+          type="text"
+          id="address"
+          placeholder="Address"
+          className="border p-2 rounded w-64"
+          value={filters.address}
+          onChange={handleChange}
+        />
+
         <select className="border p-2 rounded w-56">
           <option value="">Services Status</option>
           <option value="">Available</option>
@@ -173,8 +183,9 @@ export default function GridView() {
           <option value="oldest">Oldest</option>
         </select>
         <button
-        onClick={handleSubmit}
-         className="bg-purple-600 text-white px-4 py-2 rounded-lg">
+          onClick={handleSubmit}
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg"
+        >
           Search
         </button>
       </div>
@@ -262,7 +273,7 @@ export default function GridView() {
               </div>
             </div>
           </div>
-         
+
           <div className="bg-white rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
             {/* Other posts */}
             {!loading && posts.length === 0 && (
