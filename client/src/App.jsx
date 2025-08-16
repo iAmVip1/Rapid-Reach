@@ -16,11 +16,13 @@ import Failed from "./pages/Failed";
 import Testing from "./pages/Testing";
 import Post from "./pages/Post";
 import Sample from "./pages/Sample";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   return (
     <BrowserRouter>
     <Header />
+    <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />

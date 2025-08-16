@@ -219,15 +219,26 @@ export default function GridView() {
             <div>
               <h3 className="font-medium mb-2">Category</h3>
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+                 <Link to={'/gridview?category=Hospital'}>
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm cursor-pointer">
                   Hospital
                 </span>
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                 </Link>
+                 <Link to={'/gridview?category=Blood+Bank'}>
+                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm cursor-pointer">
                   Blood Bank
                 </span>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                 </Link>
+                  <Link to={'/gridview?category=Police+Department'}>
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm cursor-pointer">
                   Police Department
+                </span>  
+                  </Link>
+                <Link to={'/gridview?category=Fire+Department'}>
+                <span className="px-3 py-1 bg-red-100 text-orange-700 rounded-full text-sm cursor-pointer">
+                  Fire Department
                 </span>
+                </Link>
               </div>
             </div>
 
