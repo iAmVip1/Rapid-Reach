@@ -6,6 +6,9 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import ReactDOMServer from "react-dom/server";
 import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
+import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { MdCall } from "react-icons/md";
+import StarRating from "../components/StarRating";
 
 // Default Leaflet marker icon (local assets via package)
 const defaultIcon = L.icon({
@@ -92,6 +95,7 @@ export default function Testing() {
     };
     fetchPost();
   }, [params.postId]);
+  
 
   const position = useMemo(() => {
     if (!post) return null;
@@ -119,16 +123,66 @@ export default function Testing() {
   if (!post || !position) {
     return <div className="text-center mt-6">Location unavailable</div>;
   }
+
+  const makeOverlayDivIcon = (category, departmentName) => {
+  const iconEl = getCategoryIconElement(category);
+  // Compose HTML for icon + label below
+  const html = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    ">
+      <div style="
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.2);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        ${ReactDOMServer.renderToString(iconEl)}
+      </div>
+      <div style="
+        margin-top: 4px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #000;
+        text-align: center;
+      ">
+        ${departmentName || ""}
+      </div>
+    </div>
+  `;
+
+  return L.divIcon({
+    className: "",
+    html,
+    iconSize: [32, 48], // extra height for label
+    iconAnchor: [16, 48], // bottom center aligns to location
+    popupAnchor: [0, -48], // popup sits above marker+label
+  });
+};
+
+
+
+  
 console.log(post);
 
   return (
-    <div className="">
-    <div className="flex flex-col h-[calc(100vh-5rem)]">
+    <div className="min-h-screen">
+    <div className="flex flex-col space-y-4">
       {/* 5rem = ~80px, adjust to your navbar height */}
       <MapContainer
         center={position}
         zoom={15}
-        className="flex-1 w-full z-0"
+        className="w-full z-0 border border-gray-400"
+          style={{ height: "400px" }} // Reduce the height as per your requirement
         scrollWheelZoom={false}
       >
         <TileLayer
@@ -162,7 +216,82 @@ console.log(post);
         />
       </MapContainer>
     </div>
-    
+     {/* Details Section */}
+        <div className="flex justify-center ">
+          <div className="flex flex-col md:flex-row items-start justify-between w-full max-w-7xl p-8 bg-white rounded-2xl gap-8">
+            {/* Left Section */}
+            <div className="flex items-start gap-6">
+              {/* Logo */}
+              <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center">
+                <img
+                  src={post.imageUrls}
+                  className="text-sm font-semibold text-blue-600"
+                />
+              </div>
+
+              {/* Department Info */}
+              <div className="flex flex-col gap-4">
+                <div className="text-2xl font-bold text-gray-800">
+                  {post.departmentName}
+                </div>
+
+                {/* Call Now */}
+                <div className="flex items-center gap-2 text-gray-700">
+                  <MdCall className="text-blue-500 text-lg" />
+                  <span className="hover:underline cursor-pointer">
+                    {post.phoneNumber1}
+                  </span>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-center gap-2 text-gray-700">
+                  <FaMapMarkerAlt className="text-blue-500" />
+                  <span>{post.address}</span>
+                </div>
+
+                {/* Mobile view */}
+                <div className="md:hidden">
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <FaEnvelope className="text-gray-600" />
+                    <span className="hover:underline cursor-pointer">
+                      {post.userMail}
+                    </span>
+                  </div>
+
+                  {/* Contact No */}
+                  <div className="flex items-center gap-2 text-gray-700 mt-2">
+                    <FaPhoneAlt className="text-blue-500" />
+                    <span>{post.phoneNumber2}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center ">
+                  <div className="p-4 bg-white rounded ">
+                    <h1 className="text-2xl font-bold mb-4">Rate Us</h1>
+                    <StarRating totalStars={5} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Section */}
+            <div className="hidden sm:block md:flex md:flex-col md:items-start md:gap-6 md:mt-6">
+              {/* Email */}
+              <div className="flex items-center gap-2 text-gray-700">
+                <FaEnvelope className="text-gray-600" />
+                <span className="hover:underline cursor-pointer">
+                  {post.userMail}
+                </span>
+              </div>
+
+              {/* Contact No */}
+              <div className="flex items-center gap-2 text-gray-700">
+                <FaPhoneAlt className="text-blue-500" />
+                <span>{post.phoneNumber2}</span>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   );
 }

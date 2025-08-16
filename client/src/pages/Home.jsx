@@ -110,7 +110,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       <h2>Search Posts</h2>
 
       {/* Search Form */}

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
 import { data, Link, useLocation, useNavigate } from "react-router-dom";
-import Carpenter from "../../../imagesForWeb/car.png";
-import Electrician from "../../../imagesForWeb/elec.png";
-import Plumber from "../../../imagesForWeb/serviceman.png";
+import Hospital from "../../../for uploading/hospital.jpg";
+import FireDep from "../../../for uploading/firedep.jpg";
+import PoliceDep from "../../../for uploading/policedep.jpg";
+import MapImage from "../../../for uploading/map.jpg";
 import PostItem from "../components/PostItem";
 
 export default function GridView() {
@@ -195,14 +196,18 @@ export default function GridView() {
         {/* Left Column */}
         <div className="w-1/4 space-y-6">
           {/* Map */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-              Map Placeholder
-            </div>
-            <button className="mt-3 w-full border rounded-lg py-2">
-              Show Full Map
-            </button>
-          </div>
+         <div className="bg-white rounded-lg shadow p-4">
+  <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+    <img src={MapImage} alt="Map" className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300" />
+  </div>
+  <Link to='/mapView'>
+
+  <button className="mt-3 w-full border rounded-lg py-2">
+    Show Full Map
+  </button>
+  </Link>
+</div>
+
 
           {/* Filters */}
           <div className="bg-white rounded-lg shadow p-4 space-y-4">
@@ -232,43 +237,43 @@ export default function GridView() {
 
         {/* Right Column */}
         <div className="w-3/4 space-y-6">
-          {/* Popular Vehicles */}
+          {/* Popular Services */}
           <div className="bg-white rounded-lg shadow p-4">
             <h2 className="font-semibold mb-4">Best Service Provided</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Electrician Card */}
+              {/* FireDep Card */}
               <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
                 <img
-                  src={Electrician}
-                  alt="Electrician"
+                  src={FireDep}
+                  alt="FireDep"
                   className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
                 />
                 <div className="p-3 flex flex-col gap-2 w-full text-center">
-                  <p className="text-sm font-semibold w-full">Electrician</p>
+                  <p className="text-sm font-semibold w-full">Fire Department</p>
                 </div>
               </div>
 
-              {/* Carpenter Card */}
+              {/* Hospital Card */}
               <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
                 <img
-                  src={Carpenter}
-                  alt="Carpenter"
+                  src={Hospital}
+                  alt="Hospital"
                   className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
                 />
                 <div className="p-3 flex flex-col gap-2 w-full text-center">
-                  <p className="text-sm font-semibold w-full">Carpenter</p>
+                  <p className="text-sm font-semibold w-full">Hospital</p>
                 </div>
               </div>
 
-              {/* Plumber Card */}
+              {/* PoliceDep Card */}
               <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
                 <img
-                  src={Plumber}
-                  alt="Plumber"
+                  src={PoliceDep}
+                  alt="PoliceDep"
                   className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
                 />
                 <div className="p-3 flex flex-col gap-2 w-full text-center">
-                  <p className="text-sm font-semibold w-full">Plumber</p>
+                  <p className="text-sm font-semibold w-full">Police Department</p>
                 </div>
               </div>
             </div>
