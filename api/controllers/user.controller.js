@@ -3,6 +3,15 @@ import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
 import Post from '../models/post.model.js';
 
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}, { password: 0 }).lean();
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const test = (req, res) => {
     res.json({message: 'API is working'})
 };

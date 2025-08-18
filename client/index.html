@@ -7,6 +7,10 @@
     <title>Rapid Reach</title>
   </head>
   <body>
+    <script>
+      // Polyfill for packages expecting Node globals (e.g., simple-peer)
+      window.global ||= window;
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
