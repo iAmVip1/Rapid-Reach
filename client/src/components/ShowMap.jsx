@@ -47,19 +47,28 @@ const makeOverlayDivIcon = (category, departmentName) => {
 // Helper component to fit map to markers around user location
 function FitBounds({ userLocation }) {
   const map = useMap();
+  const [initialZoomSet, setInitialZoomSet] = useState(false);
 
   useEffect(() => {
     if (!userLocation) return;
 
-    // Set a fixed zoom level around the user's location
-    const zoomLevel = 15; // You can adjust this as needed (higher value = more zoomed in)
-    map.setView(userLocation, zoomLevel);
-  }, [userLocation, map]);
+    const zoomLevel = 15; // Desired zoom level
+    
+    // Only change the map view if it's the first location update or if the map is already at a default zoom
+    if (!initialZoomSet) {
+      map.setView(userLocation, zoomLevel);
+      setInitialZoomSet(true);
+    } else {
+      // If you're constantly updating, just adjust the map position (without zooming out)
+      map.panTo(userLocation);
+    }
+  }, [userLocation, map, initialZoomSet]);
 
   return null;
 }
 
-export default function MapView() {
+
+export default function ShowMap() {
   const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
   const [userLocation, setUserLocation] = useState(null);

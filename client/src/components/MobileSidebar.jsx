@@ -23,11 +23,12 @@ const MobileSidebar = () => {
         className={`fixed inset-y-0 left-0 bg-white border border-gray-200 rounded-r-xl shadow-lg p-6 w-64 transform z-30
         transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:hidden`}
+        lg:translate-x-0 lg:relative lg:w-64 lg:block h-screen`} // Set height to 100vh
       >
+        {/* Close button for mobile */}
         <button
           onClick={() => setSidebarOpen(false)}
-          className="absolute top-4 right-4 text-gray-700 bg-white shadow rounded-lg p-2 hover:bg-gray-100 transition"
+          className="absolute top-4 right-4 text-gray-700 bg-white shadow rounded-lg p-2 hover:bg-gray-100 transition lg:hidden"
           aria-label="Close Menu"
         >
           <FiChevronLeft className="w-6 h-6" />
@@ -42,11 +43,11 @@ const MobileSidebar = () => {
         </ul>
       </aside>
 
-      {/* Backdrop */}
+      {/* Backdrop for mobile */}
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-white/40 backdrop-blur-sm z-20"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-20 lg:hidden"
           aria-hidden="true"
         />
       )}
