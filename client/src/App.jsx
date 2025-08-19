@@ -17,10 +17,13 @@ import Testing from "./pages/Testing";
 import Post from "./pages/Post";
 import Sample from "./pages/Sample";
 import ScrollToTop from "./components/ScrollToTop";
+import { CallProvider } from "./socket/CallContext";
+import CallOverlay from "./components/CallOverlay";
 
 export default function App() {
   return (
     <BrowserRouter>
+    <CallProvider>
     <Header />
     <ScrollToTop />
       <Routes>
@@ -44,7 +47,9 @@ export default function App() {
         <Route path="/test/:postId" element={<Testing />} />
         <Route path="/sample" element={<Sample />} />
       </Routes>
+      <CallOverlay />
       <Footer />
+    </CallProvider>
     </BrowserRouter>
   )
 }

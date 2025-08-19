@@ -85,9 +85,31 @@ io.on("connection", (socket) => {
         userId: user.id,
         name: user.name,
         socketId: socket.id,
+        lat: undefined,
+        lng: undefined,
       });
     }
     io.emit("online-users", onlineUsers);
+  });
+
+  // Receive frequent location updates from clients
+  socket.on("location-update", (data) => {
+    try {
+      const { id, name, lat, lng } = data || {};
+      if (!id || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      let user = onlineUsers.find((u) => u.userId === id);
+      if (!user) {
+        user = { userId: id, name: name || "", socketId: socket.id };
+        onlineUsers.push(user);
+      }
+      user.lat = lat;
+      user.lng = lng;
+      user.socketId = socket.id;
+      if (name) user.name = name;
+      io.emit("online-users", onlineUsers);
+    } catch (err) {
+      console.error("Error handling location-update:", err);
+    }
   });
 
   socket.on("callToUser", (data) => {

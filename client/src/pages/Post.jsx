@@ -9,6 +9,7 @@ import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdCall } from "react-icons/md";
 import StarRating from "../components/StarRating";
+import { useCall } from "../socket/CallContext";
 
 // Default Leaflet marker icon (local assets via package)
 const defaultIcon = L.icon({
@@ -90,6 +91,7 @@ const makeOverlayDivIcon = (category, departmentName) => {
 };
 
 export default function Testing() {
+  const { startCall } = useCall() || {};
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -233,6 +235,18 @@ export default function Testing() {
                     <h1 className="text-2xl font-bold mb-4">Rate Us</h1>
                     <StarRating totalStars={5} />
                   </div>
+                </div>
+
+                <div className="flex items-center ">
+                  <button
+                    type="button"
+                    onClick={() => startCall && post?.userRef && startCall(post.userRef)}
+                    className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 focus:ring-4 focus:outline-none focus:ring-lime-200"
+                  >
+                    <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-transparent">
+                      Call Now
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>

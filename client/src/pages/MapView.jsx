@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import ReactDOMServer from "react-dom/server";
 import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
+import SocketContext from "../socket/SocketContext";
 
 // Category icons
 const getCategoryIconElement = (category) => {
@@ -47,14 +48,19 @@ const makeOverlayDivIcon = (category, departmentName) => {
 // Helper component to fit map to markers around user location
 function FitBounds({ userLocation }) {
   const map = useMap();
+  const [initialZoomSet, setInitialZoomSet] = useState(false);
 
   useEffect(() => {
     if (!userLocation) return;
 
-    // Set a fixed zoom level around the user's location
-    const zoomLevel = 15; // You can adjust this as needed (higher value = more zoomed in)
-    map.setView(userLocation, zoomLevel);
-  }, [userLocation, map]);
+    const zoomLevel = 15;
+    if (!initialZoomSet) {
+      map.setView(userLocation, zoomLevel);
+      setInitialZoomSet(true);
+    } else {
+      map.panTo(userLocation);
+    }
+  }, [userLocation, map, initialZoomSet]);
 
   return null;
 }
@@ -66,6 +72,8 @@ export default function MapView() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const socket = SocketContext.getSocket();
 
   // Fetch posts from API
   useEffect(() => {
@@ -98,7 +106,18 @@ export default function MapView() {
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setUserLocation([lat, lng]);
+        // Emit location to server so others can see us on the map
+        if (socket && currentUser?._id && Number.isFinite(lat) && Number.isFinite(lng)) {
+          socket.emit("location-update", {
+            id: currentUser._id,
+            name: currentUser.username,
+            lat,
+            lng,
+          });
+        }
       },
       (error) => {
         console.error("Error getting location:", error);
@@ -114,13 +133,25 @@ export default function MapView() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
+  // Join the socket room and receive online users (with locations if available)
+  useEffect(() => {
+    if (!socket) return;
+    if (currentUser?._id) {
+      socket.emit("join", { id: currentUser._id, name: currentUser.username });
+    }
+    const handleOnlineUsers = (users) => setOnlineUsers(users || []);
+    socket.on("online-users", handleOnlineUsers);
+    return () => {
+      socket.off("online-users", handleOnlineUsers);
+    };
+  }, [socket, currentUser]);
+
   if (loading) return <div className="text-center mt-6">Loading...</div>;
   if (error)
     return (
       <div className="text-center mt-6 text-red-500">Error loading posts</div>
     );
-  if (!posts || posts.length === 0)
-    return <div className="text-center mt-6">No posts found</div>;
+  // Always render the map even if there are no posts
 
   return (
     <div className="flex flex-col space-y-4 min-h-screen">
@@ -176,11 +207,37 @@ export default function MapView() {
               iconAnchor: [15, 30],
             })}
           >
+            <Tooltip direction="top" permanent>
+              {currentUser?.username || "You"}
+            </Tooltip>
             <Popup>
               <div style={{ fontWeight: "700" }}>You are here</div>
             </Popup>
           </Marker>
         )}
+
+        {/* Online users markers (excluding the current user) */}
+        {onlineUsers
+          .filter((u) => u.userId !== currentUser?._id && Number.isFinite(u?.lat) && Number.isFinite(u?.lng))
+          .map((u) => (
+            <Marker
+              key={u.userId}
+              position={[u.lat, u.lng]}
+              icon={L.icon({
+                iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                iconSize: [26, 26],
+                iconAnchor: [13, 26],
+              })}
+            >
+              <Tooltip direction="top" permanent>
+                {u.name || "Online user"}
+              </Tooltip>
+              <Popup>
+                <div style={{ fontWeight: 600 }}>{u.name || "Online user"}</div>
+                <div style={{ fontSize: 12 }}>Online</div>
+              </Popup>
+            </Marker>
+          ))}
 
         {/* Fit bounds to focus on the user location */}
         <FitBounds userLocation={userLocation} />
