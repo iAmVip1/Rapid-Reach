@@ -23,25 +23,46 @@ const getCategoryIconElement = (category) => {
   return <FaHospital size={size} color="#555" />;
 };
 
-// Div icon for marker
-const makeOverlayDivIcon = (category, departmentName) => {
+// Div icon for marker - pointed teardrop style with department name
+const makePointedDivIcon = (category, departmentName) => {
   const iconEl = getCategoryIconElement(category);
   const html = `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-        ${ReactDOMServer.renderToString(iconEl)}
-      </div>
-      <div style="margin-top: 4px; font-weight: 700; font-size: 12px; color: #000; text-align: center;">
-        ${departmentName || ""}
+    <div style="position: relative; width: 40px; height: 40px;">
+      <div style="position:absolute; inset:0; background:#ffffff; border:1px solid rgba(0,0,0,0.25); box-shadow:0 2px 4px rgba(0,0,0,0.35); border-radius:50% 50% 50% 0; transform: rotate(-45deg);">
+        <div style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%) rotate(45deg); display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;">
+          ${ReactDOMServer.renderToString(iconEl)}
+        </div>
       </div>
     </div>
   `;
+  
+  // Create container with pointer and department name
+  const containerHtml = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
+      
+      <div style="
+        margin-top: 4px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #000;
+        text-align: center;
+        background: rgba(255,255,255,0.9);
+        padding: 2px 6px;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      ">
+        ${departmentName || ""}
+      </div>
+      ${html}
+    </div>
+  `;
+  
   return L.divIcon({
     className: "",
-    html,
-    iconSize: [32, 48],
-    iconAnchor: [16, 48],
-    popupAnchor: [0, -48],
+    html: containerHtml,
+    iconSize: [40, 60], // height increased for department name
+    iconAnchor: [20, 40], // point the tip to the exact location
+    popupAnchor: [0, -60], // popup above marker + department name
   });
 };
 
@@ -175,7 +196,7 @@ export default function MapView() {
           if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
           const position = [lat, lng];
-          const icon = makeOverlayDivIcon(p.category, p.departmentName);
+          const icon = makePointedDivIcon(p.category, p.departmentName);
 
           return (
             <Marker key={idx} position={position} icon={icon}>

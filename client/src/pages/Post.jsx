@@ -45,50 +45,48 @@ const getCategoryIconElement = (category) => {
   return <FaHospital size={size} color="#555" />;
 };
 
-const makeOverlayDivIcon = (category, departmentName) => {
+// Create a pointed (teardrop) marker with the FA icon inside and department name
+const makePointedDivIcon = (category, departmentName) => {
   const iconEl = getCategoryIconElement(category);
-  // Compose HTML for icon + label below
   const html = `
-    <div style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-    ">
-      <div style="
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.2);
-        box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      ">
-        ${ReactDOMServer.renderToString(iconEl)}
+    <div style="position: relative; width: 40px; height: 40px;">
+      <div style="position:absolute; inset:0; background:#ffffff; border:1px solid rgba(0,0,0,0.25); box-shadow:0 2px 4px rgba(0,0,0,0.35); border-radius:50% 50% 50% 0; transform: rotate(-45deg);">
+        <div style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%) rotate(45deg); display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;">
+          ${ReactDOMServer.renderToString(iconEl)}
+        </div>
       </div>
+    </div>
+  `;
+
+  // Department name ABOVE marker now
+  const containerHtml = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
       <div style="
-        margin-top: 4px;
+        margin-bottom: 4px;
         font-weight: 700;
         font-size: 12px;
         color: #000;
         text-align: center;
+        background: rgba(255,255,255,0.9);
+        padding: 2px 6px;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
       ">
         ${departmentName || ""}
       </div>
+      ${html}
     </div>
   `;
 
   return L.divIcon({
     className: "",
-    html,
-    iconSize: [32, 48], // height increased for label
-    iconAnchor: [16, 48], // bottom center (tip of marker)
-    popupAnchor: [0, -48], // popup above marker + label
+    html: containerHtml,
+    iconSize: [40, 60],
+    iconAnchor: [20, 60],   // adjust anchor since label is on top
+    popupAnchor: [0, -70],  // push popup above label
   });
 };
+
 
 export default function Testing() {
   const { startCall } = useCall() || {};
@@ -130,7 +128,7 @@ export default function Testing() {
   }, [post]);
 
   const overlayIcon = useMemo(
-    () => makeOverlayDivIcon(post?.category, post?.departmentName),
+    () => makePointedDivIcon(post?.category, post?.departmentName),
     [post?.category, post?.departmentName]
   );
 
