@@ -38,6 +38,66 @@ app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
+// Temporary Departments endpoint for search (mock data)
+app.get("/api/departments", (req, res) => {
+  try {
+    const { search = "", category = "", sortBy = "" } = req.query || {};
+
+    const departments = [
+      {
+        _id: "1",
+        name: "City General Hospital",
+        category: "hospital",
+        phone: "+1-202-555-0101",
+        image: "/uploads/hospital1.jpg",
+      },
+      {
+        _id: "2",
+        name: "Manhattan Police Precinct",
+        category: "police",
+        phone: "+1-202-555-0102",
+        image: "/uploads/police1.jpg",
+      },
+      {
+        _id: "3",
+        name: "Downtown Fire Service",
+        category: "fire",
+        phone: "+1-202-555-0103",
+        image: "/uploads/fire1.jpg",
+      },
+      {
+        _id: "4",
+        name: "Metro Blood Bank",
+        category: "blood",
+        phone: "+1-202-555-0104",
+        image: "/uploads/blood1.jpg",
+      },
+    ];
+
+    // Filtering
+    let filtered = departments.filter((d) => {
+      const matchesSearch = search
+        ? (d.name || "").toLowerCase().includes(String(search).toLowerCase())
+        : true;
+      const matchesCategory = category ? d.category === category : true;
+      return matchesSearch && matchesCategory;
+    });
+
+    // Sorting (very basic mock)
+    if (sortBy === "rating") {
+      filtered = filtered.sort((a, b) => (a.name > b.name ? 1 : -1));
+    }
+
+    if (sortBy === "nearest") {
+      filtered = filtered.reverse();
+    }
+
+    res.json(filtered);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch departments" });
+  }
+});
+
 // Error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

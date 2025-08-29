@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import ReactDOMServer from "react-dom/server";
 import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
+import SocketContext from "../socket/SocketContext";
 
 // Category icons
 const getCategoryIconElement = (category) => {
@@ -22,25 +23,46 @@ const getCategoryIconElement = (category) => {
   return <FaHospital size={size} color="#555" />;
 };
 
-// Div icon for marker
-const makeOverlayDivIcon = (category, departmentName) => {
+// Div icon for marker - pointed teardrop style with department name
+const makePointedDivIcon = (category, departmentName) => {
   const iconEl = getCategoryIconElement(category);
   const html = `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-        ${ReactDOMServer.renderToString(iconEl)}
-      </div>
-      <div style="margin-top: 4px; font-weight: 700; font-size: 12px; color: #000; text-align: center;">
-        ${departmentName || ""}
+    <div style="position: relative; width: 40px; height: 40px;">
+      <div style="position:absolute; inset:0; background:#ffffff; border:1px solid rgba(0,0,0,0.25); box-shadow:0 2px 4px rgba(0,0,0,0.35); border-radius:50% 50% 50% 0; transform: rotate(-45deg);">
+        <div style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%) rotate(45deg); display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;">
+          ${ReactDOMServer.renderToString(iconEl)}
+        </div>
       </div>
     </div>
   `;
+  
+  // Create container with pointer and department name
+  const containerHtml = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
+      
+      <div style="
+        margin-top: 4px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #000;
+        text-align: center;
+        background: rgba(255,255,255,0.9);
+        padding: 2px 6px;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      ">
+        ${departmentName || ""}
+      </div>
+      ${html}
+    </div>
+  `;
+  
   return L.divIcon({
     className: "",
-    html,
-    iconSize: [32, 48],
-    iconAnchor: [16, 48],
-    popupAnchor: [0, -48],
+    html: containerHtml,
+    iconSize: [40, 60], // height increased for department name
+    iconAnchor: [20, 40], // point the tip to the exact location
+    popupAnchor: [0, -60], // popup above marker + department name
   });
 };
 
@@ -52,21 +74,17 @@ function FitBounds({ userLocation }) {
   useEffect(() => {
     if (!userLocation) return;
 
-    const zoomLevel = 15; // Desired zoom level
-    
-    // Only change the map view if it's the first location update or if the map is already at a default zoom
+    const zoomLevel = 15;
     if (!initialZoomSet) {
       map.setView(userLocation, zoomLevel);
       setInitialZoomSet(true);
     } else {
-      // If you're constantly updating, just adjust the map position (without zooming out)
       map.panTo(userLocation);
     }
   }, [userLocation, map, initialZoomSet]);
 
   return null;
 }
-
 
 export default function ShowMap() {
   const location = useLocation();
@@ -75,6 +93,8 @@ export default function ShowMap() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const socket = SocketContext.getSocket();
 
   // Fetch posts from API
   useEffect(() => {
@@ -107,7 +127,18 @@ export default function ShowMap() {
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setUserLocation([lat, lng]);
+        // Emit location to server so others can see us on the map
+        if (socket && currentUser?._id && Number.isFinite(lat) && Number.isFinite(lng)) {
+          socket.emit("location-update", {
+            id: currentUser._id,
+            name: currentUser.username,
+            lat,
+            lng,
+          });
+        }
       },
       (error) => {
         console.error("Error getting location:", error);
@@ -123,13 +154,25 @@ export default function ShowMap() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
+  // Join the socket room and receive online users (with locations if available)
+  useEffect(() => {
+    if (!socket) return;
+    if (currentUser?._id) {
+      socket.emit("join", { id: currentUser._id, name: currentUser.username });
+    }
+    const handleOnlineUsers = (users) => setOnlineUsers(users || []);
+    socket.on("online-users", handleOnlineUsers);
+    return () => {
+      socket.off("online-users", handleOnlineUsers);
+    };
+  }, [socket, currentUser]);
+
   if (loading) return <div className="text-center mt-6">Loading...</div>;
   if (error)
     return (
       <div className="text-center mt-6 text-red-500">Error loading posts</div>
     );
-  if (!posts || posts.length === 0)
-    return <div className="text-center mt-6">No posts found</div>;
+  // Always render the map even if there are no posts
 
   return (
     <div className="flex flex-col space-y-4 min-h-screen">
@@ -153,7 +196,7 @@ export default function ShowMap() {
           if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
           const position = [lat, lng];
-          const icon = makeOverlayDivIcon(p.category, p.departmentName);
+          const icon = makePointedDivIcon(p.category, p.departmentName);
 
           return (
             <Marker key={idx} position={position} icon={icon}>
@@ -185,11 +228,37 @@ export default function ShowMap() {
               iconAnchor: [15, 30],
             })}
           >
+            <Tooltip direction="top" permanent>
+              {currentUser?.username || "You"}
+            </Tooltip>
             <Popup>
               <div style={{ fontWeight: "700" }}>You are here</div>
             </Popup>
           </Marker>
         )}
+
+        {/* Online users markers (excluding the current user) */}
+        {onlineUsers
+          .filter((u) => u.userId !== currentUser?._id && Number.isFinite(u?.lat) && Number.isFinite(u?.lng))
+          .map((u) => (
+            <Marker
+              key={u.userId}
+              position={[u.lat, u.lng]}
+              icon={L.icon({
+                iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                iconSize: [26, 26],
+                iconAnchor: [13, 26],
+              })}
+            >
+              <Tooltip direction="top" permanent>
+                {u.name || "Online user"}
+              </Tooltip>
+              <Popup>
+                <div style={{ fontWeight: 600 }}>{u.name || "Online user"}</div>
+                <div style={{ fontSize: 12 }}>Online</div>
+              </Popup>
+            </Marker>
+          ))}
 
         {/* Fit bounds to focus on the user location */}
         <FitBounds userLocation={userLocation} />

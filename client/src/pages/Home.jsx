@@ -7,7 +7,7 @@ import { signoutSuccess } from '../redux/user/userSlice';
 import SocketContext from '../socket/SocketContext';
 import { useRef } from 'react';
 import Peer from 'simple-peer/simplepeer.min.js';
-import { Howl } from "howler";
+// audio removed
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user.currentUser);
@@ -43,14 +43,7 @@ export default function Dashboard() {
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
 
-   // 🔥 Load ringtone
-  const ringtone = useRef(
-  new Howl({
-    src: ["/audio-call.mp3"],
-    loop: false,
-    volume: 1.0,
-  })
-);
+  // ringtone removed per request
 
 
   const socket = SocketContext.getSocket();
@@ -71,22 +64,19 @@ export default function Dashboard() {
         setReciveingCall(true);
         setCaller(data);
         setCallerSignal(data.signal);
-      // ✅ Start playing ringtone
-      ringtone.current.play()
+      // audio removed
       });
 
       socket.on("callEnded",(data)=>{
         console.log("call ended by", data.name);
         endCallCleanup();
-        // ✅ Stop ringtone when call is accepted
-        ringtone.current.stop()
+        // audio removed
       })
 
       socket.on("callRejected",(data)=>{
         setCallRejectedPopUp(true);
         setCallRejectedUser(data);
-      // ✅ Stop ringtone when call is accepted
-        ringtone.current.stop()
+        // audio removed
       })
 
       return ()=>{
@@ -188,8 +178,7 @@ export default function Dashboard() {
     }
   }
   const handelacceptCall =async()=>{
-    // ✅ Stop ringtone when call is accepted
-      ringtone.current.stop()
+    // audio removed
     try {
         const currentStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -237,8 +226,7 @@ export default function Dashboard() {
   }
 
   const handelendCall=()=>{
-  // ✅ Stop ringtone
-  ringtone.current.stop();
+  // audio removed
 
   let toUserId = null;
 
@@ -262,8 +250,7 @@ export default function Dashboard() {
 
 
   const handelrejectCall=()=>{
-    // ✅ Stop ringtone when call is accepted
-      ringtone.current.stop()
+    // audio removed
     setReciveingCall(false);
     setCallAccepted(false);
 
@@ -287,8 +274,7 @@ export default function Dashboard() {
 
       connectionRef.current?.destroy();
 
-    // ✅ Stop ringtone when call is accepted
-      ringtone.current.stop()
+    // audio removed
 
       setStream(null);
       setReciveingCall(false);
