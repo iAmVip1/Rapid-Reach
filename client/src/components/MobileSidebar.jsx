@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import { MdMenu } from "react-icons/md";
-// removed phone icon
 import SocketContext from "../socket/SocketContext";
+import { Link } from "react-router-dom";
 
 const MobileSidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,112 +28,118 @@ const MobileSidebar = () => {
   const isOnlineUser = (userId) => onlineUsers.some((u) => u.userId === userId);
 
   // Handle Submit (search button / enter key)
-const handleSubmit = (e) => {
-  e.preventDefault();
-  setHasSearched(true);
-  setLoading(true);
-  setError("");
-  setResults([]); // reset previous results
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setHasSearched(true);
+    setLoading(true);
+    setError("");
+    setResults([]); // reset previous results
 
-  const fetchPosts = async () => {
-    try {
-      const query = new URLSearchParams({
-        departmentName: search,
-        category,
-      }).toString();
+    const fetchPosts = async () => {
+      try {
+        const query = new URLSearchParams({
+          departmentName: search,
+          category,
+        }).toString();
 
-      const res = await fetch(`/api/post/get?${query}`);
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+        const res = await fetch(`/api/post/get?${query}`);
+        if (!res.ok) throw new Error(`Request failed (${res.status})`);
 
-      const data = await res.json();
-      const rawList = Array.isArray(data) ? data : data?.data || [];
+        const data = await res.json();
+        const rawList = Array.isArray(data) ? data : data?.data || [];
 
-      const normalized = rawList.map((post, index) => ({
-        _id: post._id || post.id || String(index),
-        image: (post.imageUrls && post.imageUrls[0]) || post.image || "/placeholder.jpg",
-        name: post.departmentName || post.title || post.name || "Unknown",
-        category: post.category || "",
-        phone: post.phoneNumber1 || post.phone || post.contactNumber || post.tel || "",
-        latitude: post.latitude,
-        longitude: post.longitude,
-        userRef: post.userRef,
-        isAvailable: isOnlineUser(post.userRef),
-      }));
+        const normalized = rawList.map((post, index) => ({
+          _id: post._id || post.id || String(index),
+          image:
+            (post.imageUrls && post.imageUrls[0]) ||
+            post.image ||
+            "/placeholder.jpg",
+          name: post.departmentName || post.title || post.name || "Unknown",
+          category: post.category || "",
+          phone:
+            post.phoneNumber1 ||
+            post.phone ||
+            post.contactNumber ||
+            post.tel ||
+            "",
+          latitude: post.latitude,
+          longitude: post.longitude,
+          userRef: post.userRef,
+          isAvailable: isOnlineUser(post.userRef),
+        }));
 
-      let finalResults = normalized;
+        let finalResults = normalized;
 
-      // Filter by availability
-      if (sortBy === "available") {
-        finalResults = finalResults.filter((p) => p.isAvailable);
+        // Filter by availability
+        if (sortBy === "available") {
+          finalResults = finalResults.filter((p) => p.isAvailable);
+        }
+
+        // Sort by nearest using Haversine (just like GridView)
+        if (sortBy === "nearest" && navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const userCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+              };
+
+              const haversineDistance = (coords1, coords2) => {
+                const R = 6371;
+                const dLat = ((coords2.lat - coords1.lat) * Math.PI) / 180;
+                const dLon = ((coords2.lng - coords1.lng) * Math.PI) / 180;
+                const lat1 = (coords1.lat * Math.PI) / 180;
+                const lat2 = (coords2.lat * Math.PI) / 180;
+
+                const a =
+                  Math.sin(dLat / 2) ** 2 +
+                  Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+              };
+
+              const sortedResults = finalResults
+                .map((post) => {
+                  const hasCoords =
+                    typeof post.latitude === "number" &&
+                    typeof post.longitude === "number";
+                  return {
+                    ...post,
+                    distance: hasCoords
+                      ? haversineDistance(userCoords, {
+                          lat: post.latitude,
+                          lng: post.longitude,
+                        })
+                      : Infinity,
+                  };
+                })
+                .sort((a, b) => a.distance - b.distance);
+
+              setResults(sortedResults);
+              setLoading(false);
+            },
+            (err) => {
+              console.warn("Geolocation failed:", err);
+              setResults(finalResults);
+              setLoading(false);
+            },
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+          );
+          return; // exit early so we don't overwrite setResults
+        }
+
+        // Default: no nearest sorting
+        setResults(finalResults);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching:", err);
+        setError(err.message || "Failed to load results");
+        setLoading(false);
       }
+    };
 
-      // Sort by nearest using Haversine (just like GridView)
-      if (sortBy === "nearest" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            const userCoords = {
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
-            };
-
-            const haversineDistance = (coords1, coords2) => {
-              const R = 6371;
-              const dLat = ((coords2.lat - coords1.lat) * Math.PI) / 180;
-              const dLon = ((coords2.lng - coords1.lng) * Math.PI) / 180;
-              const lat1 = (coords1.lat * Math.PI) / 180;
-              const lat2 = (coords2.lat * Math.PI) / 180;
-
-              const a =
-                Math.sin(dLat / 2) ** 2 +
-                Math.cos(lat1) *
-                  Math.cos(lat2) *
-                  Math.sin(dLon / 2) ** 2;
-              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-              return R * c;
-            };
-
-            const sortedResults = finalResults
-              .map((post) => {
-                const hasCoords =
-                  typeof post.latitude === "number" &&
-                  typeof post.longitude === "number";
-                return {
-                  ...post,
-                  distance: hasCoords
-                    ? haversineDistance(userCoords, {
-                        lat: post.latitude,
-                        lng: post.longitude,
-                      })
-                    : Infinity,
-                };
-              })
-              .sort((a, b) => a.distance - b.distance);
-
-            setResults(sortedResults);
-            setLoading(false);
-          },
-          (err) => {
-            console.warn("Geolocation failed:", err);
-            setResults(finalResults);
-            setLoading(false);
-          },
-          { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
-        );
-        return; // exit early so we don't overwrite setResults
-      }
-
-      // Default: no nearest sorting
-      setResults(finalResults);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching:", err);
-      setError(err.message || "Failed to load results");
-      setLoading(false);
-    }
+    fetchPosts();
   };
-
-  fetchPosts();
-};
 
   return (
     <>
@@ -153,7 +159,7 @@ const handleSubmit = (e) => {
         className={`fixed inset-y-0 left-0 bg-white border border-gray-200 rounded-r-xl shadow-lg p-6 w-72 sm:w-80 max-w-[85vw] lg:w-64 transform z-30
         transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:sticky lg:top-0 lg:w-64 lg:block h-screen lg:h-screen overflow-hidden flex flex-col min-h-0`}
+        lg:translate-x-0 lg:sticky lg:top-0 lg:w-64 lg:block h-screen lg:h-screen overflow-hidden flex flex-col min-h-0 md:overflow-y-auto`}
       >
         {/* Close button for mobile */}
         <button
@@ -164,7 +170,9 @@ const handleSubmit = (e) => {
           <FiChevronLeft className="w-6 h-6" />
         </button>
 
-        <h2 className="text-sm font-semibold text-gray-900 uppercase mb-5">Filters</h2>
+        <h2 className="text-sm font-semibold text-gray-900 uppercase mb-5">
+          Filters
+        </h2>
 
         {/* Search Form */}
         <form onSubmit={handleSubmit} className="space-y-4 shrink-0">
@@ -181,7 +189,9 @@ const handleSubmit = (e) => {
 
           {/* Category Dropdown */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Category
+            </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -197,7 +207,9 @@ const handleSubmit = (e) => {
 
           {/* Sort By Dropdown */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Sort By</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Sort By
+            </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -219,12 +231,10 @@ const handleSubmit = (e) => {
         </form>
 
         {/* Results Preview */}
-        <div className="mt-6 space-y-4 overflow-y-auto flex-1 min-h-0 pr-1 scroll-smooth [-webkit-overflow-scrolling:touch]">
+        <div className="mt-6 space-y-4 overflow-y-auto flex-1 min-h-0 pr-1 scroll-smooth [-webkit-overflow-scrolling:touch] md:max-h-[calc(100vh-400px)] md:overflow-y-auto">
           {loading && <p className="text-sm text-gray-500">Loading...</p>}
 
-          {!loading && error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {!loading && error && <p className="text-sm text-red-600">{error}</p>}
 
           {!loading && hasSearched && !error && results.length === 0 && (
             <p className="text-sm text-gray-400">No results found.</p>
@@ -233,8 +243,9 @@ const handleSubmit = (e) => {
           {results.map((item) => (
             <div
               key={item._id}
-              className="flex items-center gap-3 border rounded-lg p-2 shadow-sm hover:shadow-md transition"
+              
             >
+              <Link to={`/post/${item._id}`} className="flex items-center gap-3 border rounded-lg p-2 shadow-sm hover:shadow-md transition">
               <img
                 src={item.image || "/placeholder.jpg"}
                 alt={item.name}
@@ -242,20 +253,22 @@ const handleSubmit = (e) => {
               />
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-  {item.name}
-  {isOnlineUser(item.userRef) && (
-    <span className="w-3 h-3 bg-green-500 rounded-full inline-block flex-shrink-0"></span>
-  )}
-</h3>
-<p className="text-xs text-gray-500">
-  {item.category}
-  {typeof item.distance === "number" && Number.isFinite(item.distance) && (
-    <span className="ml-2 text-gray-400">{item.distance.toFixed(2)} km</span>
-  )}
-</p>
-
+                  {item.name}
+                  {isOnlineUser(item.userRef) && (
+                    <span className="w-3 h-3 bg-green-500 rounded-full inline-block flex-shrink-0"></span>
+                  )}
+                </h3>
+                <p className="text-xs text-gray-500">
+                  {item.category}
+                  {typeof item.distance === "number" &&
+                    Number.isFinite(item.distance) && (
+                      <span className="ml-2 text-gray-400">
+                        {item.distance.toFixed(2)} km
+                      </span>
+                    )}
+                </p>
               </div>
-              {/* phone action removed as requested */}
+              </Link>
             </div>
           ))}
         </div>
