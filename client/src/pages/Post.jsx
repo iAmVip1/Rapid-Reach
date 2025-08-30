@@ -11,6 +11,8 @@ import { MdCall } from "react-icons/md";
 import StarRating from "../components/StarRating";
 import { useCall } from "../socket/CallContext";
 
+
+
 // Default Leaflet marker icon (local assets via package)
 const defaultIcon = L.icon({
   iconUrl: new URL(
@@ -93,7 +95,7 @@ export default function Testing() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
+  
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -238,7 +240,15 @@ export default function Testing() {
                 <div className="flex items-center ">
                   <button
                     type="button"
-                    onClick={() => startCall && post?.userRef && startCall(post.userRef)}
+                    onClick={() => {
+                      console.log("Call button clicked, post.userRef:", post?.userRef);
+                      if (startCall && post?.userRef) {
+                        console.log("Starting call to:", post.userRef);
+                        startCall(post.userRef);
+                      } else {
+                        console.log("Cannot start call - missing startCall function or userRef");
+                      }
+                    }}
                     className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 focus:ring-4 focus:outline-none focus:ring-lime-200"
                   >
                     <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-transparent">

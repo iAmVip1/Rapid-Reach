@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import SocketContext from "./SocketContext";
 import Peer from "simple-peer/simplepeer.min.js";
 import { Howl, Howler } from "howler";
@@ -7,8 +8,9 @@ import { Howl, Howler } from "howler";
 const CallContext = createContext(null);
 
 export function CallProvider({ children }) {
-  const currentUser = useSelector((state) => state.user.currentUser);
+const currentUser = useSelector((state) => state.user.currentUser);
   const socket = SocketContext.getSocket();
+  const location = useLocation();
 
   const hasJoined = useRef(false);
   const myVideoRef = useRef(null);
@@ -22,11 +24,38 @@ export function CallProvider({ children }) {
   const [caller, setCaller] = useState(null);
   const [callerSignal, setCallerSignal] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
+  const [isCalling, setIsCalling] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isAudioUnlocked, setIsAudioUnlocked] = useState(false);
-  const [shouldPlayOnUnlock, setShouldPlayOnUnlock] = useState(false);
+  const [callRejectedPopUp, setCallRejectedPopUp] = useState(false);
+  const [callRejectedUser, setCallRejectedUser] = useState(null);
 
+  // ---- ringtone setup ----
   const ringtone = useRef(null);
+
+  const createRingtone = () => {
+    if (ringtone.current) return ringtone.current; // ✅ already created
+    ringtone.current = new Howl({
+      src: ["/audio-call.mp3"],
+      loop: true,
+      volume: 1.0,
+      preload: true,
+    });
+    return ringtone.current;
+  };
+
+  const playRingtone = () => {
+    const sound = createRingtone();
+    if (sound && !sound.playing()) {
+      sound.play();
+    }
+  };
+
+  const stopRingtone = () => {
+    if (ringtone.current && ringtone.current.playing()) {
+      ringtone.current.stop();
+    }
+  };
 
   // Join once and wire socket listeners
   useEffect(() => {
@@ -39,22 +68,19 @@ export function CallProvider({ children }) {
     const onMe = (id) => setMe(id);
     const onOnlineUsers = (users) => setOnlineUsers(users || []);
     const onCallToUser = (data) => {
+      console.log("Received call from:", data);
       setReceivingCall(true);
       setCaller(data);
       setCallerSignal(data.signal);
-      if (isAudioUnlocked) {
-        ringtone.current.play();
-      } else {
-        setShouldPlayOnUnlock(true);
-      }
+      playRingtone(); // 🔔 start ringtone
     };
     const onCallEnded = () => {
       endCallCleanup();
-      ringtone.current.stop();
     };
-    const onCallRejected = () => {
-      // just stop sound and cleanup if needed
-      ringtone.current.stop();
+    const onCallRejected = (data) => {
+      setCallRejectedPopUp(true);
+      setCallRejectedUser(data);
+      stopRingtone();
     };
 
     socket.on("me", onMe);
@@ -70,23 +96,12 @@ export function CallProvider({ children }) {
       socket.off("callEnded", onCallEnded);
       socket.off("callRejected", onCallRejected);
     };
-  }, [socket, currentUser, isAudioUnlocked]);
-
-  // Create ringtone only after user gesture
-  const createRingtone = () => {
-    if (!ringtone.current) {
-      ringtone.current = new Howl({ 
-        src: ["/audio-call.mp3"], 
-        loop: false, 
-        volume: 1.0,
-        preload: false
-      });
-    }
-  };
+  }, [socket, currentUser]);
 
   // Attempt to unlock audio on first user gesture
   useEffect(() => {
     if (isAudioUnlocked) return;
+
     const handler = async () => {
       try {
         createRingtone();
@@ -94,11 +109,13 @@ export function CallProvider({ children }) {
           await Howler.ctx.resume();
         }
         setIsAudioUnlocked(true);
-        // Play a silent sound to unlock audio
+
+        // Play a silent unlock
         if (ringtone.current) {
           ringtone.current.volume(0);
           ringtone.current.play();
           ringtone.current.volume(1.0);
+          ringtone.current.stop();
         }
       } catch (e) {
         console.log("Audio unlock failed:", e);
@@ -108,9 +125,11 @@ export function CallProvider({ children }) {
         window.removeEventListener("touchstart", handler);
       }
     };
+
     window.addEventListener("pointerdown", handler, { once: true });
     window.addEventListener("keydown", handler, { once: true });
     window.addEventListener("touchstart", handler, { once: true });
+
     return () => {
       window.removeEventListener("pointerdown", handler);
       window.removeEventListener("keydown", handler);
@@ -118,29 +137,23 @@ export function CallProvider({ children }) {
     };
   }, [isAudioUnlocked]);
 
-  // If we were asked to play ringtone before unlock, play once unlocked
-  useEffect(() => {
-    if (isAudioUnlocked && shouldPlayOnUnlock && receivingCall && ringtone.current) {
-      ringtone.current.play();
-      setShouldPlayOnUnlock(false);
-    }
-  }, [isAudioUnlocked, shouldPlayOnUnlock, receivingCall]);
-
   const startCall = async (callToUserId) => {
     if (!socket || !currentUser) return;
     try {
+      setIsCalling(true);
       setSelectedUserId(callToUserId);
+
       const currentStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: { echoCancellation: true, noiseSuppression: true },
       });
+
       streamRef.current = currentStream;
       if (myVideoRef.current) {
         myVideoRef.current.srcObject = currentStream;
         myVideoRef.current.muted = true;
         myVideoRef.current.volume = 0;
       }
-      currentStream.getAudioTracks().forEach((t) => (t.enabled = true));
 
       const peer = new Peer({ initiator: true, trickle: false, stream: currentStream });
 
@@ -173,14 +186,13 @@ export function CallProvider({ children }) {
       connectionRef.current = peer;
     } catch (err) {
       console.error("Error accessing media device:", err);
+      setIsCalling(false);
     }
   };
 
   const acceptCall = async () => {
     if (!socket) return;
-    if (ringtone.current) {
-      ringtone.current.stop();
-    }
+    stopRingtone(); // 🔇 stop when accepted
     try {
       const currentStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -189,6 +201,7 @@ export function CallProvider({ children }) {
       streamRef.current = currentStream;
       if (myVideoRef.current) myVideoRef.current.srcObject = currentStream;
       currentStream.getAudioTracks().forEach((t) => (t.enabled = true));
+
       setCallAccepted(true);
       setReceivingCall(true);
 
@@ -214,18 +227,18 @@ export function CallProvider({ children }) {
 
   const rejectCall = () => {
     if (!socket || !caller) return;
-    if (ringtone.current) {
-      ringtone.current.stop();
-    }
+    stopRingtone(); // 🔇 stop when rejected
     setReceivingCall(false);
     setCallAccepted(false);
-    socket.emit("reject-call", { to: caller.from, name: currentUser?.username, profilepic: currentUser?.profilePicture });
+    socket.emit("reject-call", {
+      to: caller.from,
+      name: currentUser?.username,
+      profilepic: currentUser?.profilePicture,
+    });
   };
 
   const endCall = () => {
-    if (ringtone.current) {
-      ringtone.current.stop();
-    }
+    stopRingtone(); // 🔇 always stop
     let toUserId = null;
     if (caller && caller.from) toUserId = caller.from;
     else if (selectedUserId) toUserId = selectedUserId;
@@ -242,13 +255,14 @@ export function CallProvider({ children }) {
       if (myVideoRef.current) myVideoRef.current.srcObject = null;
       connectionRef.current?.destroy();
     } finally {
-      if (ringtone.current) {
-        ringtone.current.stop();
-      }
+      stopRingtone(); // 🔇 ensure stopped
       streamRef.current = null;
       setReceivingCall(false);
       setCallAccepted(false);
+      setIsCalling(false);
       setSelectedUserId(null);
+      setCallRejectedPopUp(false);
+      setCallRejectedUser(null);
     }
   };
 
@@ -259,10 +273,11 @@ export function CallProvider({ children }) {
         await Howler.ctx.resume();
       }
       setIsAudioUnlocked(true);
-      // Play a silent sound to unlock audio
+
       if (ringtone.current) {
         ringtone.current.volume(0);
         ringtone.current.play();
+        ringtone.current.stop();
         ringtone.current.volume(1.0);
       }
     } catch (e) {
@@ -278,6 +293,9 @@ export function CallProvider({ children }) {
       caller,
       callerSignal,
       callAccepted,
+      isCalling,
+      callRejectedPopUp,
+      callRejectedUser,
       myVideoRef,
       receiverVideoRef,
       startCall,
@@ -287,12 +305,22 @@ export function CallProvider({ children }) {
       isAudioUnlocked,
       unlockAudio,
     }),
-    [me, onlineUsers, receivingCall, caller, callerSignal, callAccepted, isAudioUnlocked]
+    [
+      me,
+      onlineUsers,
+      receivingCall,
+      caller,
+      callerSignal,
+      callAccepted,
+      isCalling,
+      callRejectedPopUp,
+      callRejectedUser,
+      isAudioUnlocked,
+    ]
   );
 
   return <CallContext.Provider value={value}>{children}</CallContext.Provider>;
 }
-
 export function useCall() {
   return useContext(CallContext);
 }
