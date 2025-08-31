@@ -38,11 +38,11 @@ export default function App() {
         <Route element={<DepartmentRoute />} >
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/update-post/:postId" element={<UpdatePost />} />
+        <Route path="/mapview" element={<MapView />} />
         </Route>
         
         <Route path="/post/:postId" element={<Post />} />
         <Route path="/gridview" element={<GridView />} />
-        <Route path="/mapview" element={<MapView />} />
         <Route path="/services" element={<Services />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
