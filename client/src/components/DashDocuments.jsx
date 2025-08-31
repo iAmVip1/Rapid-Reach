@@ -12,7 +12,7 @@ export default function DashDocuments() {
         const res = await fetch(`/api/user/posts/${currentUser._id}`);
         const data = await res.json();
         if (res.ok) {
-          setUserPosts(data); // backend returns posts array
+          setUserPosts(data);
         }
       } catch (error) {
         console.log(error.message);
@@ -39,109 +39,102 @@ export default function DashDocuments() {
       console.log(error.message);
     }
   };
-  console.log(userPosts);
 
   return (
-    <div className="max-w-lg mx-auto border p-8 rounded-lg shadow-lg ">
-      <h1 className="text-xl font-semibold text-center">
-        Details and Documents
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h1 className="text-2xl font-bold text-center text-gray-800">
+        Details & Documents
       </h1>
-      <h2 className="text-sm text-center text-gray-600 mb-6">
-        (Here you can view, delete or update your documents.)
-      </h2>
+      <p className="text-sm text-center text-gray-600 mb-8">
+        Manage your documents easily. View, update, or delete them anytime.
+      </p>
 
       {userPosts.length > 0 ? (
-        <>
-          {userPosts.map((post) => (
-            <form key={post._id} className="mb-8">
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">
-                  Department Name:
-                </label>
-                <span className="text-base">{post.departmentName}</span>
-              </div>
+       <div className="flex justify-center items-center w-full">
+  <div className="w-full max-w-2xl space-y-6">
+    {userPosts.map((post) => (
+      <div
+        key={post._id}
+        className="bg-white shadow-md rounded-2xl p-5 flex flex-col justify-between hover:shadow-lg transition duration-300"
+      >
+        {/* Document Preview */}
+        <a href={post.imageUrls} target="_blank" rel="noreferrer">
+          <img
+            src={post.imageUrls}
+            alt="Post document"
+            className="w-full h-40 object-cover rounded-lg mb-4 bg-gray-100"
+          />
+        </a>
 
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Address:</label>
-                <span className="text-base">{post.address}</span>
-              </div>
+        {/* Info */}
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold text-gray-800 truncate">
+            {post.departmentName}
+          </h2>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">Address: </span>
+            {post.address}
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">Contact: </span>
+            {post.phoneNumber1}, {post.phoneNumber2}
+          </p>
+          <p className="text-sm text-gray-600 truncate">
+            <span className="font-medium">Website: </span>
+            <a
+              href={post.website}
+              target="_blank"
+              className="text-blue-600 underline"
+            >
+              {post.website}
+            </a>
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">Category: </span>
+            {post.category}
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">Reg. No: </span>
+            {post.registrationNo}
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">Email: </span>
+            {post.userMail}
+          </p>
+        </div>
 
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Website:</label>
-                <a href={post && post.website} target="_blank">
-                <span className="text-base">{post.website}</span>
-                </a>
-              </div>
+        {/* Actions */}
+        <div className="flex justify-between mt-5">
+          <Link to={`/update-post/${post._id}`}>
+            <button className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm">
+              Update
+            </button>
+          </Link>
 
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Contact No:</label>
-                <span className="text-base">
-                  {post.phoneNumber1}, {post.phoneNumber2}
-                </span>
-              </div>
+          <Link to={`/post/${post._id}`}>
+            <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm">
+              Visit
+            </button>
+          </Link>
 
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Category:</label>
-                <span className="text-base">{post.category}</span>
-              </div>
+          <button
+            type="button"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
+            onClick={() => handlePostDelete(post._id)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">
-                  Registration No:
-                </label>
-                <span className="text-base">{post.registrationNo}</span>
-              </div>
-
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Document:</label>
-                <div className="w-2/3 p-2 rounded h-28 flex">
-                  <a href={post && post.imageUrls} target="_blank">
-                    <img
-                      src={post.imageUrls}
-                      alt="Post document"
-                      className="w-52 h-28 object-contain bg-gray-200 rounded"
-                    />
-                  </a>
-                </div>
-              </div>
-
-              <div className="mb-5 flex items-center gap-4">
-                <label className="w-1/3 font-bold text-base">Email:</label>
-                <span className="text-base">{post.userMail}</span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-center gap-3 mt-6">
-                <Link to={`/update-post/${post._id}`}>
-                  <button className="bg-purple-500 text-white py-2 px-5 rounded hover:bg-purple-600">
-                    Update
-                  </button>
-                </Link>
-
-                <Link to={`/post/${post._id}`}>
-                  <button className="bg-yellow-500 text-white px-4 py-2 rounded">
-                    Visit Page
-                  </button>
-                </Link>
-
-                <button
-                  type="button"
-                  className="bg-red-500 text-white py-2 px-5 rounded hover:bg-red-600"
-                  onClick={() => handlePostDelete(post._id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </form>
-          ))}
-        </>
       ) : (
-        <div className="flex items-center justify-center">
+        <div className="flex justify-center">
           <Link to="/create-post">
-            <button className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 hover:text-white">
-              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-transparent">
-                + Upload Documents
-              </span>
+            <button className="relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 shadow hover:from-purple-600 hover:to-blue-600 transition">
+              + Upload Documents
             </button>
           </Link>
         </div>

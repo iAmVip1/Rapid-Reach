@@ -266,15 +266,22 @@ export default function DashProfile() {
           <p className="mt-2 text-green-600">{updateUserSuccess}</p>
         )}
       </form>
-      <span className="cursor-pointer hover:underline" onClick={handleSignout}>
-        Sign Out
-      </span>
-      <button
-        className="w-full bg-red-500 text-white px-6 py-3 rounded-md font-semibold hover:bg-red-600 transition mt-6 cursor-pointer"
-        onClick={() => setShowModal(true)}
-      >
-        Delete Account
-      </button>
+     <div className="flex justify-between gap-4 mt-6">
+  <button
+    onClick={handleSignout}
+    className="flex-1 bg-gray-500 text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-600 transition cursor-pointer"
+  >
+    Sign Out
+  </button>
+
+  <button
+    onClick={() => setShowModal(true)}
+    className="flex-1 bg-red-500 text-white px-6 py-3 rounded-md font-semibold hover:bg-red-600 transition cursor-pointer"
+  >
+    Delete Account
+  </button>
+</div>
+
       
       {showModal && (
   <div className="fixed inset-0 backdrop-blur-md bg-black/30 flex items-center justify-center z-50">
