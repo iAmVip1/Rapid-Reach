@@ -132,7 +132,7 @@ export default function DashUsers() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
               <div className="p-3 bg-emerald-100 rounded-lg">
@@ -156,31 +156,6 @@ export default function DashUsers() {
               </div>
             </div>
           </div>
-          
-          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <FaBuilding className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Services</p>
-                <p className="text-2xl font-bold text-gray-900">{new Set(users.map(getUserService)).size}</p>
-              </div>
-            </div>
-          </div> */}
-          
-          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <FaEnvelope className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Verified Users</p>
-                <p className="text-2xl font-bold text-gray-900">{users.filter(u => u.email).length}</p>
-              </div>
-            </div>
-          </div> */}
-          
         </div>
 
         {/* Search and Filter */}
