@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-export default function PostItem({ post }) {
+export default function PostItem({ post, isOnline = false }) {
   const categoryIcons = {
     Hospital: {
       icon: <FaHospital />,
@@ -20,10 +20,14 @@ export default function PostItem({ post }) {
       label: "Blood Bank",
       color: "text-red-600",
     },
-    Police: { icon: <FaShieldAlt />, label: "Police", color: "text-blue-600" },
-    "Fire Service": {
+    "Police Department": { 
+      icon: <FaShieldAlt />, 
+      label: "Police Department", 
+      color: "text-blue-600" 
+    },
+    "Fire Department": {
       icon: <FaFire />,
-      label: "Fire Service",
+      label: "Fire Department",
       color: "text-orange-500",
     },
   };
@@ -37,14 +41,22 @@ export default function PostItem({ post }) {
           className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300"
         />
         <div className="p-3 flex flex-col gap-2 w-full">
-          <p className="text-lg font-semibold truncate">{post.departmentName}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-lg font-semibold truncate">
+              {post.departmentName}
+            </p>
+            <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} 
+                 title={isOnline ? 'Available' : 'Unavailable'}></div>
+          </div>
           <div className="flex items-center gap-1">
             <FaMapMarkerAlt className="h-4 w-4 text-green-700" />
             <p className="text-sm font-semibold truncate w-full">
               {post.address}
             </p>
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2">{post.description}</p>
+          <p className="text-sm text-gray-600 line-clamp-2">
+            {post.description}
+          </p>
           <div className="text-slate-700 flex flex-wrap gap-4">
             <div className="font-bold text-xs">
               {categoryIcons[post.category] && (
@@ -57,13 +69,13 @@ export default function PostItem({ post }) {
                   {categoryIcons[post.category].label}
                 </p>
               )}
-            {/* Display the distance if available */}
-            
-            {post.distance && (
-              <p className="text-sm text-gray-500">
-                Distance: {post.distance} km
-              </p>
-            )}
+
+              {/* Display the distance if available */}
+              {post.distance && (
+                <p className="text-sm text-gray-500">
+                  Distance: {post.distance} km
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -71,4 +83,3 @@ export default function PostItem({ post }) {
     </div>
   );
 }
-

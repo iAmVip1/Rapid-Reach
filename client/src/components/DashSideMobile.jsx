@@ -7,14 +7,14 @@ export default function DashSideMobile({ isOpen, onClose }) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-10 bg-black/30 md:hidden"
+          className="fixed inset-0 z-40 bg-black/30 md:hidden"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 w-64 h-full bg-gradient-to-br from-blue-900 to-purple-800 text-white z-20 p-4 
+        className={`fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-gradient-to-br from-blue-900 to-purple-800 text-white z-50 p-4 
         transform transition-transform duration-300 ease-in-out 
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:hidden`}
       >

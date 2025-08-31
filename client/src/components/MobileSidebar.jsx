@@ -156,10 +156,10 @@ const MobileSidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 bg-white border border-gray-200 rounded-r-xl shadow-lg p-6 w-72 sm:w-80 max-w-[85vw] lg:w-64 transform z-30
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white border border-gray-200 rounded-r-xl shadow-lg p-6 w-72 sm:w-80 max-w-[85vw] lg:w-64 transform z-50
         transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:sticky lg:top-0 lg:w-64 lg:block h-screen lg:h-screen overflow-hidden flex flex-col min-h-0 md:overflow-y-auto`}
+        lg:translate-x-0 lg:sticky lg:top-0 lg:w-64 lg:block lg:h-screen overflow-hidden flex flex-col min-h-0 md:overflow-y-auto`}
       >
         {/* Close button for mobile */}
         <button

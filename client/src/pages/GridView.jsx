@@ -2,25 +2,47 @@ import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
 import { data, Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Hospital from "../../../for uploading/hospital.jpg";
 import FireDep from "../../../for uploading/firedep.jpg";
 import PoliceDep from "../../../for uploading/policedep.jpg";
 import MapImage from "../../../for uploading/map.jpg";
 import PostItem from "../components/PostItem";
+import SocketContext from "../socket/SocketContext";
 
 export default function GridView() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser } = useSelector((state) => state.user);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const socket = SocketContext.getSocket();
 
   const [filters, setFilters] = useState({
     departmentName: "",
     address: "",
     category: "",
+    availability: "",
   });
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const [sortOption, setSortOption] = useState("");
+
+  // Track online users for availability status
+  useEffect(() => {
+    if (!socket) return;
+    if (currentUser?._id) {
+      socket.emit("join", { id: currentUser._id, name: currentUser.username });
+    }
+    const handleOnlineUsers = (users) => setOnlineUsers(users || []);
+    socket.on("online-users", handleOnlineUsers);
+    return () => {
+      socket.off("online-users", handleOnlineUsers);
+    };
+  }, [socket, currentUser]);
+
+  const isOnlineUser = (userId) => onlineUsers.some((u) => u.userId === userId);
 
   const haversineDistance = (coords1, coords2) => {
     const R = 6371; // Radius of Earth in km
@@ -44,6 +66,19 @@ export default function GridView() {
     return R * c; // distance in km
   };
 
+  // Filter posts based on availability
+  useEffect(() => {
+    let filtered = [...posts];
+
+    if (filters.availability === "available") {
+      filtered = filtered.filter(post => isOnlineUser(post.userRef));
+    } else if (filters.availability === "unavailable") {
+      filtered = filtered.filter(post => !isOnlineUser(post.userRef));
+    }
+
+    setFilteredPosts(filtered);
+  }, [posts, filters.availability, onlineUsers]);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const departmentNameFromUrl = urlParams.get("departmentName");
@@ -55,6 +90,7 @@ export default function GridView() {
         departmentName: departmentNameFromUrl || "",
         address: addressFromUrl || "",
         category: categoryFromUrl || "",
+        availability: "",
       });
     }
 
@@ -113,7 +149,7 @@ export default function GridView() {
             lng: position.coords.longitude,
           };
 
-          const sortedPosts = [...posts]
+          const sortedPosts = [...filteredPosts]
             .map((post) => {
               const distance = haversineDistance(userCoords, {
                 lat: post.latitude,
@@ -123,7 +159,7 @@ export default function GridView() {
             })
             .sort((a, b) => a.distance - b.distance); // Sort by distance
 
-          setPosts(sortedPosts); // Update state with sorted posts
+          setFilteredPosts(sortedPosts); // Update state with sorted posts
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -133,14 +169,14 @@ export default function GridView() {
     }
 
     if (value === "latest") {
-      setPosts(
-        [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      setFilteredPosts(
+        [...filteredPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       );
     }
 
     if (value === "oldest") {
-      setPosts(
-        [...posts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      setFilteredPosts(
+        [...filteredPosts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       );
     }
   };
@@ -167,10 +203,15 @@ export default function GridView() {
           onChange={handleChange}
         />
 
-        <select className="border p-2 rounded w-56">
+        <select 
+          id="availability"
+          className="border p-2 rounded w-56"
+          value={filters.availability}
+          onChange={handleChange}
+        >
           <option value="">Services Status</option>
-          <option value="">Available</option>
-          <option value="">Unavailable</option>
+          <option value="available">Available</option>
+          <option value="unavailable">Unavailable</option>
         </select>
 
         <select
@@ -192,9 +233,9 @@ export default function GridView() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto flex gap-6 mt-6">
-        {/* Left Column */}
-        <div className="w-1/4 space-y-6">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 mt-6 px-4 lg:px-0">
+        {/* Left Column - Visible on all devices */}
+        <div className="w-full lg:w-1/4 space-y-6">
           {/* Map */}
          <div className="bg-white rounded-lg shadow p-4">
   <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
@@ -247,7 +288,7 @@ export default function GridView() {
         </div>
 
         {/* Right Column */}
-        <div className="w-3/4 space-y-6">
+        <div className="w-full lg:w-3/4 space-y-6">
           {/* Popular Services */}
           <div className="bg-white rounded-lg shadow p-4">
             <h2 className="font-semibold mb-4">Best Service Provided</h2>
@@ -292,15 +333,21 @@ export default function GridView() {
 
           <div className="bg-white rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
             {/* Other posts */}
-            {!loading && posts.length === 0 && (
+            {!loading && filteredPosts.length === 0 && (
               <p className="text-xl ">No Services found !!</p>
             )}
             {loading && (
               <p className="text-xl text-center w-full">Loading...</p>
             )}
             {!loading &&
-              posts &&
-              posts.map((post) => <PostItem key={post._id} post={post} />)}
+              filteredPosts &&
+              filteredPosts.map((post) => (
+                <PostItem 
+                  key={post._id} 
+                  post={post} 
+                  isOnline={isOnlineUser(post.userRef)}
+                />
+              ))}
           </div>
         </div>
       </div>

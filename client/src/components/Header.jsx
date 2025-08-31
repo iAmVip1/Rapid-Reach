@@ -8,7 +8,6 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  // console.log(currentUser?.profilePicture);
 
   const handleSignout = async () => {
     try {
@@ -33,13 +32,13 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-lime-50 shadow-md">
+    <header className="bg-lime-50 shadow-md sticky top-0 z-50">
       <nav className="border-gray-200">
-        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
-          {/* Logo */}
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 h-16">
+          {/* Logo - Left Side */}
           <Link
             to="/"
-            className="font-bold text-sm sm:text-xl flex items-center"
+            className="font-bold text-sm sm:text-xl flex items-center flex-shrink-0"
           >
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_the_Red_Cross.svg/1200px-Flag_of_the_Red_Cross.svg.png"
@@ -55,135 +54,69 @@ export default function Navbar() {
             <span>Reach</span>
           </Link>
 
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex items-center space-x-8 cursor-pointer">
-            <li
-              className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
-            transition-colors duration-200"
-            >
+          {/* Center Navigation - Desktop */}
+          <ul className="hidden md:flex items-center justify-center space-x-8 flex-1">
+            <li>
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  isActive
-                    ? "bg-rose-700 text-white p-2 rounded-xl"
-                    : "font-medium"
+                  `px-4 py-2 rounded-xl transition-colors duration-200 font-medium ${
+                    isActive
+                      ? "bg-rose-700 text-white"
+                      : "hover:bg-rose-700 hover:text-white"
+                  }`
                 }
               >
                 Home
               </NavLink>
             </li>
-            <li
-              className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
-            transition-colors duration-200"
-            >
+            <li>
               <NavLink
                 to="/services"
                 className={({ isActive }) =>
-                  isActive
-                    ? "bg-rose-700 text-white p-2 rounded-xl"
-                    : "font-medium"
+                  `px-4 py-2 rounded-xl transition-colors duration-200 font-medium ${
+                    isActive
+                      ? "bg-rose-700 text-white"
+                      : "hover:bg-rose-700 hover:text-white"
+                  }`
                 }
               >
                 Services
               </NavLink>
             </li>
-            <li
-              className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
-            transition-colors duration-200"
-            >
+            <li>
               <NavLink
                 to="/contact"
                 className={({ isActive }) =>
-                  isActive
-                    ? "bg-rose-700 text-white p-2 rounded-xl"
-                    : "font-medium"
+                  `px-4 py-2 rounded-xl transition-colors duration-200 font-medium ${
+                    isActive
+                      ? "bg-rose-700 text-white"
+                      : "hover:bg-rose-700 hover:text-white"
+                  }`
                 }
               >
                 Contact Us
               </NavLink>
             </li>
-            {currentUser ? (
-              <>
-                <button className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded sm:hidden md:block z-50">
-                  <img
-                    src={
-                      currentUser?.profilePicture
-                        ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                            /\\/g,
-                            "/"
-                          )}`
-                        : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
-                    }
-                    alt="profile picture"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 rounded-lg p-3 mt-1 shadow-md scale-y-0 group-hover:scale-y-100 origin-top duration-200 bg-white space-y-2 w-auto">
-                    <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
-                      <div>{currentUser.username}</div>
-                      <div className="font-medium truncate">
-                        {currentUser.email}
-                      </div>
-                    </div>
-                    <a
-                      href="/dashboard?tab=profile"
-                      className="block py-2 px-4 text-sm hover:font-semibold hover:bg-gray-500 hover:text-white rounded-xl"
-                    >
-                      Profile
-                    </a>
-                   
-                    <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
-                    <div className="py-2">
-                      <div
-                        className="block px-4 py-2 text-sm hover:cursor-pointer hover:bg-red-500 hover:text-white rounded-xl"
-                        onClick={handleSignout}
-                      >
-                        Sign out
-                      </div>
-                    </div>
-                  </div>
-                </button>
-              </>
-            ) : (
-              <li
-                className="hover:bg-rose-700 hover:text-white p-2 rounded-xl
-            transition-colors duration-200"
-              >
-                <NavLink
-                  to="/sign-in"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "bg-rose-700 text-white p-2 rounded-xl"
-                      : "font-medium"
-                  }
-                >
-                  Login
-                </NavLink>
-              </li>
-            )}
           </ul>
 
-          {/* Mobile Hamburger */}
-          <div className="md:hidden flex items-center space-x-4">
-            {/* profilePicture */}
-             {currentUser ? (
-               <button
-              className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded z-50"
-              onClick={toggleDropdown} // Toggle dropdown on click
-            >
-              <img
-                src={
-                  currentUser?.profilePicture
-                    ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                        /\\/g,
-                        "/"
-                      )}`
-                    : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
-                }
-                alt="profile picture"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              {isOpen && ( // Only show the dropdown if `isOpen` is true
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 rounded-lg p-3 mt-1 shadow-md scale-y-100 origin-top duration-200 bg-white space-y-2 w-auto">
+          {/* Right Side - Login/User Profile */}
+          <div className="hidden md:flex items-center flex-shrink-0">
+            {currentUser ? (
+              <button className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded z-50">
+                <img
+                  src={
+                    currentUser?.profilePicture
+                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
+                          /\\/g,
+                          "/"
+                        )}`
+                      : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
+                  }
+                  alt="profile picture"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 rounded-lg p-3 mt-1 shadow-md scale-y-0 group-hover:scale-y-100 origin-top duration-200 bg-white space-y-2 w-auto min-w-[200px]">
                   <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
                     <div>{currentUser.username}</div>
                     <div className="font-medium truncate">
@@ -196,7 +129,7 @@ export default function Navbar() {
                   >
                     Profile
                   </a>
-                
+                 
                   <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
                   <div className="py-2">
                     <div
@@ -207,14 +140,72 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
-              )}
-            </button>
-             ):(
-              <></>
-             )}
-           
+              </button>
+            ) : (
+              <NavLink
+                to="/sign-in"
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded-xl transition-colors duration-200 font-medium ${
+                    isActive
+                      ? "bg-rose-700 text-white"
+                      : "hover:bg-rose-700 hover:text-white"
+                  }`
+                }
+              >
+                Login
+              </NavLink>
+            )}
+          </div>
 
-            {/* profilePicture */}
+          {/* Mobile Hamburger */}
+          <div className="md:hidden flex items-center space-x-4">
+            {/* Profile Picture for Mobile */}
+            {currentUser && (
+              <button
+                className="group relative border-none block text-gray-500 text-lg px-3 py-1 rounded z-50"
+                onClick={toggleDropdown}
+              >
+                <img
+                  src={
+                    currentUser?.profilePicture
+                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
+                          /\\/g,
+                          "/"
+                        )}`
+                      : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
+                  }
+                  alt="profile picture"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+               {isOpen && (
+  <div className="absolute top-full left-1/2 -translate-x-1/2 transform rounded-lg p-3 mt-1 shadow-md scale-y-100 origin-top duration-200 bg-white space-y-2 w-40">
+
+    <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
+      <div>{currentUser.username}</div>
+      <div className="font-medium truncate">{currentUser.email}</div>
+    </div>
+    <a
+      href="/dashboard?tab=profile"
+      className="block py-2 px-4 text-sm hover:font-semibold hover:bg-gray-500 hover:text-white rounded-xl"
+    >
+      Profile
+    </a>
+    <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
+    <div className="py-2">
+      <div
+        className="block px-4 py-2 text-sm hover:cursor-pointer hover:bg-red-500 hover:text-white rounded-xl"
+        onClick={handleSignout}
+      >
+        Sign out
+      </div>
+    </div>
+  </div>
+)}
+
+              </button>
+            )}
+
+            {/* Hamburger Menu Button */}
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
             </button>
@@ -223,14 +214,16 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden px-4 py-4 space-y-2 ">
+          <div className="md:hidden px-4 py-4 space-y-2 border-t border-gray-200">
             <NavLink
               to="/"
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                isActive
-                  ? "block text-black font-medium"
-                  : "block text-gray-600"
+                `block py-2 px-4 rounded-xl transition-colors duration-200 ${
+                  isActive
+                    ? "bg-rose-700 text-white font-medium"
+                    : "text-gray-600 hover:bg-rose-700 hover:text-white"
+                }`
               }
             >
               Home
@@ -239,9 +232,11 @@ export default function Navbar() {
               to="/services"
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                isActive
-                  ? "block text-black font-medium"
-                  : "block text-gray-600"
+                `block py-2 px-4 rounded-xl transition-colors duration-200 ${
+                  isActive
+                    ? "bg-rose-700 text-white font-medium"
+                    : "text-gray-600 hover:bg-rose-700 hover:text-white"
+                }`
               }
             >
               Services
@@ -250,23 +245,25 @@ export default function Navbar() {
               to="/contact"
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                isActive
-                  ? "block text-black font-medium"
-                  : "block text-gray-600"
+                `block py-2 px-4 rounded-xl transition-colors duration-200 ${
+                  isActive
+                    ? "bg-rose-700 text-white font-medium"
+                    : "text-gray-600 hover:bg-rose-700 hover:text-white"
+                }`
               }
             >
               Contact Us
             </NavLink>
-            {currentUser ? (
-              <></>
-            ) : (
+            {!currentUser && (
               <NavLink
                 to="/sign-in"
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  isActive
-                    ? "block text-black font-medium"
-                    : "block text-gray-600"
+                  `block py-2 px-4 rounded-xl transition-colors duration-200 ${
+                    isActive
+                      ? "bg-rose-700 text-white font-medium"
+                      : "text-gray-600 hover:bg-rose-700 hover:text-white"
+                  }`
                 }
               >
                 Login
