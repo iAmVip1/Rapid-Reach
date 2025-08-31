@@ -6,6 +6,12 @@ import DashProfile from "../components/DashProfile";
 import DashSideMobile from "../components/DashSideMobile";
 import { FaBars } from "react-icons/fa";
 import DashDocuments from "../components/DashDocuments";
+import DashHome from "../components/DashHome";
+import DashBlood from "../components/DashBlood";
+import DashFire from "../components/DashFire";
+import DashPoliceDep from "../components/DashPoliceDep";
+import DashHospital from "../components/DashHospital";
+import DashUsers from "../components/DashUsers";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -61,8 +67,13 @@ export default function Dashboard() {
         )}
 
         {/* Render Tab Content */}
+        {tab === "home" && <DashHome />}
         {tab === "profile" && <DashProfile />}
-        {tab === "documents" && <DashDocuments />}
+        {tab === "users" && <DashUsers />}
+        {tab === "blood" && <DashBlood />}
+        {tab === "fire" && <DashFire />}
+        {tab === "policeDep" && <DashPoliceDep />}
+        {tab === "hospital" && <DashHospital />}
         {/* Add other tab checks here */}
       </div>
     </div>
