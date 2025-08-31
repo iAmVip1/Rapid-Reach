@@ -207,7 +207,7 @@ export default function DashDocuments() {
               {/* Action Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link to={`/update-post/${userPost._id}`} className="flex-1">
-                  <button className="w-full bg-cyan-400 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2">
+                  <button className="w-full bg-cyan-400 hover:bg-cyan-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2">
                     <FaEdit />
                     Edit Details
                   </button>

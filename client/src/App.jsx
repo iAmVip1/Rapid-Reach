@@ -19,6 +19,7 @@ import Sample from "./pages/Sample";
 import ScrollToTop from "./components/ScrollToTop";
 import { CallProvider } from "./socket/CallContext";
 import CallOverlay from "./components/CallOverlay";
+import UpdatePost from "./pages/UpdatePost";
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
 
         <Route element={<DepartmentRoute />} >
         <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/update-post/:postId" element={<UpdatePost />} />
         </Route>
         
         <Route path="/post/:postId" element={<Post />} />
