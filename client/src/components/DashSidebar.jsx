@@ -31,10 +31,10 @@ if (currentUser?.isAdmin) {
 }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* DashSideBar (desktop only) */}
       <div
-        className={`hidden md:flex flex-col bg-white shadow-md transition-all duration-300 ease-in-out ${DashSideBarWidth}`}
+        className={`hidden md:flex flex-col bg-white shadow-md transition-all duration-300 ease-in-out ${DashSideBarWidth} min-h-screen`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
