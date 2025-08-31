@@ -32,7 +32,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-lime-50 shadow-md sticky top-0 z-50">
+    <header className="bg-gray-50 shadow-md sticky top-0 z-50">
       <nav className="border-gray-200">
         <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 h-16">
           {/* Logo - Left Side */}
