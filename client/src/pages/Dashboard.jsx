@@ -69,6 +69,7 @@ export default function Dashboard() {
         {/* Render Tab Content */}
         {tab === "home" && <DashHome />}
         {tab === "profile" && <DashProfile />}
+        {tab === "documents" && <DashDocuments />}
         {tab === "users" && <DashUsers />}
         {tab === "blood" && <DashBlood />}
         {tab === "fire" && <DashFire />}

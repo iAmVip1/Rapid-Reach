@@ -11,12 +11,14 @@ export default function DashHospital() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [onlineUsers, setOnlineUsers] = useState([]);
 
-  // Fetch hospital posts
+  // Fetch hospital posts (include unapproved for admin review)
   useEffect(() => {
     const fetchHospitalPosts = async () => {
       try {
         setLoading(true);
-        const res = await fetch('/api/post/get?category=Hospital');
+        const res = await fetch('/api/post/admin/get?category=Hospital&includeUnapproved=true', {
+          credentials: 'include',
+        });
         const data = await res.json();
         console.log('Hospital API Response:', data); // Debug log
         
@@ -67,30 +69,24 @@ export default function DashHospital() {
     }
   };
 
-  const handleUpdateStatus = async (postId, newStatus) => {
-    const statusText = newStatus === 'approved' ? 'approve' : 'reject';
-    if (window.confirm(`Are you sure you want to ${statusText} this hospital post?`)) {
+  const handleApprove = async (postId) => {
+    if (window.confirm('Approve this hospital post?')) {
       try {
-        const res = await fetch(`/api/post/update/${postId}`, {
+        const res = await fetch(`/api/post/approve/${postId}`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: newStatus }),
+          credentials: 'include',
         });
         const data = await res.json();
         if (res.ok) {
-          // Update the post in the local state
           setHospitalPosts(hospitalPosts.map(post => 
-            post._id === postId ? { ...post, status: newStatus } : post
+            post._id === postId ? { ...post, approved: true } : post
           ));
-          alert(`Post ${statusText}d successfully!`);
         } else {
-          alert(data.message || 'Failed to update status');
+          alert(data.message || 'Failed to approve post');
         }
       } catch (error) {
-        console.log('Error updating status:', error.message);
-        alert('Failed to update status');
+        console.log('Error approving post:', error.message);
+        alert('Failed to approve post');
       }
     }
   };
@@ -100,13 +96,8 @@ export default function DashHospital() {
     alert(`Calling ${post.departmentName}...`);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  const getStatusColor = (approved) => {
+    return approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
   };
 
   const formatDate = (dateString) => {
@@ -121,7 +112,8 @@ export default function DashHospital() {
   const filteredPosts = hospitalPosts.filter(post => {
     const matchesSearch = post.departmentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.address?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || post.status === filterStatus;
+    const status = post.approved ? 'approved' : 'pending';
+    const matchesStatus = filterStatus === 'all' || status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -285,19 +277,21 @@ export default function DashHospital() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <FaCircle className={`w-3 h-3 mr-2 ${isOnlineUser(post.userRef) ? 'text-green-500' : 'text-gray-400'}`} />
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(post.status || 'pending')}`}>
-                          {post.status || 'Pending'}
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(!!post.approved)}`}>
+                          {post.approved ? 'Approved' : 'Pending'}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
-                        <Link to={`/post/${post._id}`}>
-                          <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                            <FaEye className="w-3 h-3 mr-1" />
-                            View
-                          </button>
-                        </Link>
+                        {post.approved && (
+                          <Link to={`/post/${post._id}`}>
+                            <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                              <FaEye className="w-3 h-3 mr-1" />
+                              View
+                            </button>
+                          </Link>
+                        )}
                         <button
                           onClick={() => handleCallHospital(post)}
                           className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
@@ -305,24 +299,16 @@ export default function DashHospital() {
                           <FaPhone className="w-3 h-3 mr-1" />
                           Call
                         </button>
-                        {/* Status Update Buttons - Only show for pending posts */}
-                        {(post.status === 'pending' || !post.status) && (
+                        {/* Approve button - Only show for pending posts */}
+                        {!post.approved && (
                           <>
                             <button
-                              onClick={() => handleUpdateStatus(post._id, 'approved')}
+                              onClick={() => handleApprove(post._id)}
                               className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200"
                               title="Approve Post"
                             >
                               <FaCheck className="w-3 h-3 mr-1" />
                               Approve
-                            </button>
-                            <button
-                              onClick={() => handleUpdateStatus(post._id, 'rejected')}
-                              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200"
-                              title="Reject Post"
-                            >
-                              <FaTimes className="w-3 h-3 mr-1" />
-                              Reject
                             </button>
                           </>
                         )}
@@ -363,8 +349,8 @@ export default function DashHospital() {
                 </div>
                 <div className="flex items-center">
                   <FaCircle className={`w-3 h-3 mr-1 ${isOnlineUser(post.userRef) ? 'text-green-500' : 'text-gray-400'}`} />
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(post.status || 'pending')}`}>
-                    {post.status || 'Pending'}
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(!!post.approved)}`}>
+                    {post.approved ? 'Approved' : 'Pending'}
                   </span>
                 </div>
               </div>
@@ -385,12 +371,14 @@ export default function DashHospital() {
               </div>
               
               <div className="flex flex-wrap gap-2">
-                <Link to={`/post/${post._id}`} className="flex-1 min-w-0">
-                  <button className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                    <FaEye className="w-3 h-3 mr-2" />
-                    View
-                  </button>
-                </Link>
+                {post.approved && (
+                  <Link to={`/post/${post._id}`} className="flex-1 min-w-0">
+                    <button className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                      <FaEye className="w-3 h-3 mr-2" />
+                      View
+                    </button>
+                  </Link>
+                )}
                 <button
                   onClick={() => handleCallHospital(post)}
                   className="flex-1 min-w-0 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
@@ -398,22 +386,15 @@ export default function DashHospital() {
                   <FaPhone className="w-3 h-3 mr-2" />
                   Call
                 </button>
-                {/* Status Update Buttons - Only show for pending posts */}
-                {(post.status === 'pending' || !post.status) && (
+                {/* Approve button - Only show for pending posts */}
+                {!post.approved && (
                   <>
                     <button
-                      onClick={() => handleUpdateStatus(post._id, 'approved')}
+                      onClick={() => handleApprove(post._id)}
                       className="flex-1 min-w-0 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200"
                     >
                       <FaCheck className="w-3 h-3 mr-2" />
                       Approve
-                    </button>
-                    <button
-                      onClick={() => handleUpdateStatus(post._id, 'rejected')}
-                      className="flex-1 min-w-0 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200"
-                    >
-                      <FaTimes className="w-3 h-3 mr-2" />
-                      Reject
                     </button>
                   </>
                 )}

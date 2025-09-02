@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { FaPhone, FaTrash, FaEye, FaEdit, FaUser, FaEnvelope, FaBuilding, FaCircle, FaSearch, FaFilter } from 'react-icons/fa';
+import Socket from '../socket/SocketContext';
 
 export default function DashUsers() {
   const { currentUser } = useSelector((state) => state.user);
@@ -34,15 +35,30 @@ export default function DashUsers() {
     }
   }, [currentUser]);
 
-  // Mock online users for demo (replace with real socket implementation)
+  // Subscribe to socket events like Home.jsx (join + online-users)
+  const hasJoined = useRef(false);
   useEffect(() => {
-    // Simulate online users - replace with actual socket implementation
-    const mockOnlineUsers = users.slice(0, 3).map(user => user._id);
-    setOnlineUsers(mockOnlineUsers);
-  }, [users]);
+    const socket = Socket.getSocket();
+
+    if (currentUser && socket && !hasJoined.current) {
+      socket.emit('join', { id: currentUser._id, name: currentUser.username });
+      hasJoined.current = true;
+    }
+
+    const handleOnlineUsers = (list) => {
+      // Expecting array of { userId, ... } or ids; normalize
+      setOnlineUsers(Array.isArray(list) ? list : []);
+    };
+
+    socket.on('online-users', handleOnlineUsers);
+    return () => {
+      socket.off('online-users', handleOnlineUsers);
+    };
+  }, [currentUser]);
 
   const isOnlineUser = (userId) => {
-    return onlineUsers.includes(userId);
+    const id = String(userId);
+    return onlineUsers.some((u) => (u && typeof u === 'object' ? String(u.userId) === id : String(u) === id));
   };
 
   const handleDeleteUser = async (userId) => {

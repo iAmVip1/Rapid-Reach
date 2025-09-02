@@ -7,6 +7,18 @@ export default function DashDocuments() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPost, setUserPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  const getStatusDisplay = (post) => {
+    const raw = post?.status ? String(post.status).toLowerCase() : (post?.approved ? 'approved' : 'pending');
+    switch (raw) {
+      case 'approved':
+        return { label: 'Approved', cls: 'bg-cyan-400 text-white' };
+      case 'rejected':
+        return { label: 'Rejected', cls: 'bg-red-500 text-white' };
+      default:
+        return { label: 'Pending', cls: 'bg-green-500 text-white' };
+    }
+  };
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -86,8 +98,8 @@ export default function DashDocuments() {
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 drop-shadow-lg">
                       {userPost.departmentName}
                     </h2>
-                    <span className="bg-cyan-400 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {userPost.category}
+                    <span className={`${getStatusDisplay(userPost).cls} px-3 py-1 rounded-full text-sm font-semibold`}>
+                      {getStatusDisplay(userPost).label}
                     </span>
                   </div>
                  

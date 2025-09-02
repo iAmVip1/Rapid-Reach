@@ -33,12 +33,13 @@ export default function App() {
         <Route element={<PrivateRoute />} >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/not-allowed" element={<Failed />} />
+        
         </Route>
 
         <Route element={<DepartmentRoute />} >
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/update-post/:postId" element={<UpdatePost />} />
-        <Route path="/mapview" element={<MapView />} />
+        
         </Route>
         
         <Route path="/post/:postId" element={<Post />} />
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/test/:postId" element={<Testing />} />
         <Route path="/sample" element={<Sample />} />
+        <Route path="/mapview" element={<MapView />} />
       </Routes>
       <CallOverlay />
       <Footer />
