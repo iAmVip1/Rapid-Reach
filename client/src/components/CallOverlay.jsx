@@ -18,12 +18,14 @@ export default function CallOverlay() {
     rejectCall,
     endCall,
     startCall,
+    isMicOn,
+    isCamOn,
+    toggleMic,
+    toggleCam,
     isAudioUnlocked,
     unlockAudio,
   } = useCall() || {};
 
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCamOn, setIsCamOn] = useState(true);
   const ringtoneRef = useRef(null);
   const location = useLocation();
 
@@ -74,27 +76,7 @@ export default function CallOverlay() {
     };
   }, []);
 
-  // Toggle Microphone
-  const toggleMic = () => {
-    if (myVideoRef?.current && myVideoRef.current.srcObject) {
-      const audioTrack = myVideoRef.current.srcObject.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !isMicOn;
-        setIsMicOn(audioTrack.enabled);
-      }
-    }
-  };
-
-  // Toggle Camera
-  const toggleCam = () => {
-    if (myVideoRef?.current && myVideoRef.current.srcObject) {
-      const videoTrack = myVideoRef.current.srcObject.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.enabled = !isCamOn;
-        setIsCamOn(videoTrack.enabled);
-      }
-    }
-  };
+  // Toggles now come from context to control real tracks
 
   // Show overlay when receiving call, call is accepted, or user is calling
   if (!receivingCall && !callAccepted && !isCalling && !callRejectedPopUp) return null;

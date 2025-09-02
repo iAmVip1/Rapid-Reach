@@ -29,9 +29,27 @@ const currentUser = useSelector((state) => state.user.currentUser);
   const [isAudioUnlocked, setIsAudioUnlocked] = useState(false);
   const [callRejectedPopUp, setCallRejectedPopUp] = useState(false);
   const [callRejectedUser, setCallRejectedUser] = useState(null);
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(true);
 
   // ---- ringtone setup ----
   const ringtone = useRef(null);
+  const attemptPlay = (videoEl) => {
+    if (!videoEl) return;
+    let tries = 0;
+    const maxTries = 5;
+    const tryPlay = () => {
+      Promise.resolve(videoEl.play?.())
+        .then(() => {})
+        .catch(() => {
+          if (tries < maxTries) {
+            tries += 1;
+            setTimeout(tryPlay, 250);
+          }
+        });
+    };
+    tryPlay();
+  };
 
   const createRingtone = () => {
     if (ringtone.current) return ringtone.current; // ✅ already created
@@ -154,6 +172,10 @@ const currentUser = useSelector((state) => state.user.currentUser);
         myVideoRef.current.muted = true;
         myVideoRef.current.volume = 0;
       }
+      const initAudioTrack = currentStream.getAudioTracks?.()[0];
+      const initVideoTrack = currentStream.getVideoTracks?.()[0];
+      if (initAudioTrack) setIsMicOn(!!initAudioTrack.enabled);
+      if (initVideoTrack) setIsCamOn(!!initVideoTrack.enabled);
 
       const peer = new Peer({ initiator: true, trickle: false, stream: currentStream });
 
@@ -174,6 +196,7 @@ const currentUser = useSelector((state) => state.user.currentUser);
           receiverVideoRef.current.srcObject = remoteStream;
           receiverVideoRef.current.muted = false;
           receiverVideoRef.current.volume = 1.0;
+          attemptPlay(receiverVideoRef.current);
         }
       });
 
@@ -199,8 +222,16 @@ const currentUser = useSelector((state) => state.user.currentUser);
         audio: { echoCancellation: true, noiseSuppression: true },
       });
       streamRef.current = currentStream;
-      if (myVideoRef.current) myVideoRef.current.srcObject = currentStream;
+      if (myVideoRef.current) {
+        myVideoRef.current.srcObject = currentStream;
+        myVideoRef.current.muted = true;
+        myVideoRef.current.volume = 0;
+      }
       currentStream.getAudioTracks().forEach((t) => (t.enabled = true));
+      const initAudioTrackR = currentStream.getAudioTracks?.()[0];
+      const initVideoTrackR = currentStream.getVideoTracks?.()[0];
+      if (initAudioTrackR) setIsMicOn(!!initAudioTrackR.enabled);
+      if (initVideoTrackR) setIsCamOn(!!initVideoTrackR.enabled);
 
       setCallAccepted(true);
       setReceivingCall(true);
@@ -215,6 +246,7 @@ const currentUser = useSelector((state) => state.user.currentUser);
           receiverVideoRef.current.srcObject = remoteStream;
           receiverVideoRef.current.muted = false;
           receiverVideoRef.current.volume = 1.0;
+          attemptPlay(receiverVideoRef.current);
         }
       });
 
@@ -263,7 +295,27 @@ const currentUser = useSelector((state) => state.user.currentUser);
       setSelectedUserId(null);
       setCallRejectedPopUp(false);
       setCallRejectedUser(null);
+      setIsMicOn(true);
+      setIsCamOn(true);
     }
+  };
+
+  const toggleMic = () => {
+    const currentStream = streamRef.current;
+    if (!currentStream) return;
+    const track = currentStream.getAudioTracks?.()[0];
+    if (!track) return;
+    track.enabled = !track.enabled;
+    setIsMicOn(track.enabled);
+  };
+
+  const toggleCam = () => {
+    const currentStream = streamRef.current;
+    if (!currentStream) return;
+    const track = currentStream.getVideoTracks?.()[0];
+    if (!track) return;
+    track.enabled = !track.enabled;
+    setIsCamOn(track.enabled);
   };
 
   const unlockAudio = async () => {
@@ -302,6 +354,10 @@ const currentUser = useSelector((state) => state.user.currentUser);
       acceptCall,
       rejectCall,
       endCall,
+      isMicOn,
+      isCamOn,
+      toggleMic,
+      toggleCam,
       isAudioUnlocked,
       unlockAudio,
     }),
@@ -315,6 +371,8 @@ const currentUser = useSelector((state) => state.user.currentUser);
       isCalling,
       callRejectedPopUp,
       callRejectedUser,
+      isMicOn,
+      isCamOn,
       isAudioUnlocked,
     ]
   );
