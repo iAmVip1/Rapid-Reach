@@ -20,11 +20,14 @@ import ScrollToTop from "./components/ScrollToTop";
 import { CallProvider } from "./socket/CallContext";
 import CallOverlay from "./components/CallOverlay";
 import UpdatePost from "./pages/UpdatePost";
+import { useTheme } from "./components/ThemeContext";
 
 export default function App() {
+  const { theme, toggleTheme } = useTheme();
   return (
     <BrowserRouter>
     <CallProvider>
+    <div className="bg-white dark:bg-zinc-800 dark:text-gray-200">
     <Header />
     <ScrollToTop />
       <Routes>
@@ -53,6 +56,7 @@ export default function App() {
       </Routes>
       <CallOverlay />
       <Footer />
+      </div>
     </CallProvider>
     </BrowserRouter>
   )

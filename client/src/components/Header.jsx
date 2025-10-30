@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
+import { FaChevronDown, FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
+import { useTheme } from "./ThemeContext";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const { theme, toggleTheme } = useTheme();
 
   const handleSignout = async () => {
     try {
@@ -30,9 +32,10 @@ export default function Navbar() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+  console.log("Theme:", theme)
 
   return (
-    <header className="bg-gray-50 shadow-md sticky top-0 z-50">
+    <header className=" bg-gray-50 dark:bg-zinc-800 shadow-md sticky top-0 z-50">
       <nav className="border-gray-200">
         <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 h-16">
           {/* Logo - Left Side */}
@@ -100,6 +103,14 @@ export default function Navbar() {
             </li>
           </ul>
 
+          <button
+            className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-2xl hover:bg-gray-200 transition-all duration-200"
+            color="gray"
+            onClick={toggleTheme}
+          >
+            {theme === 'light' ? <FaMoon /> : <FaSun />}
+          </button>
+
           {/* Right Side - Login/User Profile */}
           <div className="hidden md:flex items-center flex-shrink-0">
             {currentUser ? (
@@ -129,7 +140,7 @@ export default function Navbar() {
                   >
                     Profile
                   </a>
-                 
+
                   <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
                   <div className="py-2">
                     <div
@@ -177,31 +188,31 @@ export default function Navbar() {
                   alt="profile picture"
                   className="w-8 h-8 rounded-full object-cover"
                 />
-               {isOpen && (
-  <div className="absolute top-full left-1/2 -translate-x-1/2 transform rounded-lg p-3 mt-1 shadow-md scale-y-100 origin-top duration-200 bg-white space-y-2 w-40">
-
-    <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
-      <div>{currentUser.username}</div>
-      <div className="font-medium truncate">{currentUser.email}</div>
-    </div>
-    <a
-      href="/dashboard?tab=profile"
-      className="block py-2 px-4 text-sm hover:font-semibold hover:bg-gray-500 hover:text-white rounded-xl"
-    >
-      Profile
-    </a>
-    <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
-    <div className="py-2">
-      <div
-        className="block px-4 py-2 text-sm hover:cursor-pointer hover:bg-red-500 hover:text-white rounded-xl"
-        onClick={handleSignout}
-      >
-        Sign out
-      </div>
-    </div>
-  </div>
-)}
-
+                {isOpen && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 transform rounded-lg p-3 mt-1 shadow-md scale-y-100 origin-top duration-200 bg-white space-y-2 w-40">
+                    <div className="text-sm block py-2 px-4 hover:font-semibold border-b-2 border-dashed border-gray-400 last:border-0">
+                      <div>{currentUser.username}</div>
+                      <div className="font-medium truncate">
+                        {currentUser.email}
+                      </div>
+                    </div>
+                    <a
+                      href="/dashboard?tab=profile"
+                      className="block py-2 px-4 text-sm hover:font-semibold hover:bg-gray-500 hover:text-white rounded-xl"
+                    >
+                      Profile
+                    </a>
+                    <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
+                    <div className="py-2">
+                      <div
+                        className="block px-4 py-2 text-sm hover:cursor-pointer hover:bg-red-500 hover:text-white rounded-xl"
+                        onClick={handleSignout}
+                      >
+                        Sign out
+                      </div>
+                    </div>
+                  </div>
+                )}
               </button>
             )}
 
