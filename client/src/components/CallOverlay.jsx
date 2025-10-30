@@ -211,7 +211,7 @@ export default function CallOverlay() {
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
       <video ref={receiverVideoRef} autoPlay className="absolute top-0 left-0 w-full h-full object-contain" />
       <div className="absolute bottom-[75px] right-1 bg-gray-900 rounded-lg overflow-hidden shadow-lg">
-        <video ref={myVideoRef} autoPlay playsInline className="w-32 h-40 md:w-56 md:h-52 object-cover" />
+        <video ref={myVideoRef} autoPlay muted playsInline className="w-32 h-40 md:w-56 md:h-52 object-cover" />
       </div>
 
       {/* Call controls */}

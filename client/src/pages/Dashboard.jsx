@@ -39,7 +39,7 @@ export default function Dashboard() {
     <div className="min-h-screen flex">
       {/* Desktop Sidebar (only for roles) */}
       {hasSidebarAccess && (
-        <div className="hidden md:block">
+        <div className="hidden md:block h-screen">
           <DashSidebar />
         </div>
       )}

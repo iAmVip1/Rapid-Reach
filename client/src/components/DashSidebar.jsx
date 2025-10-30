@@ -42,13 +42,12 @@ export default function DashSideBar() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* DashSideBar (desktop only) */}
-      <div
-        className={`hidden md:flex flex-col bg-white shadow-md transition-all duration-300 ease-in-out ${DashSideBarWidth} min-h-screen`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+    <div
+      className={`hidden md:flex flex-col bg-white shadow-md transition-all duration-300 ease-in-out ${DashSideBarWidth}`}
+      style={{ height: '100vh' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
         {/* Logo */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
@@ -177,7 +176,6 @@ export default function DashSideBar() {
           
           </ul>
         </div>
-      </div>
     </div>
   );
 }
