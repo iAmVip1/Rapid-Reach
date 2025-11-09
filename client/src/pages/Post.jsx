@@ -330,14 +330,6 @@ export default function Post() {
                   </div>
                 </div>
 
-                {/* Rating Section */}
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Rate Us</h3>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <StarRating totalStars={5} />
-                  </div>
-                </div>
-
                 {/* Call Button */}
                 {currentUser && post.userRef !== currentUser._id && (
                   <div className="mb-6">

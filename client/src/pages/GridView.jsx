@@ -9,6 +9,7 @@ import PoliceDep from "../../../for uploading/policedep.jpg";
 import MapImage from "../../../for uploading/map.jpg";
 import PostItem from "../components/PostItem";
 import SocketContext from "../socket/SocketContext";
+import StarRating from "../components/StarRating";
 
 export default function GridView() {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ export default function GridView() {
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const [sortOption, setSortOption] = useState("");
+  const [bestServices, setBestServices] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
 
   // Track online users for availability status
   useEffect(() => {
@@ -65,6 +68,111 @@ export default function GridView() {
 
     return R * c; // distance in km
   };
+
+  // Priority Scoring Algorithm
+  const calculatePriorityScore = (post, isOnline, userCoords = null) => {
+    let score = 0;
+    const maxScore = 5.0;
+
+    // 1. Online Status (30% weight) - 1.5 points max
+    if (isOnline) {
+      score += 1.5;
+    }
+
+    // 2. Approval Status (25% weight) - 1.25 points max
+    if (post.approved) {
+      score += 1.25;
+    }
+
+    // 3. Recency Score (20% weight) - 1.0 point max
+    // Newer posts get higher score (within last 30 days = full points)
+    const daysSinceCreation = (Date.now() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSinceCreation <= 30) {
+      score += 1.0 * (1 - daysSinceCreation / 30);
+    } else if (daysSinceCreation <= 90) {
+      score += 0.5 * (1 - (daysSinceCreation - 30) / 60);
+    }
+
+    // 4. Distance Score (15% weight) - 0.75 points max
+    if (userCoords && post.latitude && post.longitude) {
+      const distance = haversineDistance(userCoords, {
+        lat: post.latitude,
+        lng: post.longitude,
+      });
+      // Closer = higher score (within 10km = full points)
+      if (distance <= 10) {
+        score += 0.75;
+      } else if (distance <= 50) {
+        score += 0.75 * (1 - (distance - 10) / 40);
+      }
+    }
+
+    // 5. Category Priority (10% weight) - 0.5 points max
+    const categoryPriority = {
+      "Hospital": 0.5,
+      "Fire Department": 0.5,
+      "Police Department": 0.5,
+      "Blood Bank": 0.4,
+      "Ambulance": 0.4,
+      "Fire Truck": 0.3,
+      "Police Vehicle": 0.3,
+    };
+    score += categoryPriority[post.category] || 0.2;
+
+    // Normalize to 0-5 scale
+    return Math.min(score, maxScore);
+  };
+
+  // Get user location on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.log("Location access denied or unavailable");
+        }
+      );
+    }
+  }, []);
+
+  // Calculate best services when posts or online users change
+  useEffect(() => {
+    if (posts.length === 0) {
+      setBestServices([]);
+      return;
+    }
+
+    // Calculate scores for all approved posts
+    const postsWithScores = posts
+      .filter(post => post.approved) // Only show approved posts
+      .map(post => {
+        let distance = null;
+        if (userLocation && post.latitude && post.longitude) {
+          distance = haversineDistance(userLocation, {
+            lat: post.latitude,
+            lng: post.longitude,
+          }).toFixed(2);
+        }
+        return {
+          ...post,
+          priorityScore: calculatePriorityScore(
+            post,
+            isOnlineUser(post.userRef),
+            userLocation
+          ),
+          distance,
+        };
+      })
+      .sort((a, b) => b.priorityScore - a.priorityScore)
+      .slice(0, 3); // Get top 3
+
+    setBestServices(postsWithScores);
+  }, [posts, onlineUsers, userLocation]);
 
   // Filter posts based on availability
   useEffect(() => {
@@ -289,46 +397,71 @@ export default function GridView() {
 
         {/* Right Column */}
         <div className="w-full lg:w-3/4 space-y-6">
-          {/* Popular Services */}
+          {/* Best Services - Priority Scoring */}
           <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="font-semibold mb-4">Best Service Provided</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {/* FireDep Card */}
-              <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
-                <img
-                  src={FireDep}
-                  alt="FireDep"
-                  className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
-                />
-                <div className="p-3 flex flex-col gap-2 w-full text-center">
-                  <p className="text-sm font-semibold w-full">Fire Department</p>
-                </div>
+            <h2 className="font-semibold mb-4">Best Service For You</h2>
+            {bestServices.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">
+                No services available yet. Check back soon!
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {bestServices.map((service, index) => (
+                  <Link
+                    key={service._id}
+                    to={`/post/${service._id}`}
+                    className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto"
+                  >
+                    <img
+                      src={service.imageUrls?.[0] || Hospital}
+                      alt={service.departmentName}
+                      className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300"
+                    />
+                    <div className="p-3 flex flex-col gap-2 w-full">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold truncate flex-1">
+                          {service.departmentName}
+                        </p>
+                        <div
+                          className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                            isOnlineUser(service.userRef)
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                          title={
+                            isOnlineUser(service.userRef)
+                              ? "Available"
+                              : "Unavailable"
+                          }
+                        ></div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <FaMapMarkerAlt className="h-3 w-3 text-green-700 flex-shrink-0" />
+                        <p className="text-xs text-gray-600 truncate">
+                          {service.address}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <StarRating
+                          rating={service.priorityScore}
+                          displayOnly={true}
+                          size="w-5 h-5"
+                          totalStars={5}
+                        />
+                        {service.distance && (
+                          <span className="text-xs text-gray-500">
+                            {service.distance} km
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {service.category}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-
-              {/* Hospital Card */}
-              <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
-                <img
-                  src={Hospital}
-                  alt="Hospital"
-                  className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
-                />
-                <div className="p-3 flex flex-col gap-2 w-full text-center">
-                  <p className="text-sm font-semibold w-full">Hospital</p>
-                </div>
-              </div>
-
-              {/* PoliceDep Card */}
-              <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
-                <img
-                  src={PoliceDep}
-                  alt="PoliceDep"
-                  className="h-[320px] sm:h-[220px] w-full object-contain hover:scale-105 transition-scale duration-300"
-                />
-                <div className="p-3 flex flex-col gap-2 w-full text-center">
-                  <p className="text-sm font-semibold w-full">Police Department</p>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
 
           <div className="bg-white rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
