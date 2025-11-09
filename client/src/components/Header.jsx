@@ -32,7 +32,6 @@ export default function Navbar() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  console.log("Theme:", theme)
 
   return (
     <header className=" bg-gray-50 dark:bg-zinc-800 shadow-md sticky top-0 z-50">

@@ -4,6 +4,11 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RxCrossCircled } from "react-icons/rx";
 
+// Cloudinary env variables
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
+
 export default function CreatePost() {
   //image
   const [image, setImage] = useState(null);
@@ -68,11 +73,11 @@ export default function CreatePost() {
 
       const imageData = new FormData();
       imageData.append("file", image);
-      imageData.append("upload_preset", "test-image");
-      imageData.append("cloud_name", "dyy6csn97");
+      imageData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      imageData.append("cloud_name", CLOUDINARY_CLOUD_NAME);
 
       const { data } = await axios.post(
-        "https://api.cloudinary.com/v1_1/dyy6csn97/image/upload",
+        CLOUDINARY_UPLOAD_URL,
         imageData
       );
 
