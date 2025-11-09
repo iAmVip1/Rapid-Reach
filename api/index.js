@@ -5,6 +5,7 @@ import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
+import driveRoutes from "./routes/drive.route.js";
 import path from "path";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -37,6 +38,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
+app.use("/api/drive", driveRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

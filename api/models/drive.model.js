@@ -1,24 +1,12 @@
 import mongoose from "mongoose";
 
-const postSchema = new mongoose.Schema(
+const driveSchema = new mongoose.Schema(
   {
-    departmentName: {
+    vechicleNumber: {
       type: String,
       required: true,
     },
-    address: {
-      type: String,
-      required: true,
-    },
-    longitude: {
-      type: Number,
-      required: true,
-    },
-    latitude: {
-      type: Number,
-      required: true,
-    },
-    website: {
+    departmentAddress: {
       type: String,
       required: true,
     },
@@ -30,7 +18,7 @@ const postSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    registrationNo: {
+    licenseNo: {
       type: String,
       required: true,
     },
@@ -38,15 +26,11 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    description: {
-      type: String,
-      required: true,
-    },
-    coverUrls: {
+    licenseUrls: {
       type: Array,
       required: true,
     },
-    imageUrls: {
+    documentUrls: {
       type: Array,
       required: true,
     },
@@ -69,7 +53,7 @@ const postSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const Post = mongoose.model("Post", postSchema);
+const Drive = mongoose.model("Drive", driveSchema);
 
-export default Post;
+export default Drive;
  

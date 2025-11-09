@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 border-t-4 border-teal-500 p-6">
+    <footer className=" border-t-4 border-teal-500 p-6">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center">
         {/* Logo and Title */}
         <Link
@@ -36,7 +36,7 @@ export default function Footer() {
           {/* About Section */}
           <div>
             <h4 className="font-semibold mb-2">ABOUT</h4>
-            <ul className="space-y-1 text-sm text-gray-700">
+            <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
               <li><a href="#">About Us</a></li>
               <li><a href="#">Help and Support</a></li>
             </ul>
@@ -45,7 +45,7 @@ export default function Footer() {
           {/* Follow Us Section */}
           <div>
             <h4 className="font-semibold mb-2">FOLLOW US</h4>
-            <ul className="space-y-1 text-sm text-gray-700">
+            <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
               <li><a href="#">Github</a></li>
               <li><a href="#">Discord</a></li>
             </ul>
@@ -55,8 +55,8 @@ export default function Footer() {
 
       {/* Bottom Row */}
       <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row justify-between items-center">
-        <span className="text-sm text-gray-600">© 2025 Rapid Reach</span>
-        <div className="flex gap-4 mt-4 md:mt-0 text-gray-600">
+        <span className="text-sm text-gray-600 dark:text-gray-300">© 2025 Rapid Reach</span>
+        <div className="flex gap-4 mt-4 md:mt-0 text-gray-600 dark:text-gray-300">
           <a href="#"><FaFacebook size={24} /></a>
           <a href="#"><FaInstagram size={24} /></a>
           <a href="#"><FaGithub size={24} /></a>

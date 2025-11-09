@@ -106,7 +106,7 @@ export default function Navbar() {
           </ul>
 
           <button
-            className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-2xl hover:bg-gray-200 transition-all duration-200"
+            className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
             color="gray"
             onClick={toggleTheme}
           >
