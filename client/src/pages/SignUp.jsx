@@ -4,6 +4,12 @@ import { FiUpload } from "react-icons/fi";
 import ProfilePhotoSelector from "../components/ProfilePhotoSelector";
 import { useState } from "react";
 import { FaRegUser } from "react-icons/fa6";
+import axios from "axios";
+
+// Cloudinary env variables
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -43,26 +49,46 @@ export default function SignUp() {
       setLoading(true);
       setErrorMessage(null);
 
-      const submissionData = new FormData();
-      submissionData.append("username", formData.username);
-      submissionData.append("email", formData.email);
-      submissionData.append("password", formData.password);
+      let profilePictureUrl = null;
+
+      // Upload image to Cloudinary if provided
       if (image) {
-        submissionData.append("profilePicture", image);
+        try {
+          const imageData = new FormData();
+          imageData.append("file", image);
+          imageData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+          imageData.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+
+          const { data: cloudinaryData } = await axios.post(
+            CLOUDINARY_UPLOAD_URL,
+            imageData
+          );
+          profilePictureUrl = cloudinaryData.secure_url;
+        } catch (uploadError) {
+          setLoading(false);
+          return setErrorMessage("Failed to upload profile picture. Please try again.");
+        }
       }
 
-      // Add the boolean fields
-      submissionData.append("isHospital", formData.isHospital || false);
-      submissionData.append("isFireDep", formData.isFireDep || false);
-      submissionData.append("isPoliceDep", formData.isPoliceDep || false);
-      submissionData.append("isPoliceVAn", formData.isPoliceVAn || false);
-      submissionData.append("isAmbulance", formData.isAmbulance || false);
-      submissionData.append("isBlood", formData.isBlood || false);
-      submissionData.append("isFireTruck", formData.isFireTruck || false);
-
+      // Send signup data with Cloudinary URL
       const res = await fetch("/api/auth/signup", {
         method: "POST",
-        body: submissionData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          profilePicture: profilePictureUrl,
+          isHospital: formData.isHospital || false,
+          isFireDep: formData.isFireDep || false,
+          isPoliceDep: formData.isPoliceDep || false,
+          isPoliceVAn: formData.isPoliceVAn || false,
+          isAmbulance: formData.isAmbulance || false,
+          isBlood: formData.isBlood || false,
+          isFireTruck: formData.isFireTruck || false,
+        }),
       });
 
       const data = await res.json();

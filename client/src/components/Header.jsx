@@ -33,6 +33,9 @@ export default function Navbar() {
     setIsOpen(!isOpen);
   };
 
+  console.log(currentUser);
+  
+
   return (
     <header className=" bg-gray-50 dark:bg-zinc-800 shadow-md sticky top-0 z-50">
       <nav className="border-gray-200">
@@ -117,10 +120,12 @@ export default function Navbar() {
                 <img
                   src={
                     currentUser?.profilePicture
-                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                          /\\/g,
-                          "/"
-                        )}`
+                      ? currentUser.profilePicture.startsWith('http')
+                        ? currentUser.profilePicture
+                        : `http://localhost:3000/${currentUser.profilePicture.replace(
+                            /\\/g,
+                            "/"
+                          )}`
                       : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
                   }
                   alt="profile picture"
@@ -178,10 +183,12 @@ export default function Navbar() {
                 <img
                   src={
                     currentUser?.profilePicture
-                      ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                          /\\/g,
-                          "/"
-                        )}`
+                      ? currentUser.profilePicture.startsWith('http')
+                        ? currentUser.profilePicture
+                        : `http://localhost:3000/${currentUser.profilePicture.replace(
+                            /\\/g,
+                            "/"
+                          )}`
                       : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
                   }
                   alt="profile picture"

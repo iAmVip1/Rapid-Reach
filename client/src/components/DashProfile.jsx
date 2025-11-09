@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useRef, useState, useEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import axios from "axios";
 import {
   updateStart,
   updateSuccess,
@@ -11,6 +12,11 @@ import {
   deleteUserFailure,
   signoutSuccess,
 } from "../redux/user/userSlice";
+
+// Cloudinary env variables
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
@@ -37,28 +43,26 @@ export default function DashProfile() {
   const handleImageUpload = async (file) => {
     setImageFileUploading(true);
     setImageFileUploadError(null);
-    setImageFileUploadProgress(0);
-
-    const form = new FormData();
-    form.append("image", file);
+    setImageFileUploadProgress(50); // Simulate progress
 
     try {
-      const res = await fetch("/api/user/upload-image", {
-        method: "POST",
-        body: form,
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setImageFileUploadError(data.message || "Failed to upload image");
-        setImageFileUploading(false);
-        return;
-      }
-      const data = await res.json();
-      setFormData((prev) => ({ ...prev, profilePicture: data.imageUrl }));
+      const imageData = new FormData();
+      imageData.append("file", file);
+      imageData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      imageData.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+
+      const { data } = await axios.post(
+        CLOUDINARY_UPLOAD_URL,
+        imageData
+      );
+
+      setImageFileUploadProgress(100);
+      setFormData((prev) => ({ ...prev, profilePicture: data.secure_url }));
       setImageFileUploading(false);
     } catch (error) {
-      setImageFileUploadError(error.message || "Something went wrong");
+      setImageFileUploadError(error.message || "Failed to upload image");
       setImageFileUploading(false);
+      setImageFileUploadProgress(0);
     }
   };
 
@@ -160,15 +164,9 @@ export default function DashProfile() {
               imageFile
                 ? URL.createObjectURL(imageFile)
                 : formData.profilePicture
-                ? `http://localhost:3000/${formData.profilePicture.replace(
-                    /\\/g,
-                    "/"
-                  )}`
+                ? formData.profilePicture
                 : currentUser?.profilePicture
-                ? `http://localhost:3000/${currentUser.profilePicture.replace(
-                    /\\/g,
-                    "/"
-                  )}`
+                ? currentUser.profilePicture
                 : "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true"
             }
             alt="profile picture"

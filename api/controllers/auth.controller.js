@@ -5,29 +5,28 @@ import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, profilePicture } = req.body;
 
     if (!username || !email || !password) {
       return next(errorHandler(400, 'All fields are required'));
     }
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
-    const profilePicture = req.file ? req.file.path : null;
 
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      profilePicture,
+      profilePicture: profilePicture || null,
 
       // convert string to boolean
-      isHospital: req.body.isHospital === 'true',
-      isFireDep: req.body.isFireDep === 'true',
-      isPoliceDep: req.body.isPoliceDep === 'true',
-      isPoliceVAn: req.body.isPoliceVAn === 'true',
-      isAmbulance: req.body.isAmbulance === 'true',
-      isBlood: req.body.isBlood === 'true',
-      isFireTruck: req.body.isFireTruck === 'true',
+      isHospital: req.body.isHospital === 'true' || req.body.isHospital === true,
+      isFireDep: req.body.isFireDep === 'true' || req.body.isFireDep === true,
+      isPoliceDep: req.body.isPoliceDep === 'true' || req.body.isPoliceDep === true,
+      isPoliceVAn: req.body.isPoliceVAn === 'true' || req.body.isPoliceVAn === true,
+      isAmbulance: req.body.isAmbulance === 'true' || req.body.isAmbulance === true,
+      isBlood: req.body.isBlood === 'true' || req.body.isBlood === true,
+      isFireTruck: req.body.isFireTruck === 'true' || req.body.isFireTruck === true,
     });
 
     await newUser.save();
