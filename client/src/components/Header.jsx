@@ -160,7 +160,7 @@ export default function Navbar() {
               <NavLink
                 to="/sign-in"
                 className={({ isActive }) =>
-                  `px-4 py-2 rounded-xl transition-colors duration-200 font-medium ${
+                  `ml-2 px-4 py-2 rounded-xl transition-colors duration-200 font-medium ${
                     isActive
                       ? "bg-rose-700 text-white"
                       : "hover:bg-rose-700 hover:text-white"

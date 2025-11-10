@@ -1,178 +1,106 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import ReactDOMServer from "react-dom/server";
-import { FaHospital, FaTint, FaShieldAlt, FaFire } from "react-icons/fa";
-
-// Category icons
-const getCategoryIconElement = (category) => {
-  const normalized = (category || "").toLowerCase();
-  const size = 25;
-  if (normalized.includes("hospital")) return <FaHospital size={size} color="#d32f2f" />;
-  if (normalized.includes("blood")) return <FaTint size={size} color="#b31217" />;
-  if (normalized.includes("police")) return <FaShieldAlt size={size} color="#1976d2" />;
-  if (normalized.includes("fire")) return <FaFire size={size} color="#ef6c00" />;
-  return <FaHospital size={size} color="#555" />;
-};
-
-// Div icon for marker
-const makeOverlayDivIcon = (category, departmentName) => {
-  const iconEl = getCategoryIconElement(category);
-  const html = `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-        ${ReactDOMServer.renderToString(iconEl)}
-      </div>
-      <div style="margin-top: 4px; font-weight: 700; font-size: 12px; color: #000; text-align: center;">
-        ${departmentName || ""}
-      </div>
-    </div>
-  `;
-  return L.divIcon({
-    className: "",
-    html,
-    iconSize: [32, 48],
-    iconAnchor: [16, 48],
-    popupAnchor: [0, -48],
-  });
-};
-
-// Helper component to fit map to markers around user location
-function FitBounds({ userLocation }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!userLocation) return;
-
-    // Set a fixed zoom level around the user's location
-    const zoomLevel = 15; // You can adjust this as needed (higher value = more zoomed in)
-    map.setView(userLocation, zoomLevel);
-  }, [userLocation, map]);
-
-  return null;
-}
-
-export default function Sample() {
-  const location = useLocation();
-  const { currentUser } = useSelector((state) => state.user);
-  const [userLocation, setUserLocation] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  // Fetch posts from API
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const searchQuery = urlParams.toString();
-        const res = await fetch(`/api/post/get?${searchQuery}`);
-        if (!res.ok) throw new Error("Failed to fetch posts");
-        const data = await res.json();
-        setPosts(data.data || []);
-      } catch (err) {
-        console.error("Error fetching posts:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, [location.search]);
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      console.warn("Geolocation is not supported by your browser");
-      return;
-    }
-
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-      },
-      {
-        enableHighAccuracy: true,
-        maximumAge: 1000,
-        timeout: 5000,
-      }
-    );
-
-    // Cleanup on unmount
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
-
-  if (loading) return <div className="text-center mt-6">Loading...</div>;
-  if (error) return <div className="text-center mt-6 text-red-500">Error loading posts</div>;
-  if (!posts || posts.length === 0) return <div className="text-center mt-6">No posts found</div>;
-
+export default function ApplicationFormUI() {
   return (
-    <div className="flex flex-col space-y-4">
-      <MapContainer
-        zoom={13} // Default zoom level
-        minZoom={10}  // Set a minimum zoom level
-        maxZoom={18}  // Set a maximum zoom level
-        className="w-full z-0"
-        style={{ height: "500px" }}
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+    <main className="p-3 max-w-4xl mx-auto min-h-screen bg-gray-50">
+      <h1 className="text-3xl font-semibold text-center my-7 text-gray-800">
+        Documents and Details
+      </h1>
 
-        {/* Render all posts as markers */}
-        {posts.map((p, idx) => {
-          const lat = Number(p.latitude);
-          const lng = Number(p.longitude);
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      <form className="flex flex-col sm:flex-row gap-6 bg-white shadow-lg rounded-2xl p-6">
+        {/* Left Side */}
+        <div className="flex flex-col gap-4 flex-1">
+          <input
+            type="text"
+            placeholder="City"
+            className="border border-gray-300 p-3 rounded-lg text-gray-700 focus:ring-2 focus:ring-cyan-500"
+          />
+          <input
+            type="text"
+            placeholder="Address"
+            className="border border-gray-300 p-3 rounded-lg text-gray-700 focus:ring-2 focus:ring-cyan-500"
+          />
+          <input
+            type="number"
+            placeholder="Contact Number"
+            className="border border-gray-300 p-3 rounded-lg text-gray-700 focus:ring-2 focus:ring-cyan-500"
+          />
+          <input
+            type="number"
+            placeholder="Contact Number 2"
+            className="border border-gray-300 p-3 rounded-lg text-gray-700 focus:ring-2 focus:ring-cyan-500"
+          />
+          <input
+            type="number"
+            placeholder="Experience (Years)"
+            className="border border-gray-300 p-3 rounded-lg text-gray-700 focus:ring-2 focus:ring-cyan-500"
+          />
 
-          const position = [lat, lng];
-          const icon = makeOverlayDivIcon(p.category, p.departmentName);
+          <label className="font-bold text-gray-800 bg-amber-400 rounded-3xl text-center py-2 mt-2">
+            Work Type
+          </label>
 
-          return (
-            <Marker key={idx} position={position} icon={icon}>
-              <Popup>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {getCategoryIconElement(p.category)}
-                  <div>
-                    <div style={{ fontWeight: 700 }}>{p.departmentName}</div>
-                    <div style={{ fontSize: 12 }}>{p.address}</div>
-                    {p.category && <div style={{ fontSize: 12, marginTop: 4 }}>Category: {p.category}</div>}
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
-          );
-        })}
+          <div className="flex gap-6 flex-wrap">
+            {["Plumber", "Carpenter", "Electrician", "Maid", "Water Supply", "Laundry Man"].map(
+              (job) => (
+                <label key={job} className="flex items-center gap-2">
+                  <input type="checkbox" className="w-5 h-5 accent-cyan-600" />
+                  <span className="text-gray-700">{job}</span>
+                </label>
+              )
+            )}
+          </div>
+        </div>
 
-        {/* User location marker */}
-        {userLocation && (
-          <Marker
-            position={userLocation}
-            icon={L.icon({
-              iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
-              iconSize: [30, 30],
-              iconAnchor: [15, 30],
-            })}
+        {/* Right Side */}
+        <div className="flex flex-col flex-1 gap-4">
+          <p className="font-semibold text-gray-800">
+            Images:
+            <span className="font-normal text-gray-500 ml-2">
+              Please upload your certificates or license
+            </span>
+          </p>
+
+          <div className="flex gap-3 items-center">
+            <input
+              type="file"
+              accept="image/*"
+              className="p-1 border border-gray-300 rounded w-full text-gray-600"
+            />
+            <button
+              type="button"
+              className="p-2 text-green-600 border border-green-600 rounded uppercase hover:bg-green-100 transition"
+            >
+              Upload
+            </button>
+          </div>
+
+          {/* Uploaded Image Example */}
+          <div className="flex justify-between p-3 border rounded-lg items-center">
+            <img
+              src="https://via.placeholder.com/80"
+              alt="application"
+              className="w-20 h-20 object-contain rounded-lg"
+            />
+            <button
+              type="button"
+              className="p-2 text-red-600 rounded-lg uppercase hover:bg-red-100 transition"
+            >
+              Delete
+            </button>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-fuchsia-500 to-cyan-500 text-white p-3 rounded-md 
+                       font-semibold hover:shadow-lg transition duration-200"
           >
-            <Popup>
-              <div style={{ fontWeight: "700" }}>You are here</div>
-            </Popup>
-          </Marker>
-        )}
+            Submit
+          </button>
 
-        {/* Fit bounds to focus on the user location */}
-        <FitBounds userLocation={userLocation} />
-      </MapContainer>
-    </div>
+          {/* Error Message Example */}
+          {/* <p className="text-red-600 text-sm">Error message here</p> */}
+        </div>
+      </form>
+    </main>
   );
 }
