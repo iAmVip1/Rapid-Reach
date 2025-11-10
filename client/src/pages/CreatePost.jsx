@@ -17,6 +17,9 @@ export default function CreatePost() {
   const [latitude, setLatitude] = useState("");
   const [loadingImage, setLoadingImage] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [document, setDocument] = useState(null);
+  const [documentUrl, setDocumentUrl] = useState("");
+  const [loadingDocument, setLoadingDocument] = useState(false);
 
   //form
   const navigate = useNavigate();
@@ -33,6 +36,7 @@ export default function CreatePost() {
     category: "",
     description: "",
     imageUrls: [],
+    documentUrls: [],
   });
 
   const [error, setError] = useState(false);
@@ -104,11 +108,50 @@ export default function CreatePost() {
     }
   };
 
+  const handleDocumentChange = (e) => {
+    const file = e.target.files[0];
+    setDocument(file);
+  };
+
+  const handleUploadDocument = async (e) => {
+    e.preventDefault();
+    try {
+      if (!document) return alert("Please select a document first");
+      setLoadingDocument(true);
+
+      const documentData = new FormData();
+      documentData.append("file", document);
+      documentData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      documentData.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+
+      const { data } = await axios.post(CLOUDINARY_UPLOAD_URL, documentData);
+
+      setDocumentUrl(data.secure_url);
+      setFromData((prev) => ({
+        ...prev,
+        documentUrls: [...prev.documentUrls, data.secure_url],
+      }));
+      setDocument(null);
+    } catch (error) {
+      console.log(error);
+      alert("Document upload failed!");
+    } finally {
+      setLoadingDocument(false);
+    }
+  };
+
   const handleRemoveImage = (index) => {
-    setFromData({
-      ...formData,
-      imageUrls: formData.imageUrls.filter((_, i) => i !== index),
-    });
+    setFromData((prev) => ({
+      ...prev,
+      imageUrls: prev.imageUrls.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleRemoveDocument = (index) => {
+    setFromData((prev) => ({
+      ...prev,
+      documentUrls: prev.documentUrls.filter((_, i) => i !== index),
+    }));
   };
 
   console.log(url);
@@ -355,7 +398,7 @@ export default function CreatePost() {
         {/* Certification Upload */}
         <div className="mt-4 border border-dotted border-teal-500 p-3 rounded-md">
           <label className="block text-sm font-medium text-gray-700">
-            Certification
+            Cover Image
           </label>
           <div className="max-w-md mx-auto rounded-lg overflow-hidden">
             <div className="relative h-48 rounded-lg border-2 border-blue-500 bg-gray-50 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -411,6 +454,96 @@ export default function CreatePost() {
                   className="rounded shadow-md w-64"
                 />
               </div>
+            </div>
+          )}
+          {formData.imageUrls.length > 0 && (
+            <div className="mt-6 space-y-2">
+              <h4 className="text-base font-semibold text-gray-700">Image Gallery</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {formData.imageUrls.map((imgUrl, index) => (
+                  <div key={imgUrl} className="relative group">
+                    <img src={imgUrl} alt={`Uploaded ${index + 1}`} className="rounded-lg shadow-md w-full h-32 object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-600 rounded-full p-1 transition-colors"
+                      title="Remove image"
+                    >
+                      <RxCrossCircled className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Document Upload */}
+        <div className="mt-6 border border-dotted border-indigo-500 p-3 rounded-md">
+          <label className="block text-sm font-medium text-gray-700">Supporting Documents</label>
+          <div className="max-w-md mx-auto rounded-lg overflow-hidden">
+            <div className="relative h-32 rounded-lg border-2 border-indigo-500 bg-gray-50 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+              <div className="absolute flex flex-col items-center pointer-events-none text-center px-4">
+                <img
+                  alt="Document Icon"
+                  className="mb-3"
+                  src="https://img.icons8.com/dusk/64/000000/documents.png"
+                />
+                <span className="block text-gray-500 font-semibold">
+                  Drag & drop documents here
+                </span>
+                <span className="block text-gray-400 font-normal mt-1">
+                  Accepts PDF, DOCX, JPG, PNG
+                </span>
+              </div>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                className="h-full w-full opacity-0 cursor-pointer"
+                onChange={handleDocumentChange}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-6">
+            <button
+              type="button"
+              onClick={handleUploadDocument}
+              className="border-2 rounded-md hover:bg-indigo-500 hover:text-white border-indigo-500 py-2 px-6 font-bold"
+            >
+              {loadingDocument ? "Uploading..." : "Upload Document"}
+            </button>
+          </div>
+
+          {documentUrl && (
+            <div className="mt-4 text-sm text-gray-600 text-center break-all">
+              Latest document uploaded:&nbsp;
+              <a href={documentUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">
+                {documentUrl}
+              </a>
+            </div>
+          )}
+
+          {formData.documentUrls.length > 0 && (
+            <div className="mt-6 space-y-3">
+              <h4 className="text-base font-semibold text-gray-700">Uploaded Documents</h4>
+              <ul className="space-y-2">
+                {formData.documentUrls.map((docUrl, index) => (
+                  <li key={docUrl} className="flex items-center justify-between bg-white border border-gray-200 rounded-md px-3 py-2 shadow-sm">
+                    <a href={docUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 truncate max-w-xs sm:max-w-md">
+                      Document {index + 1}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveDocument(index)}
+                      className="text-red-600 hover:text-red-700 flex items-center gap-1"
+                    >
+                      <RxCrossCircled className="w-4 h-4" />
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>

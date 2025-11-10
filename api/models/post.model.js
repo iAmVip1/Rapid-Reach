@@ -42,7 +42,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    coverUrls: {
+    documentUrls: {
       type: Array,
       required: true,
     },
