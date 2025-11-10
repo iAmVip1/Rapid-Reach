@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import { useTheme } from '../ThemeContext';
 
 const HeroLights = () => {
+  const { theme } = useTheme();
   return (
     <>
    <spotLight position={[2, 5, 6]}
@@ -43,13 +45,15 @@ const HeroLights = () => {
    color='#E3D000'
    />
 
-   {/* <directionalLight position={[1, 1, 1]} intensity={2} />
-   <ambientLight intensity={0.5} /> */}
+   {theme === 'light' && (
+     <>
+       <directionalLight position={[1, 1, 1]} intensity={2} />
+       <ambientLight intensity={0.5} />
+     </>
+   )}
    <hemisphereLight skyColor="#D9EEFA" groundColor="#000000" />
     </>
   )
 }
 
 export default HeroLights
-
-// 1:09:00
