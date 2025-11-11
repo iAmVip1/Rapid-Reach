@@ -182,6 +182,45 @@ export default function DashSideBar() {
               </li>
             </>
           ) : null}
+          {currentUser.isAdmin ? (
+            <>
+              <li>
+                <Link
+                  to="/dashboard?tab=ambulance"
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-md text-sm font-medium text-gray-700"
+                >
+                  <LuAmbulance className="w-5 h-5" />
+                  {isHovered && <span>Ambulance</span>}
+                </Link>
+              </li>
+            </>
+          ) : null}
+          {currentUser.isAdmin ? (
+            <>
+              <li>
+                <Link
+                  to="/dashboard?tab=poilcevec"
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-md text-sm font-medium text-gray-700"
+                >
+                  <PiPoliceCarFill className="w-5 h-5" />
+                  {isHovered && <span>Police Vechicle</span>}
+                </Link>
+              </li>
+            </>
+          ) : null}
+          {currentUser.isAdmin ? (
+            <>
+              <li>
+                <Link
+                  to="/dashboard?tab=firetruck"
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-md text-sm font-medium text-gray-700"
+                >
+                  <MdFireTruck className="w-5 h-5" />
+                  {isHovered && <span>Fire Truck</span>}
+                </Link>
+              </li>
+            </>
+          ) : null}
         </ul>
       </div>
     </div>

@@ -13,6 +13,9 @@ import DashPoliceDep from "../components/DashPoliceDep";
 import DashHospital from "../components/DashHospital";
 import DashUsers from "../components/DashUsers";
 import DashDriveDocs from "../components/DashDriveDocs";
+import DashAmbulance from "../components/DashAmbulance";
+import DashPoliceVec from "../components/DashPoliceVec";
+import DashFireTruck from "../components/DashFireTruck";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -77,6 +80,9 @@ export default function Dashboard() {
         {tab === "fire" && <DashFire />}
         {tab === "policeDep" && <DashPoliceDep />}
         {tab === "hospital" && <DashHospital />}
+        {tab === "ambulance" && <DashAmbulance />}
+        {tab === "poilcevec" && <DashPoliceVec />}
+        {tab === "firetruck" && <DashFireTruck />}
         
       </div>
     </div>

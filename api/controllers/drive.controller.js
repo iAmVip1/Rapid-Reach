@@ -1,4 +1,5 @@
 import Drive from "../models/drive.model.js";
+import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createDrive = async (req, res, next) => {
@@ -89,7 +90,7 @@ export const ownerGetDrive = async (req, res, next) => {
 export const getAllDrives = async (req, res, next) => {
   try {
     // Extract search params from query string
-    const { vechicleNumber, departmentAddress, category, includeUnapproved } = req.query;
+    const { vechicleNumber, defaultAddress, vehicleType, includeUnapproved } = req.query;
 
     // Build a dynamic filter object
     const filter = {};
@@ -97,11 +98,36 @@ export const getAllDrives = async (req, res, next) => {
     if (vechicleNumber) {
       filter.vechicleNumber = { $regex: vechicleNumber, $options: "i" }; // i = case-insensitive
     }
-    if (departmentAddress) {
-      filter.departmentAddress = { $regex: departmentAddress, $options: "i" };
+    if (defaultAddress) {
+      filter.defaultAddress = { $regex: defaultAddress, $options: "i" };
     }
-    if (category) {
-      filter.category = { $regex: category, $options: "i" };
+
+    // Filter by vehicle type (isAmbulance, isPoliceVAn, isFireTruck) by filtering users first
+    if (vehicleType) {
+      let userRoleFilter = {};
+      if (vehicleType === 'ambulance') {
+        userRoleFilter.isAmbulance = true;
+      } else if (vehicleType === 'police-vehicle' || vehicleType === 'policeVec') {
+        userRoleFilter.isPoliceVAn = true;
+      } else if (vehicleType === 'fire-truck' || vehicleType === 'fireTruck') {
+        userRoleFilter.isFireTruck = true;
+      }
+
+      // Find users with the specified role
+      const usersWithRole = await User.find(userRoleFilter).select('_id');
+      const userIds = usersWithRole.map(user => user._id.toString());
+      
+      // Filter drives by userRef
+      if (userIds.length > 0) {
+        filter.userRef = { $in: userIds };
+      } else {
+        // No users found with this role, return empty result
+        return res.status(200).json({
+          success: true,
+          count: 0,
+          data: [],
+        });
+      }
     }
 
     // Default: only approved drives
