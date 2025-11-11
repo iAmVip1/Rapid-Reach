@@ -482,7 +482,7 @@ export default function VehicleGrid() {
                     <div className="p-3 flex flex-col gap-2 w-full">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-semibold truncate flex-1">
-                          {service.firstName} {service.lastName}
+                          {service.userName}
                         </p>
                         <div
                           className={`w-3 h-3 rounded-full flex-shrink-0 ${

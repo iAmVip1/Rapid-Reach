@@ -63,7 +63,7 @@ export default function VehicleItem({ drive, isOnline = false }) {
         <div className="p-3 flex flex-col gap-2 w-full">
           <div className="flex items-center gap-2">
             <p className="text-lg font-semibold truncate">
-              {drive.firstName} {drive.lastName}
+              {drive.userName}
             </p>
             <div
               className={`w-3 h-3 rounded-full flex-shrink-0 ${

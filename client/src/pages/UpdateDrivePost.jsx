@@ -24,6 +24,7 @@ export default function UpdateDrivepost() {
     company: '',
     licenseUrls: [],
     documentUrls: [],
+    category: '',
   });
 
   const [error, setError] = useState(false);
@@ -58,6 +59,7 @@ export default function UpdateDrivepost() {
             company: data.company || '',
             licenseUrls: Array.isArray(data.licenseUrls) ? data.licenseUrls : [],
             documentUrls: Array.isArray(data.documentUrls) ? data.documentUrls : [],
+            category: data.category || '',
           });
         }
       } catch (err) {
@@ -68,6 +70,21 @@ export default function UpdateDrivepost() {
     };
     if (driveId) fetchDrive();
   }, [driveId]);
+
+  // Set category based on user role - MUST be before any early returns
+  useEffect(() => {
+    if (currentUser) {
+      let cat = "";
+      if (currentUser.isPoliceVAn) cat = "police-vehicle";
+      else if (currentUser.isAmbulance) cat = "ambulance";
+      else if (currentUser.isFireTruck) cat = "fire-truck";
+
+      setFormData((prev) => ({
+        ...prev,
+        category: cat,
+      }));
+    }
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { id, name, value } = e.target;
@@ -204,22 +221,6 @@ export default function UpdateDrivepost() {
       </div>
     );
   }
-
-   useEffect(() => {
-      if (currentUser) {
-        let cat = "";
-        if (currentUser.isPoliceVAn) cat = "police-vehicle";
-        else if (currentUser.isAmbulance) cat = "Ambulance";
-        else if (currentUser.isFireTruck) cat = "fire-truck";
-  
-        setFormData((prev) => ({
-          ...prev,
-          category: cat,
-        }));
-      }
-    }, [currentUser]);
-    console.log(formData);
-    console.log(url);
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen ">
