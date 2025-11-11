@@ -226,6 +226,8 @@ export default function CreatePost() {
       if (data.success === false) {
         setError(data.message);
       }
+      navigate (`/dashboard?tab=documents`)
+
     } catch (error) {
       setError(error.message);
       setLoading(false);

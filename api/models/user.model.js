@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: "https://github.com/iAmVip1/serviceaggregator/blob/main/images/avatar.jpg?raw=true",
+        required: true,
     },
     isHospital: {
         type: Boolean,

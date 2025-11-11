@@ -21,13 +21,16 @@ import { CallProvider } from "./socket/CallContext";
 import CallOverlay from "./components/CallOverlay";
 import UpdatePost from "./pages/UpdatePost";
 import { useTheme } from "./components/ThemeContext";
+import Drivepost from "./pages/Drivepost";
+import UpdateDrivePost from "./pages/UpdateDrivePost";
+import DriveRoute from "./components/DriveRoute";
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   return (
     <BrowserRouter>
     <CallProvider>
-    <div className="bg-white dark:bg-zinc-800 dark:text-gray-200">
+    <div className="bg-white dark:bg-zinc-800 dark:text-gray-200 dark:min-h-screen">
     <Header />
     <ScrollToTop />
       <Routes>
@@ -36,16 +39,21 @@ export default function App() {
         <Route element={<PrivateRoute />} >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/not-allowed" element={<Failed />} />
-        
+        <Route path="/post/:postId" element={<Post />} />
         </Route>
 
         <Route element={<DepartmentRoute />} >
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/update-post/:postId" element={<UpdatePost />} />
+        </Route>
+
+        <Route element={<DriveRoute />} >
+        <Route path="/create-drive" element={<Drivepost />} />
+        <Route path="/update-drive/" element={<UpdateDrivePost />} />
         
         </Route>
         
-        <Route path="/post/:postId" element={<Post />} />
+        
         <Route path="/gridview" element={<GridView />} />
         <Route path="/services" element={<Services />} />
         <Route path="/sign-in" element={<SignIn />} />

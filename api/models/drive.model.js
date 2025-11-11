@@ -6,7 +6,15 @@ const driveSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    departmentAddress: {
+    defaultAddress: {
+      type: String,
+      required: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
       type: String,
       required: true,
     },
@@ -21,8 +29,9 @@ const driveSchema = new mongoose.Schema(
     licenseNo: {
       type: String,
       required: true,
+      unique: true,
     },
-    category: {
+    company: {
       type: String,
       required: true,
     },
