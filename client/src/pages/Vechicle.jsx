@@ -19,7 +19,7 @@ export default function Vechicle() {
       try {
         setLoading(true);
         // Use owner endpoint so the owner can view even if not yet approved
-        const res = await fetch(`/api/drive/owner-get/${driveId}`);
+        const res = await fetch(`/api/drive/get/${driveId}`);
         const data = await res.json();
         if (data.success === false) {
           setError(true);

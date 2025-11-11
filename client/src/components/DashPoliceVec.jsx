@@ -285,7 +285,7 @@ export default function DashPoliceVec() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         {drive.approved && (
-                          <Link to={`/vechicle/${drive._id}`}>
+                          <Link to={`/drive/${drive._id}`}>
                             <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                               <FaEye className="w-3 h-3 mr-1" />
                               View
