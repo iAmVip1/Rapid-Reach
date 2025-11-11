@@ -66,6 +66,23 @@ export const getDrive = async (req, res, next) => {
     } 
     }
 
+// Auth-required: allow owner/admin to view regardless of approval
+export const ownerGetDrive = async (req, res, next) => {
+  try {
+    const drive = await Drive.findById(req.params.id);
+    if (!drive) {
+      return next(errorHandler(404, 'Drive not found'));
+    }
+    const isOwner = req.user?.isAdmin || req.user?.id === drive.userRef?.toString();
+    if (!isOwner && !drive.approved) {
+      return next(errorHandler(404, 'Drive not found'));
+    }
+    return res.status(200).json(drive);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const getAllDrives = async (req, res, next) => {
   try {
     // Extract search params from query string

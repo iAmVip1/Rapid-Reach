@@ -33,9 +33,6 @@ export default function Navbar() {
     setIsOpen(!isOpen);
   };
 
-  console.log(currentUser);
-  
-
   return (
     <header className=" bg-gray-50 dark:bg-zinc-800 shadow-md sticky top-0 z-50">
       <nav className="border-gray-200">

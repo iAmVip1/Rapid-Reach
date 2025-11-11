@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
 import Post from '../models/post.model.js';
+import Drive from '../models/drive.model.js';
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -107,5 +108,18 @@ export const getUserPosts = async (req, res, next) => {
     }
   } else {
     return next (errorHandler(401, 'You can only view your own posts!'));
+  }
+}
+
+export const getUserDrives = async (req, res, next) => {
+  if (req.user.id === req.params.id || req.user.isAdmin) {
+    try {
+      const drives = await Drive.find({ userRef: req.params.id }).sort({ createdAt: -1 });
+      return res.status(200).json({ success: true, data: drives });
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    return next(errorHandler(401, 'You can only view your own drives!'));
   }
 }

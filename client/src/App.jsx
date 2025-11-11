@@ -24,6 +24,7 @@ import { useTheme } from "./components/ThemeContext";
 import Drivepost from "./pages/Drivepost";
 import UpdateDrivePost from "./pages/UpdateDrivePost";
 import DriveRoute from "./components/DriveRoute";
+import Vechicle from "./pages/Vechicle";
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/not-allowed" element={<Failed />} />
         <Route path="/post/:postId" element={<Post />} />
+        <Route path="/drive/:driveId" element={<Vechicle />} />
         </Route>
 
         <Route element={<DepartmentRoute />} >
@@ -49,7 +51,7 @@ export default function App() {
 
         <Route element={<DriveRoute />} >
         <Route path="/create-drive" element={<Drivepost />} />
-        <Route path="/update-drive/" element={<UpdateDrivePost />} />
+        <Route path="/update-drive/:driveId" element={<UpdateDrivePost />} />
         
         </Route>
         
