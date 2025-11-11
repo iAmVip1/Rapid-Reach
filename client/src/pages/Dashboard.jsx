@@ -12,6 +12,7 @@ import DashFire from "../components/DashFire";
 import DashPoliceDep from "../components/DashPoliceDep";
 import DashHospital from "../components/DashHospital";
 import DashUsers from "../components/DashUsers";
+import DashDriveDocs from "../components/DashDriveDocs";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -66,16 +67,17 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Render Tab Content */}
+       
         {tab === "home" && <DashHome />}
         {tab === "profile" && <DashProfile />}
         {tab === "documents" && <DashDocuments />}
+        {tab === "drive" && <DashDriveDocs />}
         {tab === "users" && <DashUsers />}
         {tab === "blood" && <DashBlood />}
         {tab === "fire" && <DashFire />}
         {tab === "policeDep" && <DashPoliceDep />}
         {tab === "hospital" && <DashHospital />}
-        {/* Add other tab checks here */}
+        
       </div>
     </div>
   );
