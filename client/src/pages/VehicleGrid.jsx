@@ -414,26 +414,46 @@ export default function VehicleGrid() {
             </div>
 
             {/* Vehicle Type Filters */}
-            <div>
-              <h3 className="font-medium mb-2">Vehicle Type</h3>
-              <div className="flex flex-wrap gap-2">
-                <Link to="/vehiclegrid?vehicleType=ambulance">
-                  <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm cursor-pointer flex items-center gap-1">
-                    <FaAmbulance /> Ambulance
-                  </span>
-                </Link>
-                <Link to="/vehiclegrid?vehicleType=police-vehicle">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm cursor-pointer flex items-center gap-1">
-                    <FaShieldAlt /> Police Vehicle
-                  </span>
-                </Link>
-                <Link to="/vehiclegrid?vehicleType=fire-truck">
-                  <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm cursor-pointer flex items-center gap-1">
-                    <FaFire /> Fire Truck
-                  </span>
-                </Link>
-              </div>
-            </div>
+             <div>
+                          <h3 className="font-medium mb-2">Category</h3>
+                          <div className="flex flex-wrap gap-2">
+                             <Link to={'/gridview?category=Hospital'}>
+                            <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm cursor-pointer">
+                              Hospital
+                            </span>
+                             </Link>
+                             <Link to={'/gridview?category=Blood+Bank'}>
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm cursor-pointer">
+                              Blood Bank
+                            </span>
+                             </Link>
+                              <Link to={'/gridview?category=Police+Department'}>
+                            <span className="px-3 py-1 bg-blue-200 text-blue-700 rounded-full text-sm cursor-pointer">
+                              Police Department
+                            </span>  
+                              </Link>
+                            <Link to={'/gridview?category=Fire+Department'}>
+                            <span className="px-3 py-1 bg-gray-300 text-black rounded-full text-sm cursor-pointer">
+                              Fire Department
+                            </span>
+                            </Link>
+                            <Link to={'/vehiclegrid?category=ambulance'}>
+                            <span className="px-3 py-1 bg-red-100 text-orange-700 rounded-full text-sm cursor-pointer">
+                              Ambulance
+                            </span>
+                            </Link>
+                            <Link to={'/vehiclegrid?category=fire-truck'}>
+                            <span className="px-3 py-1 bg-amber-200 text-amber-700 rounded-full text-sm cursor-pointer">
+                              Fire Truck
+                            </span>
+                            </Link>
+                            <Link to={'/vehiclegrid?category=police-vehicle'}>
+                            <span className="px-3 py-1 bg-cyan-200 text-cyan-700 rounded-full text-sm cursor-pointer">
+                              Police Vehicle
+                            </span>
+                            </Link>
+                          </div>
+                        </div>
           </div>
         </div>
 

@@ -72,21 +72,21 @@ export default function Services() {
 
           {/* Fire Truck */}
           {!hide.fireTruck && (
-            <Link to={"/gridview?category=Fire+vehicle"}>
+            <Link to={"/vehiclegrid?category=fire-truck"}>
               <ServiceCard img={Firevec} title="Fire Truck" />
             </Link>
           )}
 
           {/* Police Vehicle */}
           {!hide.policeVan && (
-            <Link to={"/gridview?category=PoliceVec"}>
+            <Link to={"/vehiclegrid?category=police-vehicle"}>
               <ServiceCard img={PoliceVec} title="Police Vehicle" />
             </Link>
           )}
 
           {/* Ambulance */}
           {!hide.ambulance && (
-            <Link to={"/gridview?category=Ambulance"}>
+            <Link to={"/vehiclegrid?category=Ambulance"}>
               <ServiceCard img={Ambulance} title="Ambulance" />
             </Link>
           )}

@@ -30,7 +30,6 @@ export default function GridView() {
   const [bestServices, setBestServices] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
 
-  
   useEffect(() => {
     if (!socket) return;
     if (currentUser?._id) {
@@ -46,7 +45,7 @@ export default function GridView() {
   const isOnlineUser = (userId) => onlineUsers.some((u) => u.userId === userId);
 
   const haversineDistance = (coords1, coords2) => {
-    const R = 6371; 
+    const R = 6371;
     const lat1 = coords1.lat;
     const lon1 = coords1.lng;
     const lat2 = coords2.lat;
@@ -64,38 +63,35 @@ export default function GridView() {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; 
+    return R * c;
   };
 
-  
   const calculatePriorityScore = (post, isOnline, userCoords = null) => {
     let score = 0;
     const maxScore = 5.0;
 
-    
     if (isOnline) {
       score += 1.5;
     }
 
-    
     if (post.approved) {
       score += 1.25;
     }
 
-    const daysSinceCreation = (Date.now() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    const daysSinceCreation =
+      (Date.now() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60 * 24);
     if (daysSinceCreation <= 30) {
       score += 1.0 * (1 - daysSinceCreation / 30);
     } else if (daysSinceCreation <= 90) {
       score += 0.5 * (1 - (daysSinceCreation - 30) / 60);
     }
 
-   
     if (userCoords && post.latitude && post.longitude) {
       const distance = haversineDistance(userCoords, {
         lat: post.latitude,
         lng: post.longitude,
       });
-     
+
       if (distance <= 10) {
         score += 0.75;
       } else if (distance <= 50) {
@@ -103,23 +99,20 @@ export default function GridView() {
       }
     }
 
-    
     const categoryPriority = {
-      "Hospital": 0.5,
+      Hospital: 0.5,
       "Fire Department": 0.5,
       "Police Department": 0.5,
       "Blood Bank": 0.4,
-      "Ambulance": 0.4,
+      Ambulance: 0.4,
       "Fire Truck": 0.3,
       "Police Vehicle": 0.3,
     };
     score += categoryPriority[post.category] || 0.2;
 
-    
     return Math.min(score, maxScore);
   };
 
-  
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -136,17 +129,15 @@ export default function GridView() {
     }
   }, []);
 
- 
   useEffect(() => {
     if (posts.length === 0) {
       setBestServices([]);
       return;
     }
 
-    
     const postsWithScores = posts
-      .filter(post => post.approved) 
-      .map(post => {
+      .filter((post) => post.approved)
+      .map((post) => {
         let distance = null;
         if (userLocation && post.latitude && post.longitude) {
           distance = haversineDistance(userLocation, {
@@ -165,19 +156,18 @@ export default function GridView() {
         };
       })
       .sort((a, b) => b.priorityScore - a.priorityScore)
-      .slice(0, 3); 
+      .slice(0, 3);
 
     setBestServices(postsWithScores);
   }, [posts, onlineUsers, userLocation]);
 
-  
   useEffect(() => {
     let filtered = [...posts];
 
     if (filters.availability === "available") {
-      filtered = filtered.filter(post => isOnlineUser(post.userRef));
+      filtered = filtered.filter((post) => isOnlineUser(post.userRef));
     } else if (filters.availability === "unavailable") {
-      filtered = filtered.filter(post => !isOnlineUser(post.userRef));
+      filtered = filtered.filter((post) => !isOnlineUser(post.userRef));
     }
 
     setFilteredPosts(filtered);
@@ -274,13 +264,17 @@ export default function GridView() {
 
     if (value === "latest") {
       setFilteredPosts(
-        [...filteredPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        [...filteredPosts].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
       );
     }
 
     if (value === "oldest") {
       setFilteredPosts(
-        [...filteredPosts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        [...filteredPosts].sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        )
       );
     }
   };
@@ -307,7 +301,7 @@ export default function GridView() {
           onChange={handleChange}
         />
 
-        <select 
+        <select
           id="availability"
           className="border p-2 rounded w-56"
           value={filters.availability}
@@ -341,18 +335,20 @@ export default function GridView() {
         {/* Left Column - Visible on all devices */}
         <div className="w-full lg:w-1/4 space-y-6">
           {/* Map */}
-         <div className="bg-white rounded-lg shadow p-4">
-  <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-    <img src={MapImage} alt="Map" className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300" />
-  </div>
-  <Link to='/mapView'>
-
-  <button className="mt-3 w-full border rounded-lg py-2">
-    Show Full Map
-  </button>
-  </Link>
-</div>
-
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+              <img
+                src={MapImage}
+                alt="Map"
+                className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300"
+              />
+            </div>
+            <Link to="/mapView">
+              <button className="mt-3 w-full border rounded-lg py-2">
+                Show Full Map
+              </button>
+            </Link>
+          </div>
 
           {/* Filters */}
           <div className="bg-white rounded-lg shadow p-4 space-y-4">
@@ -364,25 +360,40 @@ export default function GridView() {
             <div>
               <h3 className="font-medium mb-2">Category</h3>
               <div className="flex flex-wrap gap-2">
-                 <Link to={'/gridview?category=Hospital'}>
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm cursor-pointer">
-                  Hospital
-                </span>
-                 </Link>
-                 <Link to={'/gridview?category=Blood+Bank'}>
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm cursor-pointer">
-                  Blood Bank
-                </span>
-                 </Link>
-                  <Link to={'/gridview?category=Police+Department'}>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm cursor-pointer">
-                  Police Department
-                </span>  
-                  </Link>
-                <Link to={'/gridview?category=Fire+Department'}>
-                <span className="px-3 py-1 bg-red-100 text-orange-700 rounded-full text-sm cursor-pointer">
-                  Fire Department
-                </span>
+                <Link to={"/gridview?category=Hospital"}>
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm cursor-pointer">
+                    Hospital
+                  </span>
+                </Link>
+                <Link to={"/gridview?category=Blood+Bank"}>
+                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm cursor-pointer">
+                    Blood Bank
+                  </span>
+                </Link>
+                <Link to={"/gridview?category=Police+Department"}>
+                  <span className="px-3 py-1 bg-blue-200 text-blue-700 rounded-full text-sm cursor-pointer">
+                    Police Department
+                  </span>
+                </Link>
+                <Link to={"/gridview?category=Fire+Department"}>
+                  <span className="px-3 py-1 bg-red-100 text-orange-700 rounded-full text-sm cursor-pointer">
+                    Fire Department
+                  </span>
+                </Link>
+                <Link to={"/vehiclegrid?category=ambulance"}>
+                  <span className="px-3 py-1 bg-red-100 text-orange-700 rounded-full text-sm cursor-pointer">
+                    Ambulance
+                  </span>
+                </Link>
+                <Link to={"/vehiclegrid?category=fire-truck"}>
+                  <span className="px-3 py-1 bg-amber-200 text-amber-700 rounded-full text-sm cursor-pointer">
+                    Fire Truck
+                  </span>
+                </Link>
+                <Link to={"/vehiclegrid?category=police-vehicle"}>
+                  <span className="px-3 py-1 bg-cyan-200 text-cyan-700 rounded-full text-sm cursor-pointer">
+                    Police Vehicle
+                  </span>
                 </Link>
               </div>
             </div>
@@ -471,9 +482,9 @@ export default function GridView() {
             {!loading &&
               filteredPosts &&
               filteredPosts.map((post) => (
-                <PostItem 
-                  key={post._id} 
-                  post={post} 
+                <PostItem
+                  key={post._id}
+                  post={post}
                   isOnline={isOnlineUser(post.userRef)}
                 />
               ))}
