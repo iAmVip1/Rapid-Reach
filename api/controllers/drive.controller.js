@@ -90,16 +90,22 @@ export const ownerGetDrive = async (req, res, next) => {
 export const getAllDrives = async (req, res, next) => {
   try {
     // Extract search params from query string
-    const { vechicleNumber, defaultAddress, vehicleType, includeUnapproved } = req.query;
+    const { vechicleNumber, defaultAddress, vehicleType, userName, includeUnapproved, category} = req.query;
 
     // Build a dynamic filter object
     const filter = {};
 
     if (vechicleNumber) {
-      filter.vechicleNumber = { $regex: vechicleNumber, $options: "i" }; // i = case-insensitive
+      filter.vechicleNumber = { $regex: vechicleNumber, $options: "i" }; 
+    }
+    if (userName) {
+      filter.userName = { $regex: userName, $options: "i" }; 
     }
     if (defaultAddress) {
       filter.defaultAddress = { $regex: defaultAddress, $options: "i" };
+    }
+    if (category) {
+      filter.category = { $regex: category, $options: "i" };
     }
 
     // Filter by vehicle type (isAmbulance, isPoliceVAn, isFireTruck) by filtering users first

@@ -104,7 +104,7 @@ export default function DashSideBar() {
                   currentUser?.isPoliceDep ||
                   currentUser?.isBlood
                     ? "documents"
-                    : currentUser?.isPoliceVan ||
+                    : currentUser?.isPoliceVAn ||
                       currentUser?.isAmbulance ||
                       currentUser?.isFireTruck
                     ? "drive"

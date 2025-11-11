@@ -25,6 +25,7 @@ import Drivepost from "./pages/Drivepost";
 import UpdateDrivePost from "./pages/UpdateDrivePost";
 import DriveRoute from "./components/DriveRoute";
 import Vechicle from "./pages/Vechicle";
+import VehicleGrid from "./pages/VehicleGrid";
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -57,6 +58,7 @@ export default function App() {
         
         
         <Route path="/gridview" element={<GridView />} />
+        <Route path="/vehiclegrid" element={<VehicleGrid />} />
         <Route path="/services" element={<Services />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />

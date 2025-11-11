@@ -205,6 +205,22 @@ export default function UpdateDrivepost() {
     );
   }
 
+   useEffect(() => {
+      if (currentUser) {
+        let cat = "";
+        if (currentUser.isPoliceVAn) cat = "police-vehicle";
+        else if (currentUser.isAmbulance) cat = "Ambulance";
+        else if (currentUser.isFireTruck) cat = "fire-truck";
+  
+        setFormData((prev) => ({
+          ...prev,
+          category: cat,
+        }));
+      }
+    }, [currentUser]);
+    console.log(formData);
+    console.log(url);
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen ">
       <h1 className="text-center text-3xl my-7 font-semibold ">

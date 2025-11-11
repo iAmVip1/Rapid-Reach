@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -163,6 +163,22 @@ export default function Drivepost() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+      if (currentUser) {
+        let cat = "";
+        if (currentUser.isPoliceVAn) cat = "police-vehicle";
+        else if (currentUser.isAmbulance) cat = "Ambulance";
+        else if (currentUser.isFireTruck) cat = "fire-truck";
+  
+        setFormData((prev) => ({
+          ...prev,
+          category: cat,
+        }));
+      }
+    }, [currentUser]);
+    console.log(formData);
+    
  
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen ">
