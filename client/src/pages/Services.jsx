@@ -1,129 +1,123 @@
 import { Link } from "react-router-dom";
 import { ReactTyped } from "react-typed";
+import { useSelector } from "react-redux";
 import Hospital from "../../../for uploading/hospital.jpg";
 import FireDep from "../../../for uploading/firedep.jpg";
 import PoliceDep from "../../../for uploading/policedep.jpg";
-import Firevec from '../../../for uploading/firevech.jpg'
-import PoliceVec from '../../../for uploading//policevec.jpg'
-import Ambulance from '../../../for uploading//ambulance.jpg'
-import Bloodbank from '../../../for uploading//bloodbank.jpg'
+import Firevec from "../../../for uploading/firevech.jpg";
+import PoliceVec from "../../../for uploading/policevec.jpg";
+import Ambulance from "../../../for uploading/ambulance.jpg";
+import Bloodbank from "../../../for uploading/bloodbank.jpg";
 
 export default function Services() {
+  const { currentUser } = useSelector((state) => state.user);
+
+  // Hide specific cards depending on user type
+  const hide = {
+    hospital: currentUser?.isHospital,
+    fireDep: currentUser?.isFireDep,
+    policeDep: currentUser?.isPoliceDep,
+    blood: currentUser?.isBlood,
+    policeVan: currentUser?.isPoliceVan,
+    ambulance: currentUser?.isAmbulance,
+    fireTruck: currentUser?.isFireTruck,
+  };
+
   return (
     <div className="p-5">
+      {/* Header */}
       <div className="text-center mb-8">
         <p className="md:text-5xl sm:text-4xl text-xl font-bold">Find Here</p>
         <ReactTyped
-          className='md:text-5xl sm:text-4xl text-xl font-bold'
-          strings={['Fire Department', 'Fire Truck', 'Police Department', 'Hospital', 'Police Vechicle ', 'Ambulance', 'Blood Bank']}
+          className="md:text-5xl sm:text-4xl text-xl font-bold"
+          strings={[
+            "Fire Department",
+            "Fire Truck",
+            "Police Department",
+            "Hospital",
+            "Police Vehicle",
+            "Ambulance",
+            "Blood Bank",
+          ]}
           typeSpeed={120}
           backSpeed={140}
           loop
         />
       </div>
 
+      {/* Cards */}
       <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
         <div className="flex flex-wrap justify-center gap-6">
-          {/* FireDep */}
-          <Link to={'/gridview?category=fire+department'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={FireDep} alt="FireDep"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Fire Department
-                </p>
-              </div>
-            </div>
-          </Link>
 
-          {/* PoliceDep */}
-          <Link to={'/gridview?category=Police+Department'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={PoliceDep} alt="PoliceDep"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Police Department
-                </p>
-              </div>
-            </div>
-          </Link>
+          {/* Fire Department */}
+          {!hide.fireDep && (
+            <Link to={"/gridview?category=fire+department"}>
+              <ServiceCard img={FireDep} title="Fire Department" />
+            </Link>
+          )}
+
+          {/* Police Department */}
+          {!hide.policeDep && (
+            <Link to={"/gridview?category=Police+Department"}>
+              <ServiceCard img={PoliceDep} title="Police Department" />
+            </Link>
+          )}
 
           {/* Hospital */}
-          <Link to={'/gridview?category=hospital'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={Hospital} alt="Hospital"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Hospital
-                </p>
-              </div>
-            </div>
-          </Link>
+          {!hide.hospital && (
+            <Link to={"/gridview?category=hospital"}>
+              <ServiceCard img={Hospital} title="Hospital" />
+            </Link>
+          )}
 
-          {/* Firevec */}
-          <Link to={'/gridview?category=Fire+vehicle'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={Firevec} alt="Firevec"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Fire Truck
-                </p>
-              </div>
-            </div>
-          </Link>
+          {/* Fire Truck */}
+          {!hide.fireTruck && (
+            <Link to={"/gridview?category=Fire+vehicle"}>
+              <ServiceCard img={Firevec} title="Fire Truck" />
+            </Link>
+          )}
 
-          {/* PoliceVec */}
-          <Link to={'/gridview?category=PoliceVec'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={PoliceVec} alt="Police Vehicle"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Police Vehicle
-                  </p>
-              </div>
-            </div>
-          </Link>
+          {/* Police Vehicle */}
+          {!hide.policeVan && (
+            <Link to={"/gridview?category=PoliceVec"}>
+              <ServiceCard img={PoliceVec} title="Police Vehicle" />
+            </Link>
+          )}
 
           {/* Ambulance */}
-          <Link to={'/gridview?category=Ambulance'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={Ambulance} alt="Ambulance"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Ambulance 
-                </p>
-              </div>
-            </div>
-          </Link>
+          {!hide.ambulance && (
+            <Link to={"/gridview?category=Ambulance"}>
+              <ServiceCard img={Ambulance} title="Ambulance" />
+            </Link>
+          )}
 
-          {/* Bloodbank */}
-          <Link to={'/gridview?category=Blood+Bank'}>
-            <div className="bg-white shadow-md hover:shadow-lg cursor-pointer
-              transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]">
-              <img src={Bloodbank} alt="BloodBAnk"
-                className='h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300' />
-              <div className="p-3 flex flex-col gap-2 w-full text-center">
-                <p className='text-sm font-semibold'>
-                  Blood Bank
-                </p>
-              </div>
-            </div>
-          </Link>
-          
+          {/* Blood Bank */}
+          {!hide.blood && (
+            <Link to={"/gridview?category=Blood+Bank"}>
+              <ServiceCard img={Bloodbank} title="Blood Bank" />
+            </Link>
+          )}
         </div>
       </div>
     </div>
-  )
+  );
+}
+
+// 🔧 Reusable card component
+function ServiceCard({ img, title }) {
+  return (
+    <div
+      className="bg-white shadow-md hover:shadow-lg cursor-pointer
+        transition-all transform overflow-hidden rounded-lg w-full sm:w-[330px]"
+    >
+      <img
+        src={img}
+        alt={title}
+        className="h-[220px] w-full object-cover hover:scale-105 transition-transform duration-300"
+      />
+      <div className="p-3 flex flex-col gap-2 w-full text-center">
+        <p className="text-sm font-semibold dark:text-gray-900">{title}</p>
+      </div>
+    </div>
+  );
 }

@@ -141,7 +141,7 @@ console.log(formData);
             <input
               type="email"
               id="email"
-              placeholder="user@example.com"
+              placeholder="user@gmail.com"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={handleChange}
             />
