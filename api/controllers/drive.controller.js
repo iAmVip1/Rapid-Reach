@@ -52,19 +52,22 @@ export const updateDrive = async (req, res, next) => {
 }
 
 export const getDrive = async (req, res, next) => {
-    try {
-        const drive = await Drive.findById(req.params.id);
-        if (!drive) {
-            return next(errorHandler(404, 'Drive not found'))
-        }
-        if (!drive.approved) {
-            return next(errorHandler(404, 'Drive not found'));
-        }
-        res.status(200).json(drive);
-    } catch (error) {
-        next(error)
-    } 
+  try {
+    const drive = await Drive.findById(req.params.id);
+   
+    if (!drive) {
+      return next(errorHandler(404, "Drive not found (no record)"));
     }
+
+    if (!drive.approved) {
+      return next(errorHandler(404, "Drive not found (not approved)"));
+    }
+
+    res.status(200).json(drive);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Auth-required: allow owner/admin to view regardless of approval
 export const ownerGetDrive = async (req, res, next) => {

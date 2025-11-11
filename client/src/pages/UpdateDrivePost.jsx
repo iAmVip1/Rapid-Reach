@@ -180,6 +180,7 @@ export default function UpdateDrivepost() {
           userRef: currentUser._id,
           userMail: currentUser.email,
           userImage: currentUser.profilePicture,
+          userName: currentUser.username,
         }),
       });
 

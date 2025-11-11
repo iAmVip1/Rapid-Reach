@@ -1,241 +1,186 @@
-export default function CreatePostUI() {
+import React from "react";
+import {
+  FaUser,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaIdCard,
+  FaCar,
+  FaPhone,
+} from "react-icons/fa";
+import { MdCall } from "react-icons/md";
+
+export default function VehicleUI() {
+  const drive = {
+    firstName: "Ramesh",
+    lastName: "Karki",
+    company: "Toyota",
+    vechicleNumber: "BA 2 CHA 5678",
+    defaultAddress: "Kathmandu, Nepal",
+    userMail: "ramesh.karki@example.com",
+    phoneNumber1: "+977-9800000000",
+    phoneNumber2: "+977-9811111111",
+    licenseNo: "LN-123456",
+    userImage: "https://via.placeholder.com/150",
+    licenseUrls: [
+      "https://via.placeholder.com/300x200?text=License+Front",
+      "https://via.placeholder.com/300x200?text=License+Back",
+    ],
+    documentUrls: [
+      "https://via.placeholder.com/300x200?text=Vehicle+Doc+1",
+      "https://via.placeholder.com/300x200?text=Vehicle+Doc+2",
+    ],
+  };
+
   return (
-    <div className="p-3 max-w-3xl mx-auto min-h-screen ">
-      <h1 className="text-center text-3xl my-7 font-semibold text-gray-800">
-        Please fill up the details.
-      </h1>
-
-      <form className="space-y-6 bg-white shadow-md p-6 rounded-2xl">
-
-        {/* Longitude / Latitude / Auto-Generate */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700">
-              First Name
-            </label>
-            <input
-              type="text"
-              placeholder="Name"
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100 focus:ring-2 focus:ring-blue-400"
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        {/* Header / Cover */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+          <div className="relative">
+            <img
+              src={
+                drive.licenseUrls?.[0] ||
+                "https://via.placeholder.com/1200x400?text=License+Image"
+              }
+              alt="License"
+              className="w-full h-64 object-cover"
             />
+            <div className="absolute bottom-6 left-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg flex items-center gap-2">
+                <FaCar />
+                {drive.vechicleNumber} • {drive.company}
+              </h2>
+            </div>
           </div>
 
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              placeholder="Surname"
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100 focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        </div>
+          {/* Main Content */}
+          <div className="p-6 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Left Section */}
+              <div className="md:col-span-2">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                  <FaUser className="text-emerald-600" /> Driver Information
+                </h2>
 
-        {/* Default Address */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Default Address
-          </label>
-          <input
-            type="text"
-            placeholder="Address"
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 bg-gray-100 focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
- 
-        {/* Phone Numbers */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Phone Number 1
-          </label>
-          <input
-            type="number"
-            placeholder="Enter your Number"
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+                {/* Mobile Image */}
+                <div className="flex flex-col items-center md:hidden mb-4">
+                  <img
+                    src={drive.userImage}
+                    alt="Driver"
+                    className="w-40 h-40 rounded-full object-cover shadow-md"
+                  />
+                  <p className="text-sm text-gray-500 font-bold mt-2">
+                    Driver Image
+                  </p>
+                </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Phone Number 2
-          </label>
-          <input
-            type="number"
-            placeholder="Enter your Number"
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* License Number */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            License Number
-          </label>
-          <input
-            type="number"
-            placeholder="License"
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* License Image Section */}
-        <div className="border border-dotted border-teal-500 p-3 rounded-md">
-          <label className="block text-sm font-medium text-gray-700">
-            License Image
-          </label>
-
-          <div className="max-w-md mx-auto mt-3 rounded-lg overflow-hidden">
-            <div className="relative h-48 rounded-lg border-2 border-blue-500 bg-gray-50 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
-              <div className="absolute flex flex-col items-center text-center px-4">
-                <img
-                  alt="File Icon"
-                  className="mb-3"
-                  src="https://img.icons8.com/dusk/64/000000/file.png"
-                />
-                <span className="text-gray-500 font-semibold">
-                  Drag & drop your files here
-                </span>
-                <span className="text-gray-400 font-normal mt-1">
-                  or click to upload
-                </span>
+                {/* Driver Info */}
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-center gap-2">
+                    <FaUser className="text-emerald-600" />
+                    <span className="font-semibold">Full Name:</span>
+                    <span>
+                      {drive.firstName} {drive.lastName}
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-emerald-600" />
+                    <span className="font-semibold">Default Address:</span>
+                    <span>{drive.defaultAddress}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaEnvelope className="text-emerald-600" />
+                    <span className="font-semibold">Email:</span>
+                    <span>{drive.userMail}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaPhone className="text-emerald-600" />
+                    <span className="font-semibold">Phone 1:</span>
+                    <span>{drive.phoneNumber1}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaPhone className="text-emerald-600" />
+                    <span className="font-semibold">Phone 2:</span>
+                    <span>{drive.phoneNumber2}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaIdCard className="text-emerald-600" />
+                    <span className="font-semibold">License No:</span>
+                    <span>{drive.licenseNo}</span>
+                  </li>
+                </ul>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                className="h-full w-full opacity-0 cursor-pointer"
-              />
-            </div>
-          </div>
 
-          <div className="flex justify-center mt-6">
-            <button
-              type="button"
-              className="border-2 rounded-md hover:bg-blue-500 hover:text-white border-blue-500 py-2 px-6 font-bold transition"
-            >
-              Upload
-            </button>
-          </div>
-
-          <div className="flex justify-center mt-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2 text-gray-700">
-                Uploaded Image:
-              </h3>
-              <img
-                src="https://via.placeholder.com/200"
-                alt="Uploaded Preview"
-                className="rounded shadow-md w-64"
-              />
-            </div>
-          </div>
-        </div>
-
-         {/* Vechile Number */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Vechicle Number
-          </label>
-          <input
-            type="string"
-            placeholder="Vechicle"
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* Vechile Category */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Vechicle Category
-          </label>
-          <input
-            type="string"
-            placeholder="Vechicle"
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* Vehchile Upload */}
-        <div className="border border-dotted border-indigo-500 p-3 rounded-md">
-          <label className="block text-sm font-medium text-gray-700">
-            Vechicle Documents (Blue Book)
-          </label>
-
-          <div className="max-w-md mx-auto mt-3 rounded-lg overflow-hidden">
-            <div className="relative h-32 rounded-lg border-2 border-indigo-500 bg-gray-50 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
-              <div className="absolute flex flex-col items-center text-center px-4">
-                <img
-                  alt="Document Icon"
-                  className="mb-3"
-                  src="https://img.icons8.com/dusk/64/000000/documents.png"
-                />
-                <span className="text-gray-500 font-semibold">
-                  Drag & drop documents here
-                </span>
-                <span className="text-gray-400 font-normal mt-1">
-                  Accepts PDF, DOCX, JPG, PNG
-                </span>
-              </div>
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                className="h-full w-full opacity-0 cursor-pointer"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-6">
-            <button
-              type="button"
-              className="border-2 rounded-md hover:bg-indigo-500 hover:text-white border-indigo-500 py-2 px-6 font-bold transition"
-            >
-              Upload Document
-            </button>
-          </div>
-
-          <div className="mt-4 text-sm text-gray-600 text-center break-all">
-            Latest document uploaded:&nbsp;
-            <a
-              href="#"
-              className="text-indigo-600 underline hover:text-indigo-800"
-            >
-              https://example.com/sample.pdf
-            </a>
-          </div>
-
-          <div className="mt-6 space-y-3">
-            <h4 className="text-base font-semibold text-gray-700">
-              Uploaded Documents
-            </h4>
-            <ul className="space-y-2">
-              <li className="flex items-center justify-between bg-white border border-gray-200 rounded-md px-3 py-2 shadow-sm">
-                <a
-                  href="#"
-                  className="text-indigo-600 truncate max-w-xs sm:max-w-md"
-                >
-                  Document 1
+              {/* Driver Image (Desktop) */}
+              <div className="hidden md:flex flex-col items-center">
+                <a href={drive.userImage} target="_blank" rel="noreferrer">
+                  <img
+                    src={drive.userImage}
+                    alt="Driver"
+                    className="w-44 h-44 rounded-full object-cover shadow-lg hover:scale-105 transition-transform"
+                  />
                 </a>
-                <button
-                  type="button"
-                  className="text-red-600 hover:text-red-700 font-medium"
-                >
-                  Remove
-                </button>
-              </li>
-            </ul>
+                <p className="text-sm text-gray-500 font-bold mt-3">
+                  Driver Image
+                </p>
+              </div>
+            </div>
+
+            {/* Documents Section */}
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* License Images */}
+              <div>
+                <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                  <FaIdCard className="text-emerald-600" /> License Images
+                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {drive.licenseUrls.map((u, i) => (
+                    <a key={i} href={u} target="_blank" rel="noreferrer">
+                      <img
+                        src={u}
+                        alt={`License ${i + 1}`}
+                        className="w-full h-28 object-cover rounded-lg shadow hover:scale-105 transition-all"
+                      />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Vehicle Documents */}
+              <div>
+                <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                  <FaIdCard className="text-emerald-600" /> Vehicle Documents
+                </h2>
+                <ul className="space-y-2">
+                  {drive.documentUrls.map((d, i) => (
+                    <li
+                      key={i}
+                      className="flex items-center justify-between bg-white border border-gray-200 rounded-md px-3 py-2 shadow-sm hover:shadow-md transition-all"
+                    >
+                      <a
+                        href={d}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 truncate max-w-xs sm:max-w-md"
+                      >
+                        Document {i + 1}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Call Button */}
+            <div className="mt-8 text-center">
+              <button className="px-6 py-3 bg-emerald-600 text-white font-semibold rounded-md hover:bg-emerald-700 transition-all shadow-md">
+                <MdCall className="inline mr-2 text-lg" />
+                Call Now
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Submit */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }
