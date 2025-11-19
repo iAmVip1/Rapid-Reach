@@ -10,6 +10,7 @@ import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdCall } from "react-icons/md";
 import StarRating from "../components/StarRating";
 import { useCall } from "../socket/CallContext";
+import CommentSection from "../components/CommentSection";
 
 // Default Leaflet marker icon (local assets via package)
 const defaultIcon = L.icon({
@@ -384,6 +385,7 @@ export default function Post() {
           </div>
         </div>
       </div>
+      <CommentSection />
     </div>
   );
 }

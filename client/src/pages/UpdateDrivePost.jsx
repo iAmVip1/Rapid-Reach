@@ -207,7 +207,7 @@ export default function UpdateDrivepost() {
         setError(data.message || 'Failed to update drive');
         return;
       }
-      navigate('/dashboard?tab=documents');
+      navigate('/dashboard?tab=drive');
     } catch (err) {
       setError(err.message);
       setLoading(false);

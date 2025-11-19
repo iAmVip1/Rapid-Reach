@@ -157,7 +157,7 @@ export default function Drivepost() {
         setError(data.message || 'Failed to create drive post');
         return;
       }
-      navigate('/dashboard?tab=documents');
+      navigate('/dashboard?tab=drive');
     } catch (err) {
       setError(err.message);
       setLoading(false);
