@@ -385,7 +385,7 @@ export default function Post() {
           </div>
         </div>
       </div>
-      <CommentSection />
+      <CommentSection postId={post._id} />
     </div>
   );
 }

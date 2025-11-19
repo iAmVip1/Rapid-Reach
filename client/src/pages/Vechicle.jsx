@@ -9,6 +9,7 @@ import SocketContext from "../socket/SocketContext";
 import ReactDOMServer from "react-dom/server";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import CommentSection from "../components/CommentSection";
 
 // Get vehicle type icon
 const getVehicleIconElement = (vehicleType) => {
@@ -684,6 +685,7 @@ export default function Vechicle() {
             )}
           </div>
         </div>
+        <CommentSection postId={drive._id} />
       </div>
     </div>
   );
