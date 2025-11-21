@@ -26,6 +26,7 @@ import UpdateDrivePost from "./pages/UpdateDrivePost";
 import DriveRoute from "./components/DriveRoute";
 import Vechicle from "./pages/Vechicle";
 import VehicleGrid from "./pages/VehicleGrid";
+import DriveMap from "./pages/DriveMap";
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="/test/:postId" element={<Testing />} />
         <Route path="/sample" element={<Sample />} />
         <Route path="/mapview" element={<MapView />} />
+        <Route path="/drivemap" element={<DriveMap />} />
       </Routes>
       <CallOverlay />
       <Footer />
