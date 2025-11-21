@@ -429,7 +429,7 @@ export default function Vechicle() {
             <div className="h-96 md:h-[500px] w-full relative" style={{ minHeight: '400px' }}>
               {mapCenter && Array.isArray(mapCenter) && mapCenter.length === 2 ? (
                 <MapContainer
-                  key={`map-${mapCenter[0]}-${mapCenter[1]}`}
+                  
                   center={mapCenter}
                   zoom={
                     ((currentDriverOnlineLocation ? 1 : 0) + onlineDrivesWithLocation.length) === 1 
@@ -440,7 +440,7 @@ export default function Vechicle() {
                   }
                   className="w-full h-full"
                   style={{ zIndex: 1, height: '100%', width: '100%' }}
-                  scrollWheelZoom={true}
+                  scrollWheelZoom={false}
                 >
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
