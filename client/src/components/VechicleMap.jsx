@@ -325,6 +325,47 @@ export default function VechicleMap() {
           </Marker>
         )}
 
+        {/* Online users markers (excluding the current user and drivers) */}
+        {onlineUsers
+          .filter((u) => {
+            if (!u || typeof u !== "object") return false;
+            // Exclude current user
+            if (u.userId === currentUser?._id) return false;
+            // Only show users with valid coordinates
+            if (!Number.isFinite(u?.lat) || !Number.isFinite(u?.lng)) return false;
+            // Exclude users who are drivers - check if their userId matches any drive's userRef
+            // Only check if drives array has items to avoid unnecessary computation
+            if (drives.length > 0) {
+              const isDriver = drives.some((drive) => {
+                const driveUserRef = drive.userRef ? String(drive.userRef) : null;
+                const userId = u.userId ? String(u.userId) : null;
+                return driveUserRef && userId && driveUserRef === userId;
+              });
+              // Don't show if they're a driver (they're shown as vehicle markers)
+              if (isDriver) return false;
+            }
+            return true;
+          })
+          .map((u) => (
+            <Marker
+              key={u.userId}
+              position={[u.lat, u.lng]}
+              icon={L.icon({
+                iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                iconSize: [26, 26],
+                iconAnchor: [13, 26],
+              })}
+            >
+              <Tooltip direction="top" permanent>
+                {u.name || "Online user"}
+              </Tooltip>
+              <Popup>
+                <div style={{ fontWeight: 600 }}>{u.name || "Online user"}</div>
+                <div style={{ fontSize: 12 }}>Online</div>
+              </Popup>
+            </Marker>
+          ))}
+
         {/* Fit bounds to focus on the user location */}
         <FitBounds userLocation={userLocation} />
       </MapContainer>
