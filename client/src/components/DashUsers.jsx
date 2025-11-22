@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { FaPhone, FaTrash, FaEye, FaEdit, FaUser, FaEnvelope, FaBuilding, FaCircle, FaSearch, FaFilter } from 'react-icons/fa';
 import Socket from '../socket/SocketContext';
+import { useCall } from '../socket/CallContext';
 
 export default function DashUsers() {
   const { currentUser } = useSelector((state) => state.user);
+  const { startCall } = useCall() || {};
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -80,8 +82,13 @@ export default function DashUsers() {
   };
 
   const handleCallUser = (user) => {
-    // Implement call functionality
-    alert(`Calling ${user.username}...`);
+    if (startCall && user._id) {
+      console.log("Calling user:", user.username, "ID:", user._id);
+      startCall(user._id);
+    } else {
+      console.error("Cannot start call - missing startCall function or user ID");
+      alert(`Cannot call ${user.username}. Please try again.`);
+    }
   };
 
   const getUserService = (user) => {

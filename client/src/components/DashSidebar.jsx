@@ -43,8 +43,8 @@ export default function DashSideBar() {
 
   return (
     <div
-      className={`hidden md:flex flex-col bg-white shadow-md transition-all duration-300 ease-in-out ${DashSideBarWidth}`}
-      style={{ height: "100vh" }}
+     className={`hidden md:flex flex-col bg-white  transition-all duration-300 ease-in-out ${DashSideBarWidth} min-h-screen`}
+
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
