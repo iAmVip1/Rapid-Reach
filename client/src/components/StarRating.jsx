@@ -48,7 +48,7 @@ const StarRating = ({ totalStars = 5, rating = 0, displayOnly = false, size = "w
         );
       })}
       {displayOnly && (
-        <span className="ml-2 text-sm font-semibold text-gray-700">
+        <span className="ml-2 text-sm font-semibold ">
           {rating.toFixed(1)}
         </span>
       )}

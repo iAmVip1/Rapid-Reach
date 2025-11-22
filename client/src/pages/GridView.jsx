@@ -408,7 +408,7 @@ export default function GridView() {
           <div className="bg-white dark:bg-zinc-700 rounded-lg shadow p-4">
             <h2 className="font-semibold mb-4">Best Service For You</h2>
             {bestServices.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
+              <p className=" text-center py-8">
                 No services available yet. Check back soon!
               </p>
             ) : (
@@ -444,7 +444,7 @@ export default function GridView() {
                       </div>
                       <div className="flex items-center gap-1">
                         <FaMapMarkerAlt className="h-3 w-3 text-green-700 flex-shrink-0" />
-                        <p className="text-xs text-gray-600 truncate">
+                        <p className="text-xs truncate">
                           {service.address}
                         </p>
                       </div>
@@ -456,12 +456,12 @@ export default function GridView() {
                           totalStars={5}
                         />
                         {service.distance && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs ">
                             {service.distance} km
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs  mt-1">
                         {service.category}
                       </p>
                     </div>
