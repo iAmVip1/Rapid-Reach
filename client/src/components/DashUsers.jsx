@@ -104,7 +104,7 @@ export default function DashUsers() {
 
   const getServiceColor = (service) => {
     switch (service) {
-      case 'Hospital': return 'bg-blue-100 text-blue-800';
+      case 'Hospital': return 'bg-blue-200 text-blue-800';
       case 'Fire Department': return 'bg-red-100 text-red-800';
       case 'Police Department': return 'bg-indigo-100 text-indigo-800';
       case 'Blood Bank': return 'bg-pink-100 text-pink-800';

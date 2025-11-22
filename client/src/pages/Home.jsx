@@ -33,8 +33,8 @@ const Home = () => {
                         <h1>For real time service</h1>
                         <h1>Allows to contact</h1>
                     </div>
-                    <p className="text-white-50 md:text-xl relative z-10 pointer-events-none:">
-                        We are here for your health issue with the real time 
+                    <p className="text-gray-600 dark:text-white-50 md:text-xl relative z-10 pointer-events-none:">
+                        We are here for your health issue with the real time <br />
                         communication service.
                     </p>
                     <Button

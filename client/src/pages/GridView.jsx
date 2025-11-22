@@ -280,10 +280,10 @@ export default function GridView() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 dark:bg-zinc-800 min-h-screen">
       {/* Search Bar */}
 
-      <div className="bg-white shadow-sm py-4 px-6 flex flex-wrap gap-4 justify-between max-w-7xl mx-auto mt-4 rounded-lg">
+      <div className="bg-white dark:bg-zinc-700 shadow-sm py-4 px-6 flex flex-wrap gap-4 justify-between max-w-7xl mx-auto mt-4 rounded-lg">
         <input
           type="text"
           id="departmentName"
@@ -303,7 +303,7 @@ export default function GridView() {
 
         <select
           id="availability"
-          className="border p-2 rounded w-56"
+          className="border p-2 rounded w-56 dark:bg-zinc-700"
           value={filters.availability}
           onChange={handleChange}
         >
@@ -313,7 +313,7 @@ export default function GridView() {
         </select>
 
         <select
-          className="border p-2 rounded w-56"
+          className="border p-2 rounded w-56 dark:bg-zinc-700"
           value={sortOption}
           onChange={handleSortChange}
         >
@@ -335,8 +335,8 @@ export default function GridView() {
         {/* Left Column - Visible on all devices */}
         <div className="w-full lg:w-1/4 space-y-6">
           {/* Map */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+          <div className="bg-white dark:bg-zinc-700 rounded-lg shadow p-4">
+            <div className="h-48 bg-gray-200 dark:bg-zinc-700 rounded-lg flex items-center justify-center overflow-hidden">
               <img
                 src={MapImage}
                 alt="Map"
@@ -351,7 +351,7 @@ export default function GridView() {
           </div>
 
           {/* Filters */}
-          <div className="bg-white rounded-lg shadow p-4 space-y-4">
+          <div className="bg-white dark:bg-zinc-700 rounded-lg shadow p-4 space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="font-semibold">Filter</h2>
             </div>
@@ -405,7 +405,7 @@ export default function GridView() {
         {/* Right Column */}
         <div className="w-full lg:w-3/4 space-y-6">
           {/* Best Services - Priority Scoring */}
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-zinc-700 rounded-lg shadow p-4">
             <h2 className="font-semibold mb-4">Best Service For You</h2>
             {bestServices.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
@@ -417,7 +417,7 @@ export default function GridView() {
                   <Link
                     key={service._id}
                     to={`/post/${service._id}`}
-                    className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto"
+                    className="bg-white dark:bg-zinc-600 shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto"
                   >
                     <img
                       src={service.imageUrls?.[0] || Hospital}
@@ -471,7 +471,7 @@ export default function GridView() {
             )}
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
+          <div className="bg-white dark:bg-zinc-700 rounded-lg shadow p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
             {/* Other posts */}
             {!loading && filteredPosts.length === 0 && (
               <p className="text-xl ">No Services found !!</p>
