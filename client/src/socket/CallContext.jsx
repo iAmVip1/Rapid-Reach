@@ -155,6 +155,19 @@ const currentUser = useSelector((state) => state.user.currentUser);
     };
   }, [isAudioUnlocked]);
 
+  // Ensure local video stream is attached when call is accepted or calling
+  useEffect(() => {
+    if ((callAccepted || isCalling) && streamRef.current && myVideoRef.current) {
+      // Re-attach stream to ensure it's properly connected after component re-render
+      if (myVideoRef.current.srcObject !== streamRef.current) {
+        myVideoRef.current.srcObject = streamRef.current;
+        myVideoRef.current.muted = true;
+        myVideoRef.current.volume = 0;
+        attemptPlay(myVideoRef.current);
+      }
+    }
+  }, [callAccepted, isCalling]);
+
   const startCall = async (callToUserId) => {
     if (!socket || !currentUser) return;
     try {
@@ -382,5 +395,3 @@ const currentUser = useSelector((state) => state.user.currentUser);
 export function useCall() {
   return useContext(CallContext);
 }
-
-

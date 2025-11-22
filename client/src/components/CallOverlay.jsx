@@ -76,6 +76,22 @@ export default function CallOverlay() {
     };
   }, []);
 
+  // Ensure local video (myVideoRef) plays when call is accepted
+  useEffect(() => {
+    if ((callAccepted || isCalling) && myVideoRef?.current) {
+      const video = myVideoRef.current;
+      // Ensure the video element has the stream and plays
+      if (video.srcObject) {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.log("Error playing local video:", err);
+          });
+        }
+      }
+    }
+  }, [callAccepted, isCalling]);
+
   // Toggles now come from context to control real tracks
 
   // Show overlay when receiving call, call is accepted, or user is calling
@@ -257,5 +273,3 @@ export default function CallOverlay() {
     </div>
   );
 }
-
-
