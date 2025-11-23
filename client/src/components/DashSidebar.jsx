@@ -10,7 +10,6 @@ import { FaUsers } from "react-icons/fa";
 import { LuHospital } from "react-icons/lu";
 import { MdBloodtype, MdLocalPolice } from "react-icons/md";
 import { FaHouseFire } from "react-icons/fa6";
-import { MdOutlineBloodtype } from "react-icons/md";
 
 import { PiPoliceCarFill } from "react-icons/pi";
 import { MdFireTruck } from "react-icons/md";

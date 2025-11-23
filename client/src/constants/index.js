@@ -1,9 +1,19 @@
+import {
+  FaAmbulance,
+  FaHospital,
+  FaTint,
+  FaUniversity,
+  FaFireExtinguisher,
+} from "react-icons/fa";
+import { PiPoliceCarFill } from "react-icons/pi";
+import { MdFireTruck } from "react-icons/md";
+
 export const words =[
-    { text: 'Ambulance', imgPath:'/images/ideas.svg'},
-    { text: 'Hospital', imgPath:'/images/concepts.svg'},
-    { text: 'Blood Bank', imgPath:'/images/ideas.svg'},
-    { text: 'Police Department', imgPath:'/images/concepts.svg'},
-    { text: 'Police Vehicle', imgPath:'/images/ideas.svg'},
-    { text: 'Fire Department', imgPath:'/images/concepts.svg'},
-    { text: 'Fire Truck', imgPath:'/images/concepts.svg'},
-]
+    { text: 'Ambulance', icon: FaAmbulance },
+    { text: 'Hospital', icon: FaHospital },
+    { text: 'Blood Bank', icon: FaTint },
+    { text: 'Police Department', icon: FaUniversity },   // Police station icon
+    { text: 'Police Vehicle', icon: PiPoliceCarFill },
+    { text: 'Fire Department', icon: FaFireExtinguisher },
+    { text: 'Fire Truck', icon: MdFireTruck }
+];
