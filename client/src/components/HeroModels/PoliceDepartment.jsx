@@ -1,11 +1,12 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMediaQuery } from "react-responsive";
-import { Hospital } from "./Hospital";
+
 import HeroLights from "./HeroLights";
+import { PoliceStation } from "./PoliceStation";
 
 
-const BloodBank = () => {
+const PoliceDepartment = () => {
      const isTablet = useMediaQuery({ query: '(max-width: 1024px)' });
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
@@ -26,14 +27,14 @@ const BloodBank = () => {
 
         <group
   scale={isMobile ?  1 : 1}   // increase size
-  position={[0, -1, 0]}             // center on Y-axis
+  position={[0, -1, 4]}             // center on Y-axis
   rotation={[0, -Math.PI / 4, 0]}   // keep rotation if needed
 >
-  <Hospital />
+  <PoliceStation />
 </group>
 
     </Canvas>
   )
 }
 
-export default BloodBank
+export default PoliceDepartment

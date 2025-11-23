@@ -1,6 +1,7 @@
 import React from "react";
 import BloodBank from "./HeroModels/BloodBank";
 import Hospitalbuilding from "./HeroModels/Hospitalbuilding";
+import PoliceDepartment from "./HeroModels/PoliceDepartment";
 
 const AnimatedCounter = () => {
   return (
@@ -26,7 +27,7 @@ const AnimatedCounter = () => {
           <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
             <figure>
               <div className="w-full h-[400px] md:h-[500px]">
-                <BloodBank />
+                <PoliceDepartment />
               </div>
             </figure>
           </div>
@@ -57,14 +58,13 @@ const AnimatedCounter = () => {
             </figure>
           </div>
         </div>
-        {/* SECTION Police department */}
+        {/* SECTION Fire Department */}
         <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Police Department</h2>
+            <h2 className="text-3xl font-bold">Fire Department</h2>
             <p className="text-gray-600 text-lg">
-              Law enforcement units responsible for maintaining public safety,
-              preventing crime, and responding to emergency situations.
+             Emergency service teams dedicated to fire suppression, rescue operations, and disaster response.
             </p>
 
             {/* CUSTOM BUTTON */}
@@ -83,14 +83,13 @@ const AnimatedCounter = () => {
           </div>
         </div>
 
-        {/* SECTION Hospital */}
+        {/* SECTION Blood Bank */}
         <div className="flex flex-col md:flex-row items-center gap-10">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Hospital Services</h2>
+            <h2 className="text-3xl font-bold">Blood Bank Services</h2>
             <p className="text-gray-600 text-lg">
-              Healthcare facilities offering diagnosis, treatment, surgeries,
-              and emergency care with specialized medical staff and equipment.
+              Centers that collect, test, store, and distribute blood and blood components for patients requiring transfusions.
             </p>
 
             {/* CUSTOM BUTTON */}
@@ -108,14 +107,13 @@ const AnimatedCounter = () => {
             </figure>
           </div>
         </div>
-        {/* SECTION Police department */}
+        {/* SECTION Ambulance */}
         <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Police Department</h2>
+            <h2 className="text-3xl font-bold">Ambulance Services</h2>
             <p className="text-gray-600 text-lg">
-              Law enforcement units responsible for maintaining public safety,
-              preventing crime, and responding to emergency situations.
+              Quick-response medical vehicles equipped to provide emergency first aid and fast transportation to hospitals during critical situations.
             </p>
 
             {/* CUSTOM BUTTON */}
@@ -134,14 +132,13 @@ const AnimatedCounter = () => {
           </div>
         </div>
 
-        {/* SECTION Hospital */}
+        {/* SECTION Police Vehicle */}
         <div className="flex flex-col md:flex-row items-center gap-10">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Hospital Services</h2>
+            <h2 className="text-3xl font-bold">Police Vehicle Services</h2>
             <p className="text-gray-600 text-lg">
-              Healthcare facilities offering diagnosis, treatment, surgeries,
-              and emergency care with specialized medical staff and equipment.
+              Patrol and emergency response vehicles used by police for rapid movement, monitoring, and on-site assistance.
             </p>
 
             {/* CUSTOM BUTTON */}
@@ -159,14 +156,13 @@ const AnimatedCounter = () => {
             </figure>
           </div>
         </div>
-        {/* SECTION Police department */}
+        {/* SECTION Fire Truck */}
         <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Police Department</h2>
+            <h2 className="text-3xl font-bold">Fire Truck Services</h2>
             <p className="text-gray-600 text-lg">
-              Law enforcement units responsible for maintaining public safety,
-              preventing crime, and responding to emergency situations.
+             Specialized firefighting vehicles equipped with ladders, water pumps, hoses, and rescue tools for handling fire emergencies.
               <br />
             </p>
 
