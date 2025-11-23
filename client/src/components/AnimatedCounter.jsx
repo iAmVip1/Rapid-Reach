@@ -2,6 +2,9 @@ import React from "react";
 import BloodBank from "./HeroModels/BloodBank";
 import Hospitalbuilding from "./HeroModels/Hospitalbuilding";
 import PoliceDepartment from "./HeroModels/PoliceDepartment";
+import FireDepartment from "./HeroModels/FireDepartment";
+import AmbulanceModel from "./HeroModels/AmbulanceModel";
+import PoliceCar from "./HeroModels/PoliceCar";
 
 const AnimatedCounter = () => {
   return (
@@ -77,7 +80,7 @@ const AnimatedCounter = () => {
           <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
             <figure>
               <div className="w-full h-[400px] md:h-[500px]">
-                <BloodBank />
+                <FireDepartment />
               </div>
             </figure>
           </div>
@@ -102,7 +105,7 @@ const AnimatedCounter = () => {
           <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
             <figure>
               <div className="w-full h-[400px] md:h-[500px]">
-                <Hospitalbuilding />
+                <BloodBank />
               </div>
             </figure>
           </div>
@@ -126,7 +129,7 @@ const AnimatedCounter = () => {
           <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
             <figure>
               <div className="w-full h-[400px] md:h-[500px]">
-                <BloodBank />
+                <AmbulanceModel />
               </div>
             </figure>
           </div>
@@ -151,7 +154,7 @@ const AnimatedCounter = () => {
           <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
             <figure>
               <div className="w-full h-[400px] md:h-[500px]">
-                <Hospitalbuilding />
+                <PoliceCar />
               </div>
             </figure>
           </div>
