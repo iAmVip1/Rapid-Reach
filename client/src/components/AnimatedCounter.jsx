@@ -5,6 +5,8 @@ import PoliceDepartment from "./HeroModels/PoliceDepartment";
 import FireDepartment from "./HeroModels/FireDepartment";
 import AmbulanceModel from "./HeroModels/AmbulanceModel";
 import PoliceCar from "./HeroModels/PoliceCar";
+import { Link } from "react-router-dom";
+import FireTruck from "./HeroModels/FireTruck";
 
 const AnimatedCounter = () => {
   return (
@@ -21,9 +23,11 @@ const AnimatedCounter = () => {
             </p>
 
             {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
+            <Link to={"/gridview?category=Police+Department"}>
+              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
           </div>
 
           {/* 3D MODEL */}
@@ -47,9 +51,11 @@ const AnimatedCounter = () => {
             </p>
 
             {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
+            <Link to={"/gridview?category=hospital"}>
+              <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
           </div>
 
           {/* 3D MODEL */}
@@ -61,68 +67,23 @@ const AnimatedCounter = () => {
             </figure>
           </div>
         </div>
-        {/* SECTION Fire Department */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Fire Department</h2>
-            <p className="text-gray-600 text-lg">
-             Emergency service teams dedicated to fire suppression, rescue operations, and disaster response.
-            </p>
-
-            {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <FireDepartment />
-              </div>
-            </figure>
-          </div>
-        </div>
-
-        {/* SECTION Blood Bank */}
-        <div className="flex flex-col md:flex-row items-center gap-10">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Blood Bank Services</h2>
-            <p className="text-gray-600 text-lg">
-              Centers that collect, test, store, and distribute blood and blood components for patients requiring transfusions.
-            </p>
-
-            {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <BloodBank />
-              </div>
-            </figure>
-          </div>
-        </div>
         {/* SECTION Ambulance */}
         <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
             <h2 className="text-3xl font-bold">Ambulance Services</h2>
             <p className="text-gray-600 text-lg">
-              Quick-response medical vehicles equipped to provide emergency first aid and fast transportation to hospitals during critical situations.
+              Quick-response medical vehicles equipped to provide emergency
+              first aid and fast transportation to hospitals during critical
+              situations.
             </p>
 
             {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
+            <Link to={"/vehiclegrid?category=Ambulance"}>
+              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
           </div>
 
           {/* 3D MODEL */}
@@ -135,44 +96,22 @@ const AnimatedCounter = () => {
           </div>
         </div>
 
-        {/* SECTION Police Vehicle */}
+        {/* SECTION Blood Bank */}
         <div className="flex flex-col md:flex-row items-center gap-10">
           {/* TEXT */}
           <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Police Vehicle Services</h2>
+            <h2 className="text-3xl font-bold">Blood Bank Services</h2>
             <p className="text-gray-600 text-lg">
-              Patrol and emergency response vehicles used by police for rapid movement, monitoring, and on-site assistance.
+              Centers that collect, test, store, and distribute blood and blood
+              components for patients requiring transfusions.
             </p>
 
             {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <PoliceCar />
-              </div>
-            </figure>
-          </div>
-        </div>
-        {/* SECTION Fire Truck */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Fire Truck Services</h2>
-            <p className="text-gray-600 text-lg">
-             Specialized firefighting vehicles equipped with ladders, water pumps, hoses, and rescue tools for handling fire emergencies.
-              <br />
-            </p>
-
-            {/* CUSTOM BUTTON */}
-            <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-              Visit Service
-            </button>
+            <Link to={"/gridview?category=Blood+Bank"}>
+              <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
           </div>
 
           {/* 3D MODEL */}
@@ -185,6 +124,89 @@ const AnimatedCounter = () => {
           </div>
         </div>
 
+        {/* SECTION Fire Truck */}
+        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
+          {/* TEXT */}
+          <div className="md:w-[70%] w-full space-y-5 order-1">
+            <h2 className="text-3xl font-bold">Fire Truck Services</h2>
+            <p className="text-gray-600 text-lg">
+              Specialized firefighting vehicles equipped with ladders, water
+              pumps, hoses, and rescue tools for handling fire emergencies.
+              <br />
+            </p>
+
+            {/* CUSTOM BUTTON */}
+            <Link to={"/vehiclegrid?category=fire-truck"}>
+              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
+          </div>
+
+          {/* 3D MODEL */}
+          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
+            <figure>
+              <div className="w-full h-[400px] md:h-[500px]">
+                <FireTruck />
+              </div>
+            </figure>
+          </div>
+        </div>
+        {/* SECTION Police Vehicle */}
+        <div className="flex flex-col md:flex-row items-center gap-10">
+          {/* TEXT */}
+          <div className="md:w-[70%] w-full space-y-5 order-1">
+            <h2 className="text-3xl font-bold">Police Vehicle Services</h2>
+            <p className="text-gray-600 text-lg">
+              Patrol and emergency response vehicles used by police for rapid
+              movement, monitoring, and on-site assistance.
+            </p>
+
+            {/* CUSTOM BUTTON */}
+            <Link to={"/vehiclegrid?category=police-vehicle"}>
+              <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
+          </div>
+
+          {/* 3D MODEL */}
+          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
+            <figure>
+              <div className="w-full h-[400px] md:h-[500px]">
+                <PoliceCar />
+              </div>
+            </figure>
+          </div>
+        </div>
+
+        {/* SECTION Fire Department */}
+        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
+          {/* TEXT */}
+          <div className="md:w-[70%] w-full space-y-5 order-1">
+            <h2 className="text-3xl font-bold">Fire Department</h2>
+            <p className="text-gray-600 text-lg">
+              Emergency service teams dedicated to fire suppression, rescue
+              operations, and disaster response.
+            </p>
+
+            {/* CUSTOM BUTTON */}
+            <Link to={"/gridview?category=fire+department"}>
+              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
+                Visit Service
+              </button>
+            </Link>
+          </div>
+
+          {/* 3D MODEL */}
+          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
+            <figure>
+              <div className="w-full h-[400px] md:h-[500px]">
+                <FireDepartment />
+              </div>
+            </figure>
+          </div>
+        </div>
       </section>
     </div>
   );
