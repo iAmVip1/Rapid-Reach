@@ -65,6 +65,36 @@ const makeVehicleDivIcon = (category, driverName) => {
   });
 };
 
+// Helper for user/other-user location marker icon (same style as ShowMap/Post)
+const makeUserLocationIcon = (username) =>
+  L.divIcon({
+    className: "",
+    html: `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; white-space: nowrap;">
+        <div style="
+          margin-bottom: 4px;
+          font-weight: 700;
+          font-size: 12px;
+          color: #000;
+          text-align: center;
+          background: rgba(255,255,255,0.9);
+          padding: 2px 6px;
+          border-radius: 4px;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        ">
+          ${username || "You"}
+        </div>
+        <div style="position: relative; width: 30px; height: 30px;">
+          <img src="https://cdn-icons-png.flaticon.com/512/64/64113.png" 
+               style="width: 30px; height: 30px; object-fit: contain;" />
+        </div>
+      </div>
+    `,
+    iconSize: [30, 50],
+    iconAnchor: [15, 50],
+    popupAnchor: [0, -60],
+  });
+
 // Helper component to fit map to markers around user location
 function FitBounds({ userLocation }) {
   const map = useMap();
@@ -306,19 +336,12 @@ export default function VechicleMap() {
           );
         })}
 
-        {/* User location marker */}
+        {/* User location marker (same style as ShowMap/Post) */}
         {userLocation && (
           <Marker
             position={userLocation}
-            icon={L.icon({
-              iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
-              iconSize: [30, 30],
-              iconAnchor: [15, 30],
-            })}
+            icon={makeUserLocationIcon(currentUser?.username)}
           >
-            <Tooltip direction="top" permanent>
-              {currentUser?.username || "You"}
-            </Tooltip>
             <Popup>
               <div style={{ fontWeight: "700" }}>You are here</div>
             </Popup>
@@ -350,15 +373,8 @@ export default function VechicleMap() {
             <Marker
               key={u.userId}
               position={[u.lat, u.lng]}
-              icon={L.icon({
-                iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-                iconSize: [26, 26],
-                iconAnchor: [13, 26],
-              })}
+              icon={makeUserLocationIcon(u.name || "Online user")}
             >
-              <Tooltip direction="top" permanent>
-                {u.name || "Online user"}
-              </Tooltip>
               <Popup>
                 <div style={{ fontWeight: 600 }}>{u.name || "Online user"}</div>
                 <div style={{ fontSize: 12 }}>Online</div>

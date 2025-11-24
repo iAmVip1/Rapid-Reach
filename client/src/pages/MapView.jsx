@@ -1,4 +1,3 @@
-import React from 'react'
 import MobileSidebar from '../components/MobileSidebar'
 import ShowMap from '../components/ShowMap'
 

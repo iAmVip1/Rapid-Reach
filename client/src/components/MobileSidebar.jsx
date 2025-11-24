@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import { MdMenu } from "react-icons/md";
 import SocketContext from "../socket/SocketContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const MobileSidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
@@ -30,6 +32,22 @@ const MobileSidebar = () => {
   // Handle Submit (search button / enter key)
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // 1) Update the /mapview URL query so the main map (ShowMap) fetches the same filters
+    const urlParams = new URLSearchParams(location.search);
+    if (search) {
+      urlParams.set("departmentName", search);
+    } else {
+      urlParams.delete("departmentName");
+    }
+    if (category) {
+      urlParams.set("category", category);
+    } else {
+      urlParams.delete("category");
+    }
+    navigate(`/mapview?${urlParams.toString()}`);
+
+    // 2) Still show results list in the sidebar (optional preview)
     setHasSearched(true);
     setLoading(true);
     setError("");

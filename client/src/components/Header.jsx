@@ -33,6 +33,9 @@ export default function Navbar() {
     setIsOpen(!isOpen);
   };
 
+  const isDriverRole =
+    currentUser?.isPoliceVAn || currentUser?.isAmbulance || currentUser?.isFireTruck;
+
   return (
     <header className=" bg-gray-50 dark:bg-zinc-800 shadow-md sticky top-0 z-50">
       <nav className="border-gray-200">
@@ -142,6 +145,15 @@ export default function Navbar() {
                     Profile
                   </a>
 
+                  {isDriverRole && (
+                    <Link
+                      to="/drivemap"
+                      className="block py-2 px-4 text-sm hover:font-semibold hover:bg-emerald-600 hover:text-white rounded-xl"
+                    >
+                      Share my location
+                    </Link>
+                  )}
+
                   <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
                   <div className="py-2">
                     <div
@@ -205,6 +217,16 @@ export default function Navbar() {
                     >
                       Profile
                     </a>
+
+                    {isDriverRole && (
+                      <Link
+                        to="/drivemap"
+                        className="block py-2 px-4 text-sm hover:font-semibold hover:bg-emerald-600 hover:text-white rounded-xl"
+                      >
+                        Share my location
+                      </Link>
+                    )}
+
                     <div className="border-b-2 border-dashed border-gray-400 last:border-0"></div>
                     <div className="py-2">
                       <div
