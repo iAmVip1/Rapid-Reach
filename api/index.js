@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+const __dirname = path.resolve();
+
 dotenv.config();
 
 // MongoDB connection
@@ -49,6 +51,13 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+// ✅ Alternative fix
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
 // Allowed frontend origins (no cors package needed)
