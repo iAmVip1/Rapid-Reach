@@ -334,6 +334,15 @@ const DriveMap = () => {
             Search Vehicles
           </button>
 
+          {/* Search Departments */}
+          <Link to={"/mapview"}>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white rounded-lg px-4 py-3 font-semibold hover:bg-green-700 transition shadow-md hover:shadow-lg"
+          >
+            Search Departments
+          </button>
+          </Link>
           {/* Nearest Button */}
           <button
             type="button"

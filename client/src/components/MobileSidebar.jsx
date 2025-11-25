@@ -246,6 +246,16 @@ const MobileSidebar = () => {
           >
             Search
           </button>
+
+          {/* Submit Vehicles */}
+          <Link to={"/drivemap"}>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white rounded-lg px-3 py-2 font-semibold hover:bg-green-700 transition"
+            >
+            Search Vehicles
+          </button>
+            </Link>
         </form>
 
         {/* Results Preview */}

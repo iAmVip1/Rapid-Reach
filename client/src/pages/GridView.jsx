@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaStar, FaGasPump } from "react-icons/fa";
-import { MdDeliveryDining } from "react-icons/md";
 import { data, Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Hospital from "../../../for uploading/hospital.jpg";
