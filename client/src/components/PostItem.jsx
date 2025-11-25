@@ -33,7 +33,7 @@ export default function PostItem({ post, isOnline = false }) {
   };
 
   return (
-    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+    <div className="bg-white dark:bg-zinc-600 shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
       <Link to={`/post/${post._id}`}>
         <img
           src={post.imageUrls[0]}
@@ -54,7 +54,7 @@ export default function PostItem({ post, isOnline = false }) {
               {post.address}
             </p>
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-sm text-gray-600 line-clamp-2 dark:text-gray-200">
             {post.description}
           </p>
           <div className="text-slate-700 flex flex-wrap gap-4">
@@ -72,7 +72,7 @@ export default function PostItem({ post, isOnline = false }) {
 
               {/* Display the distance if available */}
               {post.distance && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-200">
                   Distance: {post.distance} km
                 </p>
               )}

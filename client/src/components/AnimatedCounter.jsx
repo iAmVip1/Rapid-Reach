@@ -1,213 +1,100 @@
-import React from "react";
-import BloodBank from "./HeroModels/BloodBank";
-import Hospitalbuilding from "./HeroModels/Hospitalbuilding";
-import PoliceDepartment from "./HeroModels/PoliceDepartment";
-import FireDepartment from "./HeroModels/FireDepartment";
-import AmbulanceModel from "./HeroModels/AmbulanceModel";
-import PoliceCar from "./HeroModels/PoliceCar";
-import { Link } from "react-router-dom";
-import FireTruck from "./HeroModels/FireTruck";
+import Instant from "../../../for uploading/instant.jpg";
+import Emergencycontact from "../../../for uploading/emergency_contact.jpg";
+import Medical from "../../../for uploading/medical_services.jpg";
+import Real from "../../../for uploading/real_time.jpg";
+
 
 const AnimatedCounter = () => {
   return (
     <div id="counter" className="px-6 md:px-16 py-10 xl:mt-0 mt-32">
-      <section className="w-full flex flex-col gap-20">
-        {/* SECTION Police department */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Police Department</h2>
-            <p className="text-gray-600 text-lg">
-              Law enforcement units responsible for maintaining public safety,
-              preventing crime, and responding to emergency situations.
-            </p>
+      <section className="w-full flex flex-col gap-20 px-6 md:px-16 py-10">
+ {/* SECTION 2 — Desktop reversed (Image | Text) but mobile stays Text → Image */}
+      <div className="flex flex-col md:flex-row-reverse items-center gap-10">
 
-            {/* CUSTOM BUTTON */}
-            <Link to={"/gridview?category=Police+Department"}>
-              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <PoliceDepartment />
-              </div>
-            </figure>
-          </div>
+        {/* TEXT — always first in mobile (because flex-col) */}
+        <div className="md:w-[70%] w-full space-y-5">
+          <h2 className="text-3xl font-bold">24/7 Emergency Support</h2>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
+            Get instant access to nearby emergency services including fire 
+            stations, police departments, and rescue vehicles.
+          </p>
         </div>
 
-        {/* SECTION Hospital */}
-        <div className="flex flex-col md:flex-row items-center gap-10">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Hospital Services</h2>
-            <p className="text-gray-600 text-lg">
-              Healthcare facilities offering diagnosis, treatment, surgeries,
-              and emergency care with specialized medical staff and equipment.
-            </p>
-
-            {/* CUSTOM BUTTON */}
-            <Link to={"/gridview?category=hospital"}>
-              <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <Hospitalbuilding />
-              </div>
-            </figure>
-          </div>
-        </div>
-        {/* SECTION Ambulance */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Ambulance Services</h2>
-            <p className="text-gray-600 text-lg">
-              Quick-response medical vehicles equipped to provide emergency
-              first aid and fast transportation to hospitals during critical
-              situations.
-            </p>
-
-            {/* CUSTOM BUTTON */}
-            <Link to={"/vehiclegrid?category=Ambulance"}>
-              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <AmbulanceModel />
-              </div>
-            </figure>
-          </div>
+        {/* IMAGE */}
+        <div className="md:w-[30%] w-full">
+          <img 
+            src={Emergencycontact} 
+            alt="Emergency" 
+            className="w-full h-auto rounded-2xl shadow-lg object-cover"
+          />
         </div>
 
-        {/* SECTION Blood Bank */}
-        <div className="flex flex-col md:flex-row items-center gap-10">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Blood Bank Services</h2>
-            <p className="text-gray-600 text-lg">
-              Centers that collect, test, store, and distribute blood and blood
-              components for patients requiring transfusions.
-            </p>
+      </div>
 
-            {/* CUSTOM BUTTON */}
-            <Link to={"/gridview?category=Blood+Bank"}>
-              <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <BloodBank />
-              </div>
-            </figure>
-          </div>
+      {/* SECTION 1 — Text 70% | Image 30% */}
+      <div className="flex flex-col md:flex-row items-center gap-10">
+        
+        {/* TEXT — always first on mobile */}
+        <div className="md:w-[70%] w-full space-y-5">
+          <h2 className="text-3xl font-bold">Our Medical Services</h2>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
+            We provide real-time emergency location services including ambulance, 
+            hospital coordination, blood banks, and more.
+          </p>
         </div>
 
-        {/* SECTION Fire Truck */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Fire Truck Services</h2>
-            <p className="text-gray-600 text-lg">
-              Specialized firefighting vehicles equipped with ladders, water
-              pumps, hoses, and rescue tools for handling fire emergencies.
-              <br />
-            </p>
-
-            {/* CUSTOM BUTTON */}
-            <Link to={"/vehiclegrid?category=fire-truck"}>
-              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <FireTruck />
-              </div>
-            </figure>
-          </div>
+        {/* IMAGE */}
+        <div className="md:w-[30%] w-full">
+          <img 
+            src={Medical}
+            alt="Service" 
+            className="w-full h-auto rounded-2xl shadow-lg object-cover"
+          />
         </div>
-        {/* SECTION Police Vehicle */}
-        <div className="flex flex-col md:flex-row items-center gap-10">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Police Vehicle Services</h2>
-            <p className="text-gray-600 text-lg">
-              Patrol and emergency response vehicles used by police for rapid
-              movement, monitoring, and on-site assistance.
-            </p>
+      </div>
 
-            {/* CUSTOM BUTTON */}
-            <Link to={"/vehiclegrid?category=police-vehicle"}>
-              <button className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
+      <div className="flex flex-col md:flex-row-reverse items-center gap-10">
+    {/* TEXT */}
+    <div className="md:w-[70%] w-full space-y-5">
+      <h2 className="text-3xl font-bold">Instant Assistance with One Tap</h2>
+      <p className="text-gray-600 dark:text-gray-300 text-lg">
+        In case of emergency, you can immediately call the nearest emergency services, such as ambulances, fire trucks, or police vehicles. 
+        The "Call Now" feature connects you directly to the service, reducing response times.
+      </p>
+    </div>
 
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <PoliceCar />
-              </div>
-            </figure>
-          </div>
-        </div>
+    {/* IMAGE */}
+    <div className="md:w-[30%] w-full">
+      <img 
+        src={Instant} 
+        alt="Call Now" 
+        className="w-full h-auto rounded-2xl shadow-lg object-cover"
+      />
+    </div>
+  </div>
 
-        {/* SECTION Fire Department */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-10 ">
-          {/* TEXT */}
-          <div className="md:w-[70%] w-full space-y-5 order-1">
-            <h2 className="text-3xl font-bold">Fire Department</h2>
-            <p className="text-gray-600 text-lg">
-              Emergency service teams dedicated to fire suppression, rescue
-              operations, and disaster response.
-            </p>
+    <div className="flex flex-col md:flex-row items-center gap-10">
+    {/* TEXT */}
+    <div className="md:w-[70%] w-full space-y-5">
+      <h2 className="text-3xl font-bold">Real-Time Emergency Vehicle Tracking</h2>
+      <p className="text-gray-600 dark:text-gray-300 text-lg">
+        Our platform provides live tracking of emergency vehicles, including ambulances, fire trucks, and police vehicles. 
+        With real-time updates, you can track their location and arrival time, ensuring faster and more efficient responses.
+      </p>
+    </div>
 
-            {/* CUSTOM BUTTON */}
-            <Link to={"/gridview?category=fire+department"}>
-              <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors cursor-pointer">
-                Visit Service
-              </button>
-            </Link>
-          </div>
-
-          {/* 3D MODEL */}
-          <div className="md:w-[30%] w-full order-2 mt-6 md:mt-0">
-            <figure>
-              <div className="w-full h-[400px] md:h-[500px]">
-                <FireDepartment />
-              </div>
-            </figure>
-          </div>
-        </div>
-      </section>
+    {/* IMAGE */}
+    <div className="md:w-[30%] w-full">
+      <img 
+        src={Real} 
+        alt="Live Tracking" 
+        className="w-full h-auto rounded-2xl shadow-lg object-cover"
+      />
+    </div>
+  </div>
+     
+     
+    </section>
     </div>
   );
 };

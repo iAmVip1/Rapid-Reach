@@ -53,7 +53,7 @@ export default function VehicleItem({ drive, isOnline = false }) {
     "https://via.placeholder.com/300x220";
 
   return (
-    <div className="bg-white shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
+    <div className="bg-white dark:bg-zinc-600 shadow-md hover:shadow-lg cursor-pointer transition-shadow overflow-hidden rounded-lg w-full max-w-[300px] mx-auto">
       <Link to={`/drive/${drive._id}`}>
         <img
           src={displayImage}
@@ -82,7 +82,7 @@ export default function VehicleItem({ drive, isOnline = false }) {
             <span className="font-medium">Vehicle:</span>
             <span className="truncate">{drive.vechicleNumber}</span>
           </div>
-          <div className="text-slate-700 flex flex-wrap gap-4">
+          <div className="text-slate-700 flex flex-wrap gap-4 dark:text-gray-200">
             <div className="font-bold text-xs">
               <p
                 className={`flex items-center gap-2 whitespace-nowrap ${vehicleIcon.color}`}
@@ -92,13 +92,13 @@ export default function VehicleItem({ drive, isOnline = false }) {
 
               {/* Display the distance if available */}
               {drive.distance && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 mt-1 dark:text-gray-200">
                   Distance: {drive.distance} km
                 </p>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
+          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-200">
             <span>Company: {drive.company}</span>
           </div>
         </div>
