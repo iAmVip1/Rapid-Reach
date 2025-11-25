@@ -63,7 +63,7 @@ app.get(/^\/(?!api).*/, (req, res) => {
 // Allowed frontend origins (no cors package needed)
 const allowedOrigins = [
   "http://localhost:5173", // frontend dev
-  "https://your-production-domain.com", // production frontend
+  "https://rapid-reach-9niz.onrender.com/", // production frontend
 ];
 
 // Initialize Socket.IO with built-in CORS

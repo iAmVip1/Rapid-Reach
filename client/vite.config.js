@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://rapid-reach-9niz.onrender.com/',
         secure: false,
       },
     },
