@@ -4,6 +4,7 @@ import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSli
 import { useDispatch, useSelector } from 'react-redux';
 import OAuth from '../components/OAuth';
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaShieldAlt } from 'react-icons/fa';
+import Logo from "../../../images/logo1.png";
 
 export default function Signin() {
   const [formData, setFormData] = useState({});
@@ -68,7 +69,7 @@ export default function Signin() {
                 <div className="flex items-center justify-center lg:justify-start mb-8">
                   <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 mr-4">
                     <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_the_Red_Cross.svg/250px-Flag_of_the_Red_Cross.svg.png" 
+                      src={Logo} 
                       alt="Rapid Reach Logo" 
                       className="w-16 h-16 object-contain"
                     />
